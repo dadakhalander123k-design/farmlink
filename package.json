@@ -1,0 +1,21 @@
+{
+  "name": "directfarm",
+  "version": "2.0.0",
+  "description": "DirectFarm - Direct from farm to buyer marketplace",
+  "scripts": {
+    "dev": "npx --yes serve . -l 3000",
+    "start": "npx --yes serve . -l 3000",
+    "test": "node --test tests/*.test.js"
+  },
+  "keywords": [
+    "marketplace",
+    "farmers",
+    "agriculture",
+    "supabase"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1"
+  }
+}

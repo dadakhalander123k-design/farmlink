@@ -1,0 +1,3562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DirectFarm – From farm to buyer, direct and fair</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* DirectFarm Warm Agricultural Palette: Cosmic Latte (#B7A89A) & Mocha Cream (#E8DCC6) */
+  --bg: #E8DCC6;
+  --bg-subtle: #F3ECE0;
+  --card: #FAF6EF;
+  --card-elevated: #FFFFFF;
+  --latte: #B7A89A;
+  --ink: #231C16;
+  --ink2: #5E5043;
+  --ink3: #8C7B6C;
+  --olive: #3F5B2E;
+  --olive2: #4E6E3A;
+  --olive-light: #EBF2E6;
+  --onolive: #FDFBF7;
+  --green: #2E6B24;
+  --amber: #A86F0D;
+  --terra: #A63F29;
+  --line: rgba(183,168,154,0.48);
+  --line-strong: rgba(183,168,154,0.85);
+  --soft: rgba(183,168,154,0.22);
+  --soft-hover: rgba(183,168,154,0.35);
+  --shadow-sm: 0 2px 8px rgba(35,28,22,0.05);
+  --shadow: 0 10px 30px rgba(35,28,22,0.08);
+  --shadow-lg: 0 20px 48px rgba(35,28,22,0.13);
+  --serif: 'Fraunces', Georgia, serif;
+  --sans: 'Plus Jakarta Sans', 'Figtree', system-ui, -apple-system, sans-serif;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg: #18130E;
+    --bg-subtle: #221B14;
+    --card: #221B14;
+    --card-elevated: #2C231B;
+    --latte: #B7A89A;
+    --ink: #F5EFE6;
+    --ink2: #C8BAAA;
+    --ink3: #9C8B7A;
+    --olive: #547B3E;
+    --olive2: #65924B;
+    --olive-light: #2A3620;
+    --onolive: #F5EFE6;
+    --green: #68B052;
+    --amber: #E2A63B;
+    --terra: #E26A50;
+    --line: rgba(183,168,154,0.24);
+    --line-strong: rgba(183,168,154,0.48);
+    --soft: rgba(183,168,154,0.12);
+    --soft-hover: rgba(183,168,154,0.20);
+    --shadow: 0 12px 36px rgba(0,0,0,0.5);
+    --shadow-lg: 0 24px 56px rgba(0,0,0,0.65);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"]{
+  --bg: #18130E;
+  --bg-subtle: #221B14;
+  --card: #221B14;
+  --card-elevated: #2C231B;
+  --latte: #B7A89A;
+  --ink: #F5EFE6;
+  --ink2: #C8BAAA;
+  --ink3: #9C8B7A;
+  --olive: #547B3E;
+  --olive2: #65924B;
+  --olive-light: #2A3620;
+  --onolive: #F5EFE6;
+  --green: #68B052;
+  --amber: #E2A63B;
+  --terra: #E26A50;
+  --line: rgba(183,168,154,0.24);
+  --line-strong: rgba(183,168,154,0.48);
+  --soft: rgba(183,168,154,0.12);
+  --soft-hover: rgba(183,168,154,0.20);
+  --shadow: 0 12px 36px rgba(0,0,0,0.5);
+  --shadow-lg: 0 24px 56px rgba(0,0,0,0.65);
+  color-scheme: dark;
+}
+
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 84px)}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:15.5px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+h1,h2,h3,h4{
+  font-family:var(--serif);
+  font-weight:600;
+  line-height:1.15;
+  margin:0;
+  letter-spacing:-.015em;
+  color:var(--ink);
+}
+p{margin:0}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer}
+img,svg{max-width:100%;height:auto}
+:focus-visible{outline:3px solid var(--olive);outline-offset:2px;border-radius:10px}
+.ic{flex:none;vertical-align:middle}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+
+/* ==================== Navigation ==================== */
+.nav{
+  position:sticky;
+  top:env(safe-area-inset-top,0px);
+  z-index:100;
+  display:flex;
+  align-items:center;
+  gap:20px;
+  padding:14px max(24px,calc((100% - 1200px)/2));
+  background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line);
+  transition:border-color .2s,background .2s;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  font-family:var(--serif);
+  font-weight:700;
+  font-size:22px;
+  color:var(--ink);
+  letter-spacing:-.01em;
+}
+.brand svg{width:36px;height:36px;flex:none}
+.nav-links{display:flex;align-items:center;gap:4px;margin-left:14px}
+.nav-links a{
+  padding:8px 14px;
+  border-radius:12px;
+  color:var(--ink2);
+  font-weight:600;
+  font-size:14.5px;
+  transition:background .18s,color .18s;
+  cursor:pointer;
+}
+.nav-links a:hover{background:var(--soft);color:var(--ink)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:10px;position:relative}
+.theme-btn{
+  border:1px solid var(--line);
+  background:var(--card);
+  color:var(--ink);
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  transition:background .18s,border-color .18s,transform .18s;
+}
+.theme-btn:hover{background:var(--soft);transform:scale(1.04)}
+.profile-btn{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border:1px solid var(--line);
+  background:var(--card);
+  color:var(--ink);
+  padding:5px 14px 5px 6px;
+  border-radius:14px;
+  box-shadow:var(--shadow-sm);
+  transition:border-color .18s,box-shadow .18s;
+}
+.profile-btn:hover{border-color:var(--latte);box-shadow:var(--shadow)}
+.avatar{
+  width:32px;
+  height:32px;
+  border-radius:10px;
+  background:var(--olive);
+  color:var(--onolive);
+  display:grid;
+  place-items:center;
+  font-weight:700;
+  font-size:14px;
+  font-family:var(--sans);
+}
+.role-tag{
+  font-size:11.5px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  padding:3px 9px;
+  border-radius:8px;
+  background:var(--olive-light);
+  color:var(--olive);
+}
+:root[data-theme="dark"] .role-tag{color:#9fd489}
+.menu{
+  position:absolute;
+  right:0;
+  top:calc(100% + 12px);
+  width:min(320px,88vw);
+  background:var(--card-elevated);
+  border:1px solid var(--line);
+  border-radius:20px;
+  box-shadow:var(--shadow-lg);
+  padding:10px;
+  display:none;
+  z-index:120;
+}
+.menu.open{display:block;animation:pop .18s cubic-bezier(.16,1,.3,1)}
+.menu .who{padding:12px 14px 14px;border-bottom:1px solid var(--soft);margin-bottom:6px}
+.menu .who b{display:block;font-size:17px;font-family:var(--serif)}
+.menu .who span{color:var(--ink2);font-size:13.5px;display:block;margin-top:2px}
+.menu a,.menu button{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  width:100%;
+  padding:10px 14px;
+  border:0;
+  background:none;
+  color:var(--ink);
+  border-radius:12px;
+  text-align:left;
+  font-weight:600;
+  font-size:14.5px;
+  transition:background .15s;
+}
+.menu a:hover,.menu button:hover{background:var(--soft)}
+@keyframes pop{from{opacity:0;transform:translateY(-8px) scale(.98)}to{opacity:1;transform:none}}
+
+/* ==================== Buttons & Chips ==================== */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:11px 22px;
+  border-radius:12px;
+  border:1px solid transparent;
+  font-weight:600;
+  font-size:15px;
+  text-decoration:none;
+  transition:transform .15s,box-shadow .15s,background .15s,border-color .15s;
+  white-space:nowrap;
+  line-height:1.2;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn-primary{
+  background:var(--olive);
+  color:var(--onolive);
+  box-shadow:0 4px 14px rgba(63,91,46,.25);
+}
+.btn-primary:hover{background:var(--olive2);box-shadow:0 6px 18px rgba(63,91,46,.35)}
+.btn-secondary{
+  background:var(--card);
+  color:var(--ink);
+  border-color:var(--line-strong);
+}
+.btn-secondary:hover{background:var(--soft);border-color:var(--latte)}
+.btn-ghost{
+  background:transparent;
+  border-color:var(--line);
+  color:var(--ink);
+}
+.btn-ghost:hover{background:var(--soft);border-color:var(--latte)}
+.btn-light{
+  background:var(--card);
+  border:1px solid var(--line);
+  color:var(--ink);
+}
+.btn-light:hover{background:var(--soft)}
+.btn-lg{padding:14px 28px;font-size:16px;border-radius:14px}
+.btn-sm{padding:7px 15px;font-size:13.5px;border-radius:10px}
+.btn-danger{
+  background:transparent;
+  border-color:var(--terra);
+  color:var(--terra);
+}
+.btn-danger:hover{background:color-mix(in srgb,var(--terra) 12%,transparent)}
+.btn[disabled]{opacity:.55;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+
+/* ==================== Hero Section ==================== */
+.hero{
+  position:relative;
+  padding:48px 0 64px;
+  overflow:hidden;
+}
+.hero-grid{
+  display:grid;
+  grid-template-columns:1.15fr 0.95fr;
+  gap:40px;
+  align-items:center;
+}
+@media (max-width:960px){
+  .hero-grid{grid-template-columns:1fr;gap:36px}
+}
+.hero-content{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  max-width:620px;
+}
+.hero-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:var(--card);
+  border:1px solid var(--line);
+  color:var(--olive);
+  padding:6px 14px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:13px;
+  width:fit-content;
+  box-shadow:var(--shadow-sm);
+}
+:root[data-theme="dark"] .hero-chip{color:#9fd489}
+.hero h1{
+  font-size:clamp(36px,5.2vw,62px);
+  line-height:1.08;
+  letter-spacing:-.02em;
+  color:var(--ink);
+}
+.hero p.lead{
+  font-size:clamp(16px,1.9vw,19px);
+  line-height:1.55;
+  color:var(--ink2);
+}
+.hero .cta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:8px;
+}
+.hero-trust{
+  display:flex;
+  flex-wrap:wrap;
+  gap:18px;
+  margin-top:12px;
+  color:var(--ink2);
+  font-size:13.5px;
+  font-weight:600;
+}
+.hero-trust span{display:flex;align-items:center;gap:6px}
+.hero-trust svg{color:var(--olive)}
+
+.hero-visual{
+  position:relative;
+  border-radius:24px;
+  overflow:visible;
+}
+.hero-img-wrap{
+  position:relative;
+  border-radius:24px;
+  overflow:hidden;
+  border:1px solid var(--line);
+  box-shadow:var(--shadow-lg);
+  aspect-ratio:4/3;
+  background:var(--card);
+}
+.hero-img-wrap img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transition:transform .4s cubic-bezier(.16,1,.3,1);
+}
+.hero-img-wrap:hover img{transform:scale(1.02)}
+.float-chip{
+  position:absolute;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:var(--card-elevated);
+  color:var(--ink);
+  padding:12px 18px;
+  border-radius:18px;
+  border:1px solid var(--line);
+  font-weight:700;
+  font-size:14px;
+  box-shadow:var(--shadow-lg);
+  animation:bob 6s ease-in-out infinite;
+  z-index:2;
+}
+.float-chip small{display:block;font-weight:500;color:var(--ink2);font-size:12px;margin-top:2px}
+.float-chip .dot{
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  background:var(--olive-light);
+  color:var(--olive);
+  display:grid;
+  place-items:center;
+  flex:none;
+}
+:root[data-theme="dark"] .float-chip .dot{color:#9fd489}
+.fc1{left:-16px;top:14%;animation-delay:0s}
+.fc2{right:-16px;bottom:18%;animation-delay:-2.2s}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@media (max-width:960px){
+  .float-chip{display:none}
+}
+
+/* ==================== Stats Bar ==================== */
+.stats-band{
+  background:var(--card);
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  margin:20px 0 0;
+}
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  max-width:1200px;
+  margin:0 auto;
+}
+.stat{
+  padding:28px 24px;
+  border-right:1px solid var(--line);
+}
+.stat:last-child{border-right:0}
+.stat b{
+  display:block;
+  font-family:var(--serif);
+  font-size:clamp(30px,3.8vw,44px);
+  font-weight:600;
+  line-height:1;
+  color:var(--ink);
+}
+.stat span{
+  color:var(--ink2);
+  font-size:14px;
+  font-weight:600;
+  margin-top:8px;
+  display:block;
+}
+@media (max-width:760px){
+  .stats{grid-template-columns:1fr 1fr}
+  .stat:nth-child(2){border-right:0}
+  .stat:nth-child(-n+2){border-bottom:1px solid var(--line)}
+}
+
+/* ==================== General Sections ==================== */
+section.s{padding:76px 0}
+.s-head{max-width:680px;margin-bottom:36px}
+.s-head .kicker{
+  color:var(--olive);
+  font-weight:700;
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  margin-bottom:8px;
+}
+:root[data-theme="dark"] .s-head .kicker{color:#9fd489}
+.s-head h2{font-size:clamp(28px,3.6vw,44px)}
+.s-head p{color:var(--ink2);margin-top:12px;font-size:17px;line-height:1.55}
+.alt{background:color-mix(in srgb,var(--latte) 18%,var(--bg))}
+
+/* Category Row */
+.cat-grid{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:16px;
+}
+@media (max-width:1040px){.cat-grid{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:580px){.cat-grid{grid-template-columns:repeat(2,1fr)}}
+.cat-card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:18px;
+  overflow:hidden;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  text-align:left;
+  transition:transform .2s,box-shadow .2s,border-color .2s;
+  cursor:pointer;
+  color:inherit;
+}
+.cat-card:hover{
+  transform:translateY(-3px);
+  box-shadow:var(--shadow);
+  border-color:var(--latte);
+}
+.cat-card .cat-img{
+  height:110px;
+  overflow:hidden;
+  background:var(--bg);
+}
+.cat-card .cat-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transition:transform .3s;
+}
+.cat-card:hover .cat-img img{transform:scale(1.05)}
+.cat-card .cat-info{
+  padding:12px 14px;
+  display:flex;
+  flex-direction:column;
+}
+.cat-card b{font-size:15px;color:var(--ink)}
+.cat-card span{font-size:12.5px;color:var(--ink2);margin-top:2px}
+
+/* Supply Chain */
+.chain{display:grid;gap:16px}
+.chain-row{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:10px;
+  padding:20px 24px;
+  border-radius:18px;
+  border:1px solid var(--line);
+  background:var(--card);
+}
+.chain-row .node{
+  padding:8px 16px;
+  border-radius:10px;
+  font-weight:600;
+  font-size:14.5px;
+  background:var(--soft);
+}
+.chain-row .sep{color:var(--ink3)}
+.chain-row.old{opacity:.75}
+.chain-row.old .node:not(:first-child){text-decoration:line-through;text-decoration-color:var(--terra)}
+.chain-row.new{
+  background:var(--olive);
+  color:var(--onolive);
+  border-color:var(--olive);
+  box-shadow:0 6px 20px rgba(63,91,46,.25);
+}
+.chain-row.new .node{background:rgba(255,255,255,.18);color:#fff}
+.chain-row.new .sep{color:#d9e6c9}
+.chain-note{color:var(--ink2);font-size:14px;font-weight:600;margin-left:auto}
+.chain-row.new .chain-note{color:#e4eed7}
+
+/* Roles */
+.roles{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media (max-width:860px){.roles{grid-template-columns:1fr}}
+.role{
+  border-radius:24px;
+  overflow:hidden;
+  background:var(--card);
+  border:1px solid var(--line);
+  display:flex;
+  flex-direction:column;
+  box-shadow:var(--shadow-sm);
+  transition:border-color .2s,box-shadow .2s;
+}
+.role:hover{border-color:var(--latte);box-shadow:var(--shadow)}
+.role .role-photo{
+  height:220px;
+  position:relative;
+  overflow:hidden;
+  background:var(--ink);
+}
+.role .role-photo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  opacity:.9;
+  transition:transform .4s;
+}
+.role:hover .role-photo img{transform:scale(1.03)}
+.role .role-photo::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,transparent 40%,rgba(35,28,22,.75) 100%);
+}
+.role-photo .role-pill{
+  position:absolute;
+  left:20px;
+  bottom:16px;
+  background:var(--card-elevated);
+  color:var(--ink);
+  font-weight:700;
+  font-size:13px;
+  padding:5px 12px;
+  border-radius:8px;
+  z-index:2;
+}
+.role .body{
+  padding:28px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  flex:1;
+}
+.role h3{font-size:26px}
+.role ul{margin:4px 0 12px;padding-left:20px;color:var(--ink2)}
+.role ul li{margin:6px 0;font-size:15px}
+.role .btn{align-self:flex-start;margin-top:auto}
+
+/* Features Grid */
+.feat{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:0;
+  border:1px solid var(--line);
+  border-radius:22px;
+  overflow:hidden;
+  background:var(--card);
+}
+.feat > div{
+  padding:32px 28px;
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.feat > div:nth-child(3n){border-right:0}
+.feat > div:nth-last-child(-n+3){border-bottom:0}
+.feat .ficon{
+  width:44px;
+  height:44px;
+  border-radius:12px;
+  background:var(--olive-light);
+  color:var(--olive);
+  display:grid;
+  place-items:center;
+  margin-bottom:16px;
+}
+:root[data-theme="dark"] .feat .ficon{color:#9fd489}
+.feat h3{font-size:20px;margin-bottom:8px}
+.feat p{color:var(--ink2);font-size:15px;line-height:1.55}
+@media (max-width:960px){
+  .feat{grid-template-columns:1fr 1fr}
+  .feat > div{border-right:1px solid var(--line)!important;border-bottom:1px solid var(--line)!important}
+  .feat > div:nth-child(2n){border-right:0!important}
+}
+@media (max-width:620px){
+  .feat{grid-template-columns:1fr}
+  .feat > div{border-right:0!important}
+}
+
+/* Steps */
+.steps{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:20px;
+  counter-reset:st;
+  position:relative;
+}
+.step{position:relative}
+.step::before{
+  counter-increment:st;
+  content:counter(st);
+  display:grid;
+  place-items:center;
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  background:var(--olive);
+  color:var(--onolive);
+  font-family:var(--sans);
+  font-weight:700;
+  font-size:17px;
+  position:relative;
+  z-index:1;
+  margin-bottom:16px;
+}
+.step h4{font-size:19px;margin:0 0 6px}
+.step p{color:var(--ink2);font-size:14.5px;line-height:1.5}
+@media (max-width:880px){
+  .steps{grid-template-columns:1fr;gap:24px}
+  .step{padding-left:56px}
+  .step::before{position:absolute;left:0;top:0}
+}
+
+/* CTA Band */
+.cta-band{
+  position:relative;
+  border-radius:26px;
+  overflow:hidden;
+  color:#fbf5e8;
+  padding:60px 48px;
+  background:var(--ink);
+  box-shadow:var(--shadow-lg);
+}
+.cta-band::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at 80% 20%,rgba(63,91,46,.45),transparent 60%),linear-gradient(135deg,rgba(35,28,22,.95),rgba(35,28,22,.85));
+  z-index:0;
+}
+.cta-band-content{position:relative;z-index:1;max-width:640px}
+.cta-band h2{font-size:clamp(28px,3.8vw,42px);color:#fbf5e8}
+.cta-band p{color:#d9cdb6;margin-top:12px;font-size:17px}
+.cta-band .cta{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}
+.cta-band .btn-primary{background:var(--bg);color:var(--ink)}
+.cta-band .btn-primary:hover{background:#fff}
+
+/* Footer */
+footer.ft{
+  background:var(--card);
+  border-top:1px solid var(--line);
+  color:var(--ink2);
+  padding:48px 0 60px;
+  margin-top:84px;
+}
+footer .row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:24px;
+  justify-content:space-between;
+  align-items:flex-start;
+}
+footer .brand{color:var(--ink)}
+footer p{max-width:440px;font-size:14.5px;margin-top:10px}
+
+/* ==================== Auth Screens ==================== */
+.auth{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  min-height:calc(100vh - 72px);
+}
+@media (max-width:900px){
+  .auth{grid-template-columns:1fr}
+  .auth-art{min-height:260px}
+}
+.auth-art{
+  position:relative;
+  overflow:hidden;
+  color:#FAF6EF;
+  padding:48px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  background-size:cover;
+  background-position:center;
+}
+.auth-art::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(35,28,22,.3) 0%,rgba(35,28,22,.88) 100%);
+  z-index:0;
+}
+.auth-art-content{position:relative;z-index:1}
+.auth-art h2{font-size:clamp(26px,3.2vw,40px);color:#FAF6EF;max-width:14em}
+.auth-art ul{list-style:none;padding:0;margin:20px 0 0;display:grid;gap:12px}
+.auth-art li{display:flex;gap:10px;align-items:center;color:#E8DCC6;font-size:15.5px}
+.auth-art li svg{color:#9fd489}
+.auth-form{display:grid;place-items:center;padding:40px 20px}
+.auth-card{
+  width:min(480px,100%);
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:34px;
+  box-shadow:var(--shadow);
+}
+.auth-card h1{font-size:30px;margin:18px 0 4px}
+.auth-card .sub{color:var(--ink2);margin-bottom:20px;font-size:15px}
+.seg{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  background:var(--soft);
+  border-radius:12px;
+  padding:4px;
+}
+.seg button{
+  border:0;
+  background:transparent;
+  padding:9px;
+  border-radius:10px;
+  font-weight:700;
+  font-size:14px;
+  color:var(--ink2);
+  transition:background .15s,color .15s;
+}
+.seg button.on{
+  background:var(--card-elevated);
+  color:var(--ink);
+  box-shadow:var(--shadow-sm);
+}
+.field{display:grid;gap:6px;margin-bottom:14px}
+.field label{font-weight:600;font-size:13.5px;color:var(--ink)}
+.field small{color:var(--ink2);font-size:12.5px}
+input,select,textarea{
+  width:100%;
+  font:inherit;
+  color:var(--ink);
+  background:var(--card-elevated);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:11px 14px;
+  font-size:15px;
+  transition:border-color .15s,box-shadow .15s;
+}
+input:focus,select:focus,textarea:focus{
+  outline:none;
+  border-color:var(--olive);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--olive) 25%,transparent);
+}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:540px){.two{grid-template-columns:1fr}}
+.err{
+  background:color-mix(in srgb,var(--terra) 12%,transparent);
+  color:var(--terra);
+  border:1px solid var(--terra);
+  padding:11px 15px;
+  border-radius:12px;
+  margin-bottom:16px;
+  font-weight:600;
+  font-size:14px;
+}
+.swap{margin-top:20px;text-align:center;color:var(--ink2);font-size:14.5px}
+.swap a{color:var(--olive);font-weight:700}
+:root[data-theme="dark"] .swap a{color:#9fd489}
+
+/* ==================== Dashboard Shell & Layout ==================== */
+.dash{max-width:1200px;margin:0 auto;padding:32px 24px 48px}
+.dash-head{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:flex-end;
+  gap:16px;
+  justify-content:space-between;
+  margin-bottom:24px;
+}
+.dash-head h1{font-size:clamp(28px,3.4vw,38px)}
+.dash-head p{color:var(--ink2);margin-top:6px;font-size:15px}
+.tabs{
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  padding:6px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:var(--card);
+  margin-bottom:28px;
+  scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar{display:none}
+.tabs a{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 16px;
+  border-radius:12px;
+  text-decoration:none;
+  color:var(--ink2);
+  font-weight:600;
+  white-space:nowrap;
+  font-size:14.5px;
+  transition:background .15s,color .15s;
+}
+.tabs a:hover{background:var(--soft);color:var(--ink)}
+.tabs a.on{background:var(--olive);color:var(--onolive)}
+.cnt{
+  background:var(--terra);
+  color:#fff;
+  border-radius:999px;
+  font-size:11.5px;
+  padding:1px 7px;
+  font-weight:700;
+}
+.cards4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:26px}
+@media (max-width:920px){.cards4{grid-template-columns:1fr 1fr}}
+@media (max-width:480px){.cards4{grid-template-columns:1fr}}
+.kpi{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:22px;
+  box-shadow:var(--shadow-sm);
+}
+.kpi span{color:var(--ink2);font-size:13.5px;font-weight:600;display:flex;gap:8px;align-items:center}
+.kpi b{display:block;font-family:var(--serif);font-size:32px;font-weight:600;margin-top:8px;line-height:1.1;color:var(--ink)}
+.panel{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:26px;
+  margin-bottom:22px;
+  box-shadow:var(--shadow-sm);
+}
+.panel h3{font-size:22px;margin-bottom:4px}
+.panel .sub{color:var(--ink2);margin-bottom:18px;font-size:14.5px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media (max-width:920px){.grid2{grid-template-columns:1fr}}
+
+/* Contextual Empty State */
+.empty{
+  text-align:center;
+  padding:48px 24px;
+  border:2px dashed var(--latte);
+  border-radius:22px;
+  background:color-mix(in srgb,var(--card) 60%,transparent);
+  color:var(--ink2);
+}
+.empty .empty-icon{
+  width:64px;
+  height:64px;
+  border-radius:18px;
+  background:var(--soft);
+  color:var(--olive);
+  display:grid;
+  place-items:center;
+  margin:0 auto 16px;
+}
+:root[data-theme="dark"] .empty .empty-icon{color:#9fd489}
+.empty h3{color:var(--ink);margin:0 0 6px;font-size:22px}
+.empty p{max-width:440px;margin:0 auto;font-size:15px}
+.empty .btn{margin-top:20px}
+
+/* ==================== Marketplace & Product Cards ==================== */
+.art{display:grid;place-items:center;position:relative;overflow:hidden;width:100%;height:100%}
+.art svg{width:60%;height:auto;max-height:80%;filter:drop-shadow(0 10px 14px rgba(35,28,22,.22))}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:22px}
+.pcard{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:20px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  transition:transform .2s,box-shadow .2s,border-color .2s;
+  text-align:left;
+  padding:0;
+  color:inherit;
+  position:relative;
+}
+.pcard.click{cursor:pointer}
+.pcard.click:hover{
+  transform:translateY(-4px);
+  box-shadow:var(--shadow-lg);
+  border-color:var(--latte);
+}
+.pcard .pic{
+  height:190px;
+  position:relative;
+  overflow:hidden;
+  background:var(--bg-subtle);
+}
+.pcard .pic img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transition:transform .35s cubic-bezier(.16,1,.3,1);
+}
+.pcard.click:hover .pic img{transform:scale(1.05)}
+.grade{
+  position:absolute;
+  left:12px;
+  top:12px;
+  background:rgba(35,28,22,.85);
+  color:#FAF6EF;
+  font-size:12px;
+  font-weight:700;
+  padding:4px 10px;
+  border-radius:8px;
+  backdrop-filter:blur(6px);
+  z-index:2;
+}
+.pbody{padding:18px 20px 20px;display:grid;gap:10px}
+.ptop{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.ptop h3{font-size:22px}
+.price{font-family:var(--serif);font-size:26px;font-weight:600;white-space:nowrap;color:var(--ink)}
+.price small{font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--ink2)}
+.meta{display:flex;flex-wrap:wrap;gap:6px 14px;color:var(--ink2);font-size:13.5px;font-weight:500}
+.meta span{display:flex;gap:5px;align-items:center}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  font-size:12px;
+  font-weight:700;
+  padding:3px 10px;
+  border-radius:8px;
+}
+.b-good{background:color-mix(in srgb,var(--green) 18%,transparent);color:var(--green)}
+.b-warn{background:color-mix(in srgb,var(--amber) 18%,transparent);color:var(--amber)}
+.b-bad{background:color-mix(in srgb,var(--terra) 16%,transparent);color:var(--terra)}
+.b-neutral{background:var(--soft);color:var(--ink2)}
+
+/* Toolbar & Filters */
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px;align-items:center}
+.search{position:relative;flex:1;min-width:240px}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--ink3);pointer-events:none}
+.search input{padding-left:44px;border-radius:14px;background:var(--card)}
+.toolbar select{width:auto;border-radius:14px;background:var(--card)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.chip{
+  border:1px solid var(--line);
+  background:var(--card);
+  color:var(--ink);
+  padding:7px 16px;
+  border-radius:12px;
+  font-weight:600;
+  font-size:14px;
+  display:flex;
+  gap:8px;
+  align-items:center;
+  transition:background .15s,border-color .15s,color .15s;
+}
+.chip:hover{background:var(--soft)}
+.chip.on{background:var(--olive);color:var(--onolive);border-color:var(--olive)}
+.chip i{font-style:normal;opacity:.8;font-weight:600;font-size:12px}
+
+/* ==================== Image Dropzone ==================== */
+.dropzone{
+  border:2px dashed var(--latte);
+  border-radius:18px;
+  padding:32px 20px;
+  text-align:center;
+  background:var(--bg-subtle);
+  cursor:pointer;
+  transition:border-color .18s,background .18s,transform .18s;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+}
+.dropzone:hover,.dropzone.dragover{
+  border-color:var(--olive);
+  background:color-mix(in srgb,var(--olive-light) 60%,var(--card));
+  transform:scale(1.01);
+}
+.dropzone .dz-icon{
+  width:48px;
+  height:48px;
+  border-radius:14px;
+  background:var(--soft);
+  color:var(--olive);
+  display:grid;
+  place-items:center;
+  margin-bottom:4px;
+}
+:root[data-theme="dark"] .dropzone .dz-icon{color:#9fd489}
+.dropzone .dz-title{font-weight:700;font-size:15.5px;color:var(--ink)}
+.dropzone .dz-sub{font-size:13.5px;color:var(--ink2)}
+.dropzone .dz-browse{color:var(--olive);text-decoration:underline;font-weight:700}
+:root[data-theme="dark"] .dropzone .dz-browse{color:#9fd489}
+.dropzone .dz-hint{font-size:12px;color:var(--ink3)}
+
+/* Preview Card in Listing Form */
+.live-preview-box{
+  background:var(--card-elevated);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:20px;
+  box-shadow:var(--shadow-sm);
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.live-preview-box .kicker{font-size:12px;font-weight:700;text-transform:uppercase;color:var(--olive);letter-spacing:.05em}
+
+/* ==================== Orders & Timeline ==================== */
+.orderbox{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:24px;
+  margin-bottom:20px;
+  box-shadow:var(--shadow-sm);
+}
+.orderbox .top{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+.timeline{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:0;
+  margin:24px 0 16px;
+  position:relative;
+}
+.tl{
+  position:relative;
+  text-align:center;
+  font-size:13px;
+  color:var(--ink3);
+  padding-top:36px;
+  font-weight:600;
+}
+.tl::before{
+  content:"";
+  position:absolute;
+  top:8px;
+  left:50%;
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  background:var(--card);
+  border:3px solid var(--latte);
+  transform:translateX(-50%);
+  z-index:2;
+  transition:all .2s;
+}
+.tl::after{
+  content:"";
+  position:absolute;
+  top:15px;
+  left:-50%;
+  width:100%;
+  height:3px;
+  background:var(--soft);
+  z-index:1;
+}
+.tl:first-child::after{display:none}
+.tl.done::before{
+  background:var(--olive);
+  border-color:var(--olive);
+}
+.tl.done::after{background:var(--olive)}
+.tl.now::before{
+  background:var(--olive);
+  border-color:var(--olive);
+  box-shadow:0 0 0 6px color-mix(in srgb,var(--olive) 25%,transparent);
+}
+.tl.done,.tl.now{color:var(--ink)}
+.tl-time{
+  font-size:11px;
+  color:var(--ink2);
+  margin-top:4px;
+  display:block;
+  font-weight:500;
+}
+
+/* Status Chips */
+.status{font-weight:700;font-size:12.5px;padding:4px 12px;border-radius:8px;display:inline-block}
+.st-placed{background:#F0DEC0;color:#6D4C05}
+.st-confirmed,.st-preparing{background:#D7E7CA;color:#2F4D1F}
+.st-out{background:#CFE0F0;color:#1E3E61}
+.st-delivered{background:var(--olive);color:var(--onolive)}
+.st-cancelled{background:#F5D0C6;color:#7A2A18}
+.st-open{background:#D7E7CA;color:#2F4D1F}
+.st-fulfilled{background:var(--olive);color:var(--onolive)}
+.st-closed{background:var(--soft);color:var(--ink2)}
+.st-pending{background:#F0DEC0;color:#6D4C05}
+.st-accepted{background:var(--olive);color:var(--onolive)}
+.st-declined{background:#F5D0C6;color:#7A2A18}
+
+/* Match & Intelligence Cards */
+.ring{
+  --p:80;
+  width:62px;
+  height:62px;
+  border-radius:50%;
+  background:conic-gradient(var(--olive2) calc(var(--p)*1%),var(--soft) 0);
+  display:grid;
+  place-items:center;
+  flex:none;
+  position:relative;
+}
+.ring::before{content:"";position:absolute;inset:6px;background:var(--card);border-radius:50%}
+.ring span{position:relative;font-weight:700;font-size:14.5px;color:var(--ink)}
+.mcard{
+  display:flex;
+  gap:16px;
+  align-items:flex-start;
+  padding:20px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:var(--card-elevated);
+  margin-bottom:14px;
+}
+.mcard.best{border-color:var(--olive);box-shadow:0 0 0 2px color-mix(in srgb,var(--olive) 30%,transparent)}
+.mcard .info{flex:1;min-width:0}
+.mcard h4{font-size:19px}
+.why{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.why span{font-size:12px;background:var(--soft);padding:3px 9px;border-radius:6px;color:var(--ink2);font-weight:600}
+.bar{height:10px;background:var(--soft);border-radius:999px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--olive2);border-radius:999px;transition:width .6s}
+.note{
+  background:color-mix(in srgb,var(--olive) 12%,transparent);
+  border:1px solid color-mix(in srgb,var(--olive) 30%,transparent);
+  padding:14px 18px;
+  border-radius:14px;
+  font-size:14.5px;
+  color:var(--ink);
+}
+
+/* Forecast Bars */
+.fbars{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;align-items:end;height:200px;margin:16px 0}
+.fb{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;font-size:13px}
+.fb i{display:block;width:100%;max-width:54px;border-radius:10px 10px 4px 4px;background:var(--latte);transition:height .7s}
+.fb.peak i{background:var(--olive)}
+.fb b{font-size:13px;color:var(--ink)}
+.fb em{font-style:normal;color:var(--ink2);font-size:12px}
+
+/* Mapbox */
+.mapbox{
+  background:linear-gradient(var(--soft) 1px,transparent 1px) 0 0/36px 36px,linear-gradient(90deg,var(--soft) 1px,transparent 1px) 0 0/36px 36px,var(--card-elevated);
+  border:1px solid var(--line);
+  border-radius:20px;
+  overflow:hidden;
+}
+.mapbox svg{display:block;width:100%;height:auto}
+.dash-line{stroke-dasharray:9 8;animation:dash 1.2s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-34}}
+
+/* ==================== Tables & Lists ==================== */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;font-size:13px;color:var(--ink2);font-weight:700;padding:12px;border-bottom:1px solid var(--line);text-transform:uppercase;letter-spacing:.04em}
+.tbl td{padding:14px 12px;border-bottom:1px solid var(--soft);vertical-align:middle;font-size:14.5px}
+.tbl tr:last-child td{border-bottom:0}
+.scroll-x{overflow-x:auto}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* ==================== Modal & Toasts ==================== */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(24,19,14,.65);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  z-index:200;
+  display:grid;
+  place-items:center;
+  padding:20px;
+  animation:fade .2s;
+  overflow:auto;
+}
+@keyframes fade{from{opacity:0}}
+.modal{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:26px;
+  width:min(640px,100%);
+  max-height:calc(100vh - 40px);
+  overflow:auto;
+  box-shadow:var(--shadow-lg);
+  animation:pop .22s cubic-bezier(.16,1,.3,1);
+  position:relative;
+}
+.modal .mhead{height:220px;position:relative;background:var(--bg-subtle)}
+.modal .mhead img{width:100%;height:100%;object-fit:cover;display:block}
+.modal .mhead .art{height:100%}
+.modal .mbody{padding:26px 28px 30px}
+.modal .x{
+  position:absolute;
+  right:16px;
+  top:16px;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  border:0;
+  background:rgba(250,246,239,.9);
+  color:#231C16;
+  z-index:3;
+  display:grid;
+  place-items:center;
+  box-shadow:var(--shadow-sm);
+  transition:transform .15s;
+}
+.modal .x:hover{transform:scale(1.08)}
+.tp{background:var(--bg-subtle);border:1px solid var(--line);border-radius:16px;padding:16px;margin:16px 0}
+.tp .row{display:flex;justify-content:space-between;padding:4px 0}
+.sumbox{background:var(--bg-subtle);border-radius:16px;padding:16px;margin:16px 0}
+.sumbox .row{display:flex;justify-content:space-between;padding:3px 0}
+.sumbox .row.t{font-weight:700;font-size:18px;border-top:1px solid var(--line);margin-top:8px;padding-top:10px}
+.qty{display:flex;align-items:center;gap:8px}
+.qty button{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:var(--card-elevated);
+  color:var(--ink);
+  font-size:20px;
+  display:grid;
+  place-items:center;
+}
+.qty button:hover{background:var(--soft)}
+.qty input{text-align:center;width:110px}
+#toasts{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:calc(24px + env(safe-area-inset-bottom,0px));
+  display:grid;
+  justify-items:center;
+  gap:10px;
+  z-index:300;
+  pointer-events:none;
+}
+.toast{
+  background:var(--ink);
+  color:#FAF6EF;
+  padding:12px 22px;
+  border-radius:14px;
+  box-shadow:var(--shadow-lg);
+  animation:rise .25s cubic-bezier(.16,1,.3,1) both;
+  font-weight:600;
+  font-size:14.5px;
+  max-width:92vw;
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.toast.err{background:var(--terra);color:#fff}
+.stars button{background:none;border:0;font-size:32px;color:var(--latte);padding:2px;cursor:pointer}
+.stars button.on{color:#E2A63B}
+.imgprev{height:160px;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:var(--bg-subtle)}
+.imgprev img{width:100%;height:100%;object-fit:cover}
+.imgprev .art{height:100%}
+.small{font-size:13.5px;color:var(--ink2)}
+.hr{height:1px;background:var(--soft);margin:20px 0}
+.spinner{
+  width:18px;
+  height:18px;
+  border:2.5px solid transparent;
+  border-top-color:currentColor;
+  border-radius:50%;
+  animation:spin .6s linear infinite;
+  display:inline-block;
+  vertical-align:middle;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* Skeleton Pulse */
+.skeleton{
+  background:linear-gradient(90deg,var(--soft) 25%,color-mix(in srgb,var(--soft) 60%,white) 50%,var(--soft) 75%);
+  background-size:200% 100%;
+  animation:skeleton-shimmer 1.8s infinite;
+  border-radius:12px;
+}
+@keyframes skeleton-shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+
+<!-- Supabase SDK + Configuration + Pure Domain Logic + Data Access Layer -->
+<script src="lib/supabase.js"></script>
+<script>
+  if (!window.supabase) {
+    document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"><\/script>');
+  }
+</script>
+<script src="config.js"></script>
+<script src="lib/pricing.js"></script>
+<script src="lib/matching.js"></script>
+<script src="lib/routing.js"></script>
+<script src="lib/api.js"></script>
+</head>
+<body>
+<div id="app"></div>
+<div id="toasts" aria-live="polite"></div>
+
+<script>
+/* ============ App State & Theme ============ */
+const AUTH_STATE = {
+  INITIALIZING: 'INITIALIZING',
+  AUTHENTICATED: 'AUTHENTICATED',
+  UNAUTHENTICATED: 'UNAUTHENTICATED',
+  SESSION_EXPIRED: 'SESSION_EXPIRED'
+};
+let currentAuthState = AUTH_STATE.INITIALIZING;
+let authSeq = 0;
+
+let CURRENT_USER = null;
+let PUBLIC_STATS = { farmers: 0, listings: 0, orders: 0, kg: 0 };
+let ACTIVE_LISTINGS = [];
+let MY_LISTINGS = [];
+let MY_ORDERS = [];
+let OPEN_REQS = [];
+let MY_REQS = [];
+let MY_OFFERS = [];
+let SELLER_STATS_MAP = {};
+let COUNTERPARTY_PHONES = {};
+let HAS_MORE_LISTINGS = false;
+let LISTINGS_PAGE = 0;
+const PAGE_SIZE = 24;
+
+const S = {
+  authMode: 'login',
+  q: '',
+  crop: 'All',
+  sort: 'new',
+  imgFile: null,
+  imgPreviewUrl: null,
+  icrop: null,
+  modal: null,
+  isSubmitting: false,
+  fAdd: {
+    crop: 'Tomato',
+    grade: 'A',
+    qty: '',
+    unit: 'kg',
+    price: '',
+    date: new Date().toISOString().slice(0, 10),
+    loc: '',
+    note: ''
+  },
+  bPost: {
+    crop: 'Tomato',
+    grade: 'A',
+    qty: '',
+    price: '',
+    by: new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10),
+    loc: '',
+    dist: 50
+  }
+};
+
+function theme() {
+  try { return localStorage.getItem('df_theme'); } catch(e) { return null; }
+}
+const savedTheme = theme();
+if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+
+/* ============ Helpers ============ */
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const inr = n => '₹' + Math.round(Number(n) || 0).toLocaleString('en-IN');
+const ago = t => {
+  if (!t) return '';
+  const m = Math.floor((Date.now() - t) / 60000);
+  if (m < 1) return 'just now';
+  if (m < 60) return m + ' min ago';
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + ' h ago';
+  return Math.floor(h / 24) + ' d ago';
+};
+const fdate = d => d ? new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+const ftime = d => d ? new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) + ' ' + new Date(d).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : '';
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const GR = { A: 3, B: 2, C: 1 };
+
+const ICONS = {
+  leaf: 'M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12',
+  user: 'M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2 M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
+  logout: 'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9',
+  search: 'M21 21l-4.3-4.3 M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16z',
+  truck: 'M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2 M15 18H9 M19 18h2a1 1 0 0 0 1-1v-3.7a1 1 0 0 0-.2-.6L18.3 8.4a1 1 0 0 0-.8-.4H14 M5 18a2 2 0 1 0 4 0 2 2 0 0 0-4 0 M15 18a2 2 0 1 0 4 0 2 2 0 0 0-4 0',
+  chart: 'M3 3v18h18 M7 14l4-4 4 4 5-6',
+  spark: 'M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z',
+  shield: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z M9 12l2 2 4-4',
+  pin: 'M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z M12 12a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z',
+  box: 'M21 8l-9-5-9 5v8l9 5 9-5z M3.3 7.5L12 12l8.7-4.5 M12 22V12',
+  check: 'M20 6L9 17l-5-5',
+  plus: 'M12 5v14 M5 12h14',
+  arrow: 'M5 12h14 M13 6l6 6-6 6',
+  star: 'M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.3-6.2 3.3L7 14.2 2 9.3l6.9-1z',
+  store: 'M3 9l1-5h16l1 5 M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0 M5 12v8h14v-8',
+  rupee: 'M6 4h12 M6 9h12 M9 4c6 0 6 9 0 9l7 7',
+  trend: 'M3 17l6-6 4 4 8-8 M15 7h6v6',
+  home: 'M3 11l9-8 9 8 M5 10v10h14V10',
+  list: 'M8 6h13 M8 12h13 M8 18h13 M3 6h.01 M3 12h.01 M3 18h.01',
+  x: 'M18 6L6 18 M6 6l12 12',
+  moon: 'M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z',
+  down: 'M6 9l6 6 6-6',
+  clock: 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z M12 6v6l4 2',
+  phone: 'M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z',
+  upload: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4 M17 8l-5-5-5 5 M12 3v12'
+};
+const ic = (n, s = 18) => `<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${(ICONS[n]||'').split(' M').map((d,i)=>`<path d="${i?'M'+d:d}"/>`).join('')}</svg>`;
+
+/* ============ Reference Data ============ */
+const TOWNS = [
+  {n:'Bhimavaram',lat:16.5449,lng:81.5212},{n:'Vijayawada',lat:16.5062,lng:80.6480},{n:'Eluru',lat:16.7107,lng:81.0952},
+  {n:'Tadepalligudem',lat:16.8140,lng:81.5270},{n:'Narsapuram',lat:16.4350,lng:81.6970},{n:'Tanuku',lat:16.7540,lng:81.6810},
+  {n:'Rajahmundry',lat:17.0005,lng:81.8040},{n:'Kakinada',lat:16.9891,lng:82.2475},{n:'Machilipatnam',lat:16.1875,lng:81.1389},
+  {n:'Guntur',lat:16.3067,lng:80.4365},{n:'Ongole',lat:15.5057,lng:80.0499},{n:'Nellore',lat:14.4426,lng:79.9865},
+  {n:'Visakhapatnam',lat:17.6868,lng:83.2185},{n:'Tirupati',lat:13.6288,lng:79.4192},{n:'Kurnool',lat:15.8281,lng:78.0373},
+  {n:'Hyderabad',lat:17.3850,lng:78.4867}
+];
+const town = n => { const t = TOWNS.find(x => x.n === n) || TOWNS[0]; return { label: t.n, lat: t.lat, lng: t.lng }; };
+const townOpts = sel => TOWNS.map(t => `<option ${t.n === sel ? 'selected' : ''}>${t.n}</option>`).join('');
+
+const CROPS = window.DFPricing.CROPS;
+const CROP_NAMES = Object.keys(CROPS);
+
+/* High-resolution authentic Indian crop photography */
+const CROP_PHOTOS = {
+  'Tomato': 'assets/images/crop_tomato.jpg',
+  'Onion': 'assets/images/crop_onion.jpg',
+  'Chilli': 'assets/images/crop_chilli.jpg',
+  'Potato': 'assets/images/crop_potato.jpg',
+  'Rice': 'assets/images/crop_rice.jpg',
+  'Brinjal': 'assets/images/crop_brinjal.jpg',
+  'Banana': 'assets/images/crop_banana.jpg',
+  'Okra': 'assets/images/crop_tomato.jpg',
+  'Mango': 'assets/images/crop_banana.jpg',
+  'Coconut': 'assets/images/crop_rice.jpg',
+  'Turmeric': 'assets/images/crop_onion.jpg'
+};
+
+/* ============ Crop Illustrations (SVG fallback) ============ */
+function leaves(cx, cy, n, len, col, spread = 360, off = 0) {
+  let s = '';
+  for (let i = 0; i < n; i++) {
+    const a = off + spread / n * i;
+    s += `<ellipse cx="${cx}" cy="${cy-len/2}" rx="${len/3.4}" ry="${len/2}" transform="rotate(${a} ${cx} ${cy})" fill="${col}"/>`;
+  }
+  return s;
+}
+function rg(id, a, b) {
+  return `<radialGradient id="${id}" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></radialGradient>`;
+}
+function cropArt(c) {
+  let b = '';
+  switch(c) {
+  case 'Tomato': b = `<defs>${rg('gT','#ff8a6a','#c3281a')}</defs><circle cx="84" cy="76" r="22" fill="url(#gT)"/><circle cx="50" cy="70" r="33" fill="url(#gT)"/><ellipse cx="38" cy="55" rx="9" ry="5" fill="#fff" opacity=".35" transform="rotate(-30 38 55)"/>${leaves(50,40,6,20,'#3f7d2c')}<circle cx="50" cy="40" r="4" fill="#2d5a1f"/>${leaves(84,57,5,13,'#3f7d2c')}`; break;
+  case 'Chilli': b = `<path d="M34 28Q30 92 88 100" fill="none" stroke="#b4220f" stroke-width="17" stroke-linecap="round"/><path d="M34 28Q30 92 88 100" fill="none" stroke="#e6432b" stroke-width="11" stroke-linecap="round"/><path d="M62 24Q64 80 100 84" fill="none" stroke="#b4220f" stroke-width="15" stroke-linecap="round"/><path d="M62 24Q64 80 100 84" fill="none" stroke="#e6432b" stroke-width="9" stroke-linecap="round"/><path d="M30 26c-2-8 2-13 8-14M58 22c-1-8 3-12 9-12" stroke="#3f7d2c" stroke-width="5" fill="none" stroke-linecap="round"/>`; break;
+  case 'Onion': b = `<defs>${rg('gO','#e8a0bd','#a8466f')}</defs><path d="M60 14c3 12 4 18 0 26" stroke="#c9a96a" stroke-width="5" fill="none" stroke-linecap="round"/><ellipse cx="60" cy="72" rx="38" ry="33" fill="url(#gO)"/><path d="M60 40Q40 72 60 105M60 40Q80 72 60 105M60 40Q28 70 46 100M60 40Q92 70 74 100" stroke="#fff" stroke-opacity=".35" stroke-width="2" fill="none"/><path d="M52 104l-6 8M68 104l6 8M60 106v8" stroke="#d8c9a4" stroke-width="3" stroke-linecap="round"/>`; break;
+  case 'Rice': {
+    let g = '';
+    for (let i = 0; i < 9; i++) {
+      const t = i / 8, x = 34 + t * 52, y = 92 - Math.sin(t * Math.PI * .9) * 52;
+      g += `<ellipse cx="${x-4}" cy="${y}" rx="5" ry="10" transform="rotate(${-40+t*30} ${x-4} ${y})" fill="#e7c25a"/><ellipse cx="${x+7}" cy="${y+10}" rx="5" ry="10" transform="rotate(${30+t*10} ${x+7} ${y+10})" fill="#d9ad3d"/>`;
+    }
+    b = `<path d="M28 108Q36 40 92 26" fill="none" stroke="#8a9a3f" stroke-width="4" stroke-linecap="round"/>${g}`;
+    break;
+  }
+  case 'Banana': b = `<path d="M22 38Q30 110 104 92Q58 98 40 34Z" fill="#e6c928"/><path d="M34 32Q44 104 108 80Q66 90 50 30Z" fill="#f4dc4a"/><path d="M46 28Q58 96 110 66Q74 80 60 26Z" fill="#f9e866"/><path d="M20 38l6-10 8 4-2 8zM32 32l6-10 8 4-2 8zM44 28l6-10 8 4-2 8z" fill="#6b5a1e"/>`; break;
+  case 'Mango': b = `<defs>${rg('gM','#ffe07a','#f08a24')}</defs><ellipse cx="58" cy="68" rx="38" ry="31" transform="rotate(-25 58 68)" fill="url(#gM)"/><ellipse cx="78" cy="82" rx="16" ry="12" transform="rotate(-25 78 82)" fill="#e0452a" opacity=".5"/><ellipse cx="42" cy="56" rx="9" ry="5" fill="#fff" opacity=".4" transform="rotate(-40 42 56)"/><path d="M60 38q4-14 10-18" stroke="#6b5a1e" stroke-width="3" fill="none"/><path d="M68 24q16-12 28 0q-14 10-28 0z" fill="#3f7d2c"/>`; break;
+  case 'Okra': b = [-26, 0, 26].map((r, i) => `<g transform="rotate(${r} 60 108)"><path d="M60 14C74 30 72 78 60 108C48 78 46 30 60 14Z" fill="${['#5f9a3a','#6aaa41','#558c33'][i]}"/><path d="M60 18v88" stroke="#2f5a1f" stroke-opacity=".4" stroke-width="2"/><rect x="55" y="8" width="10" height="9" rx="3" fill="#3a6a24"/></g>`).join(''); break;
+  case 'Brinjal': b = `<defs><radialGradient id="gB" cx=".3" cy=".3" r=".9"><stop offset="0" stop-color="#9a5fb8"/><stop offset="1" stop-color="#3d1a55"/></radialGradient></defs><ellipse cx="60" cy="72" rx="24" ry="46" transform="rotate(-32 60 72)" fill="url(#gB)"/><ellipse cx="44" cy="62" rx="5" ry="16" transform="rotate(-32 44 62)" fill="#fff" opacity=".28"/><path d="M80 30l12-10 8 12-12 4zM84 28c6-8 12-8 14-4" fill="#3f7d2c"/>`; break;
+  case 'Coconut': b = `<defs>${rg('gC','#a9784a','#4a2f1a')}</defs><circle cx="60" cy="64" r="40" fill="url(#gC)"/><path d="M30 44Q60 30 90 44M24 64Q60 50 96 64M30 84Q60 72 90 84" stroke="#3a2412" stroke-opacity=".35" stroke-width="2" fill="none"/><circle cx="50" cy="56" r="5" fill="#2a180b"/><circle cx="68" cy="54" r="5" fill="#2a180b"/><circle cx="59" cy="70" r="5" fill="#2a180b"/><ellipse cx="44" cy="44" rx="10" ry="5" fill="#fff" opacity=".25" transform="rotate(-30 44 44)"/>`; break;
+  case 'Turmeric': b = `<g fill="#e8a521">${[[-35,52],[10,56],[48,50]].map(([r,x])=>`<rect x="${x-12}" y="22" width="24" height="74" rx="12" transform="rotate(${r} ${x} 96)"/>`).join('')}</g><g stroke="#b97812" stroke-width="2" stroke-opacity=".55" fill="none">${[[-35,52],[10,56],[48,50]].map(([r,x])=>[40,56,72].map(y=>`<path d="${x-10} ${y}q10 5 20 0" transform="rotate(${r} ${x} 96)"/>`).join('')).join('')}</g><ellipse cx="62" cy="46" rx="5" ry="14" fill="#fff" opacity=".3" transform="rotate(10 62 46)"/>`; break;
+  default: b = `<circle cx="60" cy="60" r="32" fill="#7fa14f"/>`;
+  }
+  return `<svg viewBox="0 0 120 120" role="img" aria-label="${esc(c)} illustration" xmlns="http://www.w3.org/2000/svg">${b}</svg>`;
+}
+const art = c => { const t = (CROPS[c] || CROPS.Tomato).t; return `<div class="art" style="background:radial-gradient(circle at 30% 20%,${t[0]},${t[1]})">${cropArt(c)}</div>`; };
+
+/* Real photo rendering with graceful fallback to art(c) */
+const pic = l => {
+  const photo = l.img || CROP_PHOTOS[l.crop];
+  const locLabel = (l.loc && l.loc.label) ? l.loc.label : '';
+  if (photo) {
+    return `<img src="${esc(photo)}" alt="${esc(l.crop)} from ${esc(locLabel)}" loading="lazy" onerror="this.outerHTML=window.artFor('${esc(l.crop)}')">`;
+  }
+  return art(l.crop);
+};
+window.artFor = art;
+
+const logoSVG = `<svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="12" fill="#3F5B2E"/><path d="M12 28c0-9 6-15 17-16-1 10-7 16-15 16" fill="#E8DCC6"/><path d="M12 29c5-8 9-11 14-13" stroke="#3F5B2E" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>`;
+
+/* ============ Pure Logic Bridges ============ */
+const km = window.DFPricing.km;
+const deliveryFee = window.DFPricing.deliveryFee;
+const marketRef = (crop, ex) => window.DFPricing.marketRef(crop, ACTIVE_LISTINGS, ex);
+const priceBadge = (p, r) => window.DFPricing.priceBadge(p, r);
+const pbadge = (price, crop, ex) => {
+  const m = marketRef(crop, ex);
+  const b = priceBadge(price, m.ref);
+  return `<span class="badge ${b.c}">${ic('check', 13)} ${b.t}</span>`;
+};
+const sellerTag = (rcOrItem, maybeAvg) => {
+  let rc = 0, ra = null;
+  if (rcOrItem && typeof rcOrItem === 'object') {
+    rc = Number(rcOrItem.ratingCount || rcOrItem.rating_count || 0);
+    ra = rcOrItem.ratingAvg != null ? rcOrItem.ratingAvg : rcOrItem.rating_avg;
+  } else if (typeof maybeAvg !== 'undefined') {
+    rc = Number(rcOrItem || 0);
+    ra = maybeAvg;
+  } else if (typeof rcOrItem === 'string') {
+    const l = ACTIVE_LISTINGS.find(x => x.farmerId === rcOrItem || x.id === rcOrItem) || MY_OFFERS.find(x => x.farmerId === rcOrItem);
+    if (l) {
+      rc = Number(l.ratingCount || 0);
+      ra = l.ratingAvg;
+    }
+  }
+  if (rc > 0 && ra != null) {
+    return `<span style="color:#d9a21b;font-weight:700">★ ${Number(ra).toFixed(1)}</span> <span style="color:var(--ink2)">(${rc})</span>`;
+  }
+  return '<span style="color:var(--ink3);font-size:12.5px">New seller</span>';
+};
+const matchScore = (req, l, farmerProfile) => {
+  const stats = {
+    rating: l.ratingAvg || null,
+    n: l.ratingCount || 0,
+    done: l.done || 0
+  };
+  return window.DFMatching.matchScore(req, l, farmerProfile, stats);
+};
+const bestCombo = (req, ms) => window.DFMatching.bestCombo(req, ms);
+const planRoute = (origin, stops) => window.DFRouting.planRoute(origin, stops);
+const naiveDist = (origin, stops) => window.DFRouting.naiveDist(origin, stops);
+
+/* ============ Image Compression ============ */
+async function compressImageToBlob(file, maxDim = 1280, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    if (!file) return resolve(null);
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Failed to read image file.'));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('Failed to load image preview.'));
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) {
+            h = Math.round(h * (maxDim / w));
+            w = maxDim;
+          } else {
+            w = Math.round(w * (maxDim / h));
+            h = maxDim;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        canvas.toBlob(blob => {
+          if (!blob) return reject(new Error('Canvas compression failed.'));
+          resolve(blob);
+        }, 'image/webp', quality);
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ============ Toast & Theme ============ */
+function toast(msg, type) {
+  const t = document.createElement('div');
+  t.className = 'toast' + (type === 'err' ? ' err' : '');
+  t.innerHTML = (type === 'err' ? ic('x', 16) : ic('check', 16)) + '<span>' + esc(msg) + '</span>';
+  $('#toasts').appendChild(t);
+  setTimeout(() => t.remove(), 3800);
+}
+const go = h => {
+  if (location.hash === h) render();
+  else location.hash = h;
+};
+function toggleTheme() {
+  const r = document.documentElement;
+  const dark = r.getAttribute('data-theme') === 'dark' || (!r.getAttribute('data-theme') && matchMedia('(prefers-color-scheme:dark)').matches);
+  const n = dark ? 'light' : 'dark';
+  r.setAttribute('data-theme', n);
+  try { localStorage.setItem('df_theme', n); } catch(e) {}
+}
+function toggleMenu(e) {
+  e.stopPropagation();
+  const m = $('#menu');
+  if (m) m.classList.toggle('open');
+}
+document.addEventListener('click', e => {
+  const m = $('#menu');
+  if (m && !m.contains(e.target)) m.classList.remove('open');
+});
+function goSec(id) {
+  const u = () => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
+  if (!location.hash || location.hash === '#/' || location.hash === '#') {
+    u();
+  } else {
+    location.hash = '#/';
+    setTimeout(u, 80);
+  }
+}
+async function logout() {
+  const seq = ++authSeq;
+  stopPolling();
+  try {
+    await window.DFApi.logout();
+    if (seq !== authSeq) return;
+    CURRENT_USER = null;
+    currentAuthState = AUTH_STATE.UNAUTHENTICATED;
+    toast('Logged out');
+    go('#/');
+  } catch(e) {
+    if (seq !== authSeq) return;
+    toast(e.message || 'Logout failed', 'err');
+  }
+}
+
+/* ============ Navigation & Footer ============ */
+function navbar(u) {
+  const right = u ? `<button type="button" class="profile-btn" onclick="toggleMenu(event)" aria-haspopup="true"><span class="avatar">${esc((u.name||'U')[0].toUpperCase())}</span><b>${esc(u.name)}</b><span class="role-tag">${u.role === 'farmer' ? 'Farmer' : 'Buyer'}</span>${ic('down', 14)}</button>
+  <div class="menu" id="menu"><div class="who"><b>${esc(u.name)}</b><span>${esc(u.org)}</span><span>${esc(u.loc.label)}</span></div>
+  <a href="#/${u.role}">${ic('home')} My dashboard</a><button type="button" onclick="logout()">${ic('logout')} Log out</button></div>`
+  : `<a class="btn btn-ghost btn-sm" href="#/farmer/login">Farmer login</a><a class="btn btn-primary btn-sm" href="#/buyer/login">Buyer login</a>`;
+
+  const links = u
+    ? `<a href="#/${u.role}">${ic('home', 15)} Dashboard</a><a onclick="goSec('categories')">Produce</a><a onclick="goSec('how')">How it works</a><a onclick="goSec('smart')">Smart tools</a>`
+    : `<a onclick="goSec('categories')">Produce</a><a onclick="goSec('how')">How it works</a><a onclick="goSec('smart')">Smart tools</a><a href="#/farmer/login">For farmers</a><a href="#/buyer/login">For buyers</a>`;
+
+  return `<header class="nav"><a class="brand" href="#/">${logoSVG}DirectFarm</a>
+  <nav class="nav-links" aria-label="Primary">${links}</nav>
+  <div class="nav-right"><button type="button" class="theme-btn" onclick="toggleTheme()" aria-label="Toggle light and dark theme">${ic('moon', 17)}</button>${right}</div></header>`;
+}
+
+function footer() {
+  return `<footer class="ft"><div class="wrap row">
+    <div>
+      <a class="brand" href="#/">${logoSVG}DirectFarm</a>
+      <p>A transparent farm-to-buyer digital marketplace connecting verified Indian growers with retail and wholesale buyers. Authentic produce, transparent reference prices, and AI-optimized routes.</p>
+    </div>
+    <div style="display:flex;gap:36px;flex-wrap:wrap">
+      <div>
+        <b style="display:block;margin-bottom:8px;color:var(--ink);font-size:14px">Platform</b>
+        <div style="display:grid;gap:6px;font-size:13.5px">
+          <a href="#/farmer/login">Farmer Portal</a>
+          <a href="#/buyer/login">Buyer Marketplace</a>
+          <a onclick="goSec('how')">How Deals Work</a>
+        </div>
+      </div>
+      <div>
+        <b style="display:block;margin-bottom:8px;color:var(--ink);font-size:14px">Intelligence</b>
+        <div style="display:grid;gap:6px;font-size:13.5px">
+          <a onclick="goSec('smart')">AI Matching</a>
+          <a onclick="goSec('smart')">Demand Forecast</a>
+          <a onclick="goSec('smart')">Route Optimizer</a>
+        </div>
+      </div>
+    </div>
+  </div></footer>`;
+}
+
+/* ============ Landing Page ============ */
+function landing() {
+  const farmers = PUBLIC_STATS.farmers || 0;
+  const act = PUBLIC_STATS.listings || 0;
+  const ords = PUBLIC_STATS.orders || 0;
+  const kg = PUBLIC_STATS.kg || 0;
+
+  const st = (n, l) => `<div class="stat"><b class="count" data-to="${n}">0</b><span>${l}</span></div>`;
+  const feat = [
+    ['spark', 'AI buyer matching', 'Every buyer requirement is scored against live listings on price, quantity, distance, quality and seller reliability.'],
+    ['chart', 'Demand forecast', 'See which crops are heading into high demand over the next six months, and when to sell for the best price.'],
+    ['rupee', 'Price transparency', 'Every price is compared with a market reference, so buyers see fair deals and farmers see where they stand.'],
+    ['truck', 'Route optimisation', 'Confirmed orders are sequenced into the shortest delivery run, with distance, time and fuel estimates.'],
+    ['shield', 'Direct deals', 'Farmers and buyers deal with each other. Offers, orders and delivery status stay in one place.'],
+    ['store', 'Buyer requirements', 'Restaurants, retailers and wholesalers post what they need and get ranked farmers back.']
+  ];
+
+  const popularCrops = [
+    { name: 'Tomato', category: 'Vegetables', img: 'assets/images/crop_tomato.jpg' },
+    { name: 'Rice', category: 'Grains & Paddy', img: 'assets/images/crop_rice.jpg' },
+    { name: 'Chilli', category: 'Spices', img: 'assets/images/crop_chilli.jpg' },
+    { name: 'Potato', category: 'Tubers', img: 'assets/images/crop_potato.jpg' },
+    { name: 'Brinjal', category: 'Vegetables', img: 'assets/images/crop_brinjal.jpg' },
+    { name: 'Banana', category: 'Fruits', img: 'assets/images/crop_banana.jpg' }
+  ];
+
+  return `<section class="hero"><div class="wrap hero-grid">
+    <div class="hero-content">
+      <div class="hero-chip">${ic('leaf', 16)} Direct Farm-to-Buyer Marketplace</div>
+      <h1>Fresh Produce.<br>Directly From Farmers.</h1>
+      <p class="lead">Connect farmers with buyers through a transparent, efficient and trusted digital marketplace. Transparent market reference prices, direct settlements, and AI-optimized delivery.</p>
+      <div class="cta">
+        <a class="btn btn-primary btn-lg" href="#/farmer/login" onclick="S.authMode='login'">${ic('leaf', 18)} Sell produce</a>
+        <a class="btn btn-secondary btn-lg" href="#/buyer/login" onclick="S.authMode='login'">${ic('store', 18)} Buy produce</a>
+        <a class="btn btn-ghost btn-lg" href="#/buyer/login" onclick="S.authMode='signup'">Bulk procurement</a>
+      </div>
+      <div class="hero-trust">
+        <span>${ic('check', 16)} Verified Mandi Reference</span>
+        <span>${ic('check', 16)} 0% Middleman Margin</span>
+        <span>${ic('check', 16)} Direct Settlements</span>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="float-chip fc1"><span class="dot">${ic('rupee', 18)}</span><div>Fair Price Guarantee<small>vs live Mandi benchmark</small></div></div>
+      <div class="float-chip fc2"><span class="dot">${ic('spark', 18)}</span><div>AI Buyer Match<small>scored on 5 objective factors</small></div></div>
+      <div class="hero-img-wrap">
+        <img src="assets/images/hero_farmer.jpg" alt="Indian farmer holding fresh harvested produce at sunrise" loading="eager">
+      </div>
+    </div>
+  </div></section>
+
+  <div class="stats-band"><div class="stats">
+    ${st(farmers, 'Farmers registered')}
+    ${st(act, 'Live listings')}
+    ${st(ords, 'Orders placed')}
+    ${st(Math.round(kg), 'Kilograms available now')}
+  </div></div>
+
+  <!-- Visual Crop Categories Section -->
+  <section class="s" id="categories"><div class="wrap">
+    <div class="s-head">
+      <div class="kicker">Marketplace Categories</div>
+      <h2>Fresh Harvests Available Today</h2>
+      <p>Source farm-fresh vegetables, staples, fruits and spices directly from verified regional growers.</p>
+    </div>
+    <div class="cat-grid">
+      ${popularCrops.map(c => `
+        <a class="cat-card" href="#/buyer/login" onclick="S.crop='${c.name}'">
+          <div class="cat-img"><img src="${c.img}" alt="${c.name}" loading="lazy"></div>
+          <div class="cat-info">
+            <b>${c.name}</b>
+            <span>${c.category}</span>
+          </div>
+        </a>
+      `).join('')}
+    </div>
+  </div></section>
+
+  <section class="s alt"><div class="wrap">
+    <div class="s-head">
+      <div class="kicker">The DirectFarm Advantage</div>
+      <h2>Fewer hands between the field and the plate</h2>
+      <p>Each middleman takes a cut. Going direct leaves more with the farmer and gives the buyer a lower, clearer price.</p>
+    </div>
+    <div class="chain">
+      <div class="chain-row old">
+        <span class="node">Farmer</span><span class="sep">→</span>
+        <span class="node">Middleman</span><span class="sep">→</span>
+        <span class="node">Wholesaler</span><span class="sep">→</span>
+        <span class="node">Retailer</span><span class="sep">→</span>
+        <span class="node">Consumer</span>
+        <span class="chain-note">The farmer keeps only a fraction</span>
+      </div>
+      <div class="chain-row new">
+        <span class="node">Farmer</span><span class="sep">→</span>
+        <span class="node">Direct buyer</span>
+        <span class="chain-note">DirectFarm: one direct transaction, zero commissions</span>
+      </div>
+    </div>
+  </div></section>
+
+  <section class="s"><div class="wrap"><div class="roles">
+    <article class="role">
+      <div class="role-photo">
+        <img src="assets/images/farmer_inspecting.jpg" alt="Indian farmer in lush agricultural field" loading="lazy">
+        <span class="role-pill">For Farmers &amp; FPOs</span>
+      </div>
+      <div class="body">
+        <h3>Sell harvest at your price</h3>
+        <ul>
+          <li>List crop, quantity, quality grade, price and pickup location</li>
+          <li>See buyers whose procurement requirements match your produce</li>
+          <li>AI-assisted route planning sequences multiple delivery stops</li>
+        </ul>
+        <a class="btn btn-primary" href="#/farmer/login">Farmer portal</a>
+      </div>
+    </article>
+    <article class="role">
+      <div class="role-photo">
+        <img src="assets/images/buyer_procure.jpg" alt="Agricultural produce market crates" loading="lazy">
+        <span class="role-pill">For Buyers &amp; Businesses</span>
+      </div>
+      <div class="body">
+        <h3>Source direct from the origin</h3>
+        <ul>
+          <li>Browse live produce with transparent mandi benchmark pricing</li>
+          <li>Post a requirement and receive ranked farmer matches and offers</li>
+          <li>End-to-end milestone tracking from harvest pickup to delivery</li>
+        </ul>
+        <a class="btn btn-primary" href="#/buyer/login">Buyer marketplace</a>
+      </div>
+    </article>
+  </div></div></section>
+
+  <section class="s alt" id="smart"><div class="wrap">
+    <div class="s-head">
+      <div class="kicker">Marketplace Intelligence</div>
+      <h2>Smart tools that earn their place</h2>
+      <p>Each one answers a question a farmer or buyer actually asks in daily procurement.</p>
+    </div>
+    <div class="feat">
+      ${feat.map(f => `<div>
+        <div class="ficon">${ic(f[0], 22)}</div>
+        <h3>${f[1]}</h3>
+        <p>${f[2]}</p>
+      </div>`).join('')}
+    </div>
+  </div></section>
+
+  <section class="s" id="how"><div class="wrap">
+    <div class="s-head">
+      <div class="kicker">Workflow</div>
+      <h2>How a deal happens</h2>
+    </div>
+    <div class="steps">
+      <div class="step"><h4>1. Add produce</h4><p>The farmer lists crop, quantity, grade, price and location.</p></div>
+      <div class="step"><h4>2. AI matching</h4><p>Buyers and requirements are scored against the listing.</p></div>
+      <div class="step"><h4>3. Suitable buyer</h4><p>The best-fit buyer sees the produce, or the farmer sends an offer.</p></div>
+      <div class="step"><h4>4. Direct deal</h4><p>The buyer orders and the farmer confirms. Direct settlement.</p></div>
+      <div class="step"><h4>5. Route &amp; delivery</h4><p>Orders are sequenced into an efficient delivery run.</p></div>
+    </div>
+  </div></section>
+
+  <section class="s" style="padding-bottom:0"><div class="wrap">
+    <div class="cta-band">
+      <div class="cta-band-content">
+        <h2>Ready to sell or buy at fair, transparent prices?</h2>
+        <p>Join thousands of farmers and procurement buyers closing deals directly every day.</p>
+        <div class="cta">
+          <a class="btn btn-primary btn-lg" href="#/farmer/login" onclick="S.authMode='signup'">Create farmer account</a>
+          <a class="btn btn-ghost btn-lg" href="#/buyer/login">Browse marketplace</a>
+        </div>
+      </div>
+    </div>
+  </div></section>`;
+}
+
+/* ============ Auth Page ============ */
+function authPage(role) {
+  const f = role === 'farmer', m = S.authMode, su = m === 'signup';
+  const sideList = f
+    ? ['List produce in under a minute with photo preview', 'See buyers that match your crop and price expectation', 'Get an AI-optimised delivery route for your orders', 'Direct cash or UPI settlement on delivery']
+    : ['See live prices compared against mandi references', 'Post procurement requirements and compare matches', 'Track orders from farm confirmation to final delivery', 'Verified farmer profiles and peer ratings'];
+
+  const bgImg = f ? 'assets/images/farmer_inspecting.jpg' : 'assets/images/buyer_procure.jpg';
+
+  return `<main class="auth">
+  <section class="auth-art ${role}" style="background-image:url('${bgImg}')">
+    <div class="auth-art-content">
+      <h2>${f ? 'Sell directly to the businesses and consumers who need your crop' : 'Procure fresh harvests directly from verified regional farmers'}</h2>
+      <ul>${sideList.map(s => `<li>${ic('check', 18)} ${s}</li>`).join('')}</ul>
+    </div>
+  </section>
+  <section class="auth-form"><div class="auth-card">
+    <div class="seg">
+      <button type="button" class="${!su ? 'on' : ''}" onclick="setMode('login')">Log in</button>
+      <button type="button" class="${su ? 'on' : ''}" onclick="setMode('signup')">Create account</button>
+    </div>
+    <h1>${f ? 'Farmer' : 'Buyer'} ${su ? 'sign up' : 'login'}</h1>
+    <p class="sub">${su ? (f ? 'Create your farm profile to start listing produce.' : 'Create your buyer profile to see live listings.') : 'Welcome back. Enter your email and password.'}</p>
+    <div id="authErr" class="err" hidden></div>
+    <form id="authForm" onsubmit="event.preventDefault();doAuth('${role}')">
+      ${su ? `<div class="field"><label for="a_name">Your name</label><input id="a_name" autocomplete="name" placeholder="e.g. Ramesh Kumar"></div>` : ''}
+      <div class="field"><label for="a_email">Email address</label><input id="a_email" type="email" autocomplete="email" placeholder="name@example.com"></div>
+      ${su ? `<div class="field"><label for="a_phone">Phone number</label><input id="a_phone" inputmode="numeric" maxlength="10" autocomplete="tel" placeholder="10-digit mobile number"></div>
+      <div class="two">
+        <div class="field"><label for="a_org">${f ? 'Farm or FPO name' : 'Business name'}</label><input id="a_org" placeholder="${f ? 'e.g. Ramesh Farms' : 'e.g. Hotel Grand Bay'}"></div>
+        <div class="field"><label for="a_loc">${f ? 'Farm location' : 'Delivery location'}</label><select id="a_loc">${townOpts('Bhimavaram')}</select></div>
+      </div>
+      ${f ? '' : `<div class="field"><label for="a_type">Buyer type</label><select id="a_type"><option>Consumer</option><option>Retailer</option><option>Restaurant or hotel</option><option>Wholesaler</option></select></div>`}` : ''}
+      <div class="field"><label for="a_pw">Password</label><input id="a_pw" type="password" autocomplete="${su ? 'new-password' : 'current-password'}" placeholder="${su ? 'At least 8 characters' : 'Your password'}"></div>
+      <button type="submit" id="authBtn" class="btn btn-primary btn-lg" style="width:100%">${su ? 'Create account' : 'Log in'}</button>
+    </form>
+    <p class="swap">${f ? 'Looking to buy produce? <a href="#/buyer/login">Buyer login</a>' : 'Want to sell your harvest? <a href="#/farmer/login">Farmer login</a>'}</p>
+  </div></section></main>`;
+}
+
+function setMode(m) {
+  S.authMode = m;
+  render();
+}
+
+async function doAuth(role) {
+  if (S.isSubmitting) return;
+  const seq = ++authSeq;
+  const v = id => ($('#' + id) ? $('#' + id).value : '');
+  const err = m => {
+    const e = $('#authErr');
+    if (e) {
+      e.className = 'err';
+      e.style.color = '';
+      e.textContent = m;
+      e.hidden = false;
+    }
+    toast(m, 'err');
+  };
+
+  const rawEmail = v('a_email');
+  const email = rawEmail.trim().toLowerCase();
+  const pw = ($('#a_pw') ? $('#a_pw').value : ''); // Do not trim password
+
+  if (!email || !email.includes('@')) return err('Enter a valid email address.');
+  if (pw.length < 8) return err('Password must be at least 8 characters.');
+
+  if (S.authMode === 'signup') {
+    const phone = v('a_phone').trim();
+    if (!/^\d{10}$/.test(phone)) return err('Phone number must be exactly 10 digits.');
+  }
+
+  S.isSubmitting = true;
+  const btn = $('#authBtn');
+  if (btn) { btn.disabled = true; btn.innerHTML = `<span class="spinner"></span> Please wait...`; }
+
+  try {
+    if (S.authMode === 'signup') {
+      const name = v('a_name').trim();
+      const org = v('a_org').trim();
+      const phone = v('a_phone').trim();
+      if (name.length < 2) throw new Error('Enter your full name.');
+      if (org.length < 2) throw new Error(role === 'farmer' ? 'Enter your farm or FPO name.' : 'Enter your business name.');
+      if (!/^\d{10}$/.test(phone)) throw new Error('Enter a valid 10-digit mobile number for order contact.');
+
+      const loc = town(v('a_loc'));
+      const buyerType = role === 'buyer' ? v('a_type') : null;
+
+      const res = await window.DFApi.signup({
+        role,
+        name,
+        email,
+        phone,
+        password: pw,
+        org,
+        buyerType,
+        loc
+      });
+
+      if (seq !== authSeq) return;
+      CURRENT_USER = res.user;
+      currentAuthState = AUTH_STATE.AUTHENTICATED;
+      toast(`Welcome, ${name.split(' ')[0]}! Profile created.`);
+      await reloadAppData();
+      if (seq !== authSeq) return;
+      go('#/' + role);
+      startPolling();
+    } else {
+      const res = await window.DFApi.login({
+        email,
+        password: pw,
+        role
+      });
+      if (seq !== authSeq) return;
+      CURRENT_USER = res.user;
+      currentAuthState = AUTH_STATE.AUTHENTICATED;
+      toast(`Logged in as ${CURRENT_USER.name}`);
+      await reloadAppData();
+      if (seq !== authSeq) return;
+      go('#/' + role);
+      startPolling();
+    }
+  } catch(e) {
+    if (seq !== authSeq) return;
+    console.error('Auth error in doAuth:', e);
+    err(e.message || 'Authentication error.');
+  } finally {
+    S.isSubmitting = false;
+    if (btn) { btn.disabled = false; btn.textContent = S.authMode === 'signup' ? 'Create account' : 'Log in'; }
+  }
+}
+
+/* ============ Dashboard Shell ============ */
+function shell(u, base, tabs, cur, badges, title, sub, content) {
+  return `<main class="dash">
+  <div class="dash-head">
+    <div>
+      <h1>${title}</h1>
+      <p>${sub}</p>
+    </div>
+  </div>
+  <nav class="tabs" aria-label="Dashboard sections">
+    ${tabs.map(t => `<a class="${t[0] === cur ? 'on' : ''}" href="#/${base}/${t[0]}">${ic(t[2], 17)}<span>${t[1]}</span>${badges[t[0]] ? `<span class="cnt">${badges[t[0]]}</span>` : ''}</a>`).join('')}
+  </nav>
+  ${content}
+</main>`;
+}
+
+const greet = () => {
+  const h = new Date().getHours();
+  return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+};
+const SL = { placed: 'Order placed', confirmed: 'Confirmed', preparing: 'Preparing', out: 'Out for delivery', delivered: 'Delivered', cancelled: 'Cancelled' };
+const FLOW = ['placed', 'confirmed', 'preparing', 'out', 'delivered'];
+const stChip = s => `<span class="status st-${s}">${SL[s] || s}</span>`;
+
+/* ============ Farmer Views ============ */
+const FT = [
+  ['overview', 'Overview', 'home'],
+  ['add', 'Add produce', 'plus'],
+  ['listings', 'My listings', 'list'],
+  ['orders', 'Orders', 'box'],
+  ['buyers', 'Buyer matches', 'spark'],
+  ['insights', 'Price & demand', 'chart'],
+  ['route', 'Delivery route', 'truck']
+];
+
+function farmerReqMatches(u) {
+  const mine = MY_LISTINGS.filter(l => l.status === 'active' && l.qty > 0);
+  const out = [];
+  OPEN_REQS.forEach(r => {
+    let best = null;
+    mine.forEach(l => {
+      const m = matchScore(r, l, u);
+      if (m && (!best || m.total > best.total)) best = m;
+    });
+    if (best) out.push({ r, m: best });
+  });
+  return out.sort((a, b) => b.m.total - a.m.total);
+}
+
+function farmerApp(u, tab) {
+  const mine = MY_LISTINGS;
+  const orders = MY_ORDERS;
+  const pend = orders.filter(o => o.status === 'placed').length;
+  const fm = farmerReqMatches(u);
+  const badges = {
+    orders: pend,
+    buyers: fm.filter(x => !MY_OFFERS.some(o => o.reqId === x.r.id && o.farmerId === u.id)).length
+  };
+
+  let c = '';
+  if (tab === 'add') c = fAdd(u);
+  else if (tab === 'listings') c = fListings(u, mine);
+  else if (tab === 'orders') c = fOrders(u, orders);
+  else if (tab === 'buyers') c = fBuyers(u, fm);
+  else if (tab === 'insights') c = fInsights(u, mine);
+  else if (tab === 'route') c = fRoute(u, orders);
+  else c = fOverview(u, mine, orders, fm);
+
+  return shell(u, 'farmer', FT, tab, badges, `${greet()}, ${esc(u.name.split(' ')[0])}`, `${esc(u.org)} · ${esc(u.loc.label)} · Farmer Account`, c);
+}
+
+function fOverview(u, mine, orders, fm) {
+  const sales = orders.filter(o => o.status === 'delivered').reduce((a, o) => a + o.qty * o.price, 0);
+  const act = mine.filter(l => l.status === 'active' && l.qty > 0).length;
+  const kpi = (i, l, v) => `<div class="kpi"><span>${ic(i, 16)} ${l}</span><b>${v}</b></div>`;
+  const recent = orders.slice().sort((a, b) => b.createdAt - a.createdAt).slice(0, 5);
+
+  return `<div class="cards4">
+    ${kpi('rupee', 'Completed sales', inr(sales))}
+    ${kpi('list', 'Active listings', act)}
+    ${kpi('box', 'Pending orders', orders.filter(o => o.status === 'placed').length)}
+    ${kpi('spark', 'Matching buyer requests', fm.length)}
+  </div>
+  ${!mine.length ? `
+    <div class="empty">
+      <div class="empty-icon">${ic('leaf', 32)}</div>
+      <h3>No products listed yet</h3>
+      <p>Start selling your fresh harvest directly to buyers with transparent mandi benchmark pricing.</p>
+      <a class="btn btn-primary" href="#/farmer/add">${ic('plus')} Add first produce</a>
+    </div>` :
+    `<div class="grid2">
+      <div class="panel">
+        <h3>Recent orders</h3>
+        <p class="sub">Incoming purchase requests from buyers on your listings.</p>
+        ${recent.length ? recent.map(o => `
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--soft)">
+            <div>
+              <b>${esc(o.crop)} · ${o.qty} kg</b>
+              <div class="small">${esc(o.buyerName || o.buyerOrg)} · ${ago(o.createdAt)}</div>
+            </div>
+            ${stChip(o.status)}
+          </div>
+        `).join('') : '<p class="small">No orders received yet. Active listings will attract buyers automatically.</p>'}
+        <a class="btn btn-light btn-sm" style="margin-top:16px" href="#/farmer/orders">Manage all orders</a>
+      </div>
+      <div class="panel">
+        <h3>Buyers looking for your crops</h3>
+        <p class="sub">Open buyer procurement requirements matching what you have in stock.</p>
+        ${fm.length ? fm.slice(0, 3).map(x => `
+          <div style="display:flex;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--soft)">
+            <div class="ring" style="--p:${x.m.pct}"><span>${x.m.pct}%</span></div>
+            <div>
+              <b>${esc(x.r.buyerOrg)}</b>
+              <div class="small">Needs ${x.r.qty} kg ${esc(x.r.crop)} · up to ${inr(x.r.maxPrice)}/kg · ${esc(x.r.loc.label)}</div>
+            </div>
+          </div>
+        `).join('') : '<p class="small">No matching requirements right now.</p>'}
+        <a class="btn btn-light btn-sm" style="margin-top:16px" href="#/farmer/buyers">View all matches</a>
+      </div>
+    </div>`
+  }`;
+}
+
+function fAdd(u) {
+  if (!S.fAdd.loc && u && u.loc && u.loc.label) {
+    S.fAdd.loc = u.loc.label;
+  }
+  const f = S.fAdd;
+  return `<div class="panel">
+    <h3>List new produce</h3>
+    <p class="sub">Set your crop, quantity and price. Your produce is instantly visible to buyers across Andhra Pradesh.</p>
+    
+    <form id="fAddForm" onsubmit="event.preventDefault(); publish();">
+    <div class="grid2">
+      <!-- Left Column: Form Details -->
+      <div>
+        <div class="two">
+          <div class="field">
+            <label for="p_crop">Crop / Produce</label>
+            <select id="p_crop" onchange="S.fAdd.crop=this.value; onCrop()">${CROP_NAMES.map(c => `<option ${c === f.crop ? 'selected' : ''}>${c}</option>`).join('')}</select>
+          </div>
+          <div class="field">
+            <label for="p_grade">Quality grade</label>
+            <select id="p_grade" onchange="S.fAdd.grade=this.value; updPreviewCard()"><option value="A" ${f.grade === 'A' ? 'selected' : ''}>Grade A (Premium quality)</option><option value="B" ${f.grade === 'B' ? 'selected' : ''}>Grade B (Standard grade)</option><option value="C" ${f.grade === 'C' ? 'selected' : ''}>Grade C (Processing grade)</option></select>
+          </div>
+        </div>
+
+        <div class="two">
+          <div class="field">
+            <label for="p_qty">Available quantity</label>
+            <div style="display:flex;gap:8px">
+              <input id="p_qty" type="number" min="1" step="any" placeholder="500" value="${esc(f.qty)}" oninput="S.fAdd.qty=this.value; updPreviewCard()">
+              <select id="p_unit" style="width:96px" onchange="S.fAdd.unit=this.value; updPreviewCard()"><option ${f.unit === 'kg' ? 'selected' : ''}>kg</option><option ${f.unit === 'tons' ? 'selected' : ''}>tons</option></select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="p_price">Expected price (₹ per kg)</label>
+            <input id="p_price" type="number" min="1" step="any" placeholder="28" value="${esc(f.price)}" oninput="S.fAdd.price=this.value; updHint(); updPreviewCard()">
+          </div>
+        </div>
+
+        <div id="p_hint" class="note" style="margin-bottom:16px"></div>
+
+        <div class="two">
+          <div class="field">
+            <label for="p_date">Harvest date</label>
+            <input id="p_date" type="date" value="${esc(f.date || new Date().toISOString().slice(0, 10))}" oninput="S.fAdd.date=this.value">
+          </div>
+          <div class="field">
+            <label for="p_loc">Pickup location</label>
+            <select id="p_loc" onchange="S.fAdd.loc=this.value; updPreviewCard()">${townOpts(f.loc || u.loc.label)}</select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="p_note">Produce highlights (optional)</label>
+          <input id="p_note" maxlength="120" placeholder="e.g. Freshly harvested this morning, organic certified" value="${esc(f.note)}" oninput="S.fAdd.note=this.value; updPreviewCard()">
+        </div>
+      </div>
+
+      <!-- Right Column: Professional Dropzone + Live Preview -->
+      <div>
+        <div class="field">
+          <label>Produce photograph</label>
+          <div class="dropzone" id="dz_container" onclick="$('#p_file_input').click()" ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event)">
+            <div class="dz-icon">${ic('upload', 26)}</div>
+            <div class="dz-title">${S.imgPreviewUrl ? 'Photo ready for upload' : 'Add a photo of your produce'}</div>
+            <div class="dz-sub">${S.imgPreviewUrl ? 'Click or drag another photo to replace' : 'Drag &amp; drop here or <span class="dz-browse">Browse</span>'}</div>
+            <div class="dz-hint">JPG, PNG or WebP • Max 5 MB • Compressed automatically</div>
+          </div>
+          <input type="file" id="p_file_input" accept="image/jpeg,image/png,image/webp" hidden onchange="pickImg(this)">
+        </div>
+
+        <div id="dz_actions" style="display:flex;gap:10px;margin-bottom:16px">
+          ${S.imgPreviewUrl ? `<button type="button" class="btn btn-secondary btn-sm" onclick="$('#p_file_input').click()">${ic('upload', 14)} Replace photo</button><button type="button" class="btn btn-ghost btn-sm" onclick="clearImg()">${ic('x', 14)} Remove photo</button>` : ''}
+        </div>
+
+        <!-- Live Buyer Card Preview -->
+        <div class="live-preview-box">
+          <div class="kicker">${ic('spark', 14)} Live marketplace preview for buyers</div>
+          <div id="live_card_prev" style="pointer-events:none"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+    <button type="submit" id="pubBtn" class="btn btn-primary btn-lg">${ic('leaf', 18)} Publish produce to marketplace</button>
+    </form>
+  </div>`;
+}
+
+function updateDzUI() {
+  const dz = $('#dz_container');
+  if (dz) {
+    dz.innerHTML = `
+      <div class="dz-icon">${ic('upload', 26)}</div>
+      <div class="dz-title">${S.imgPreviewUrl ? 'Photo ready for upload' : 'Add a photo of your produce'}</div>
+      <div class="dz-sub">${S.imgPreviewUrl ? 'Click or drag another photo to replace' : 'Drag &amp; drop here or <span class="dz-browse">Browse</span>'}</div>
+      <div class="dz-hint">JPG, PNG or WebP • Max 5 MB • Compressed automatically</div>
+    `;
+  }
+  const act = $('#dz_actions');
+  if (act) {
+    act.innerHTML = S.imgPreviewUrl
+      ? `<button type="button" class="btn btn-secondary btn-sm" onclick="$('#p_file_input').click()">${ic('upload', 14)} Replace photo</button><button type="button" class="btn btn-ghost btn-sm" onclick="clearImg()">${ic('x', 14)} Remove photo</button>`
+      : '';
+  }
+}
+
+function dzOver(e) {
+  e.preventDefault();
+  const dz = $('#dz_container');
+  if (dz) dz.classList.add('dragover');
+}
+function dzLeave(e) {
+  e.preventDefault();
+  const dz = $('#dz_container');
+  if (dz) dz.classList.remove('dragover');
+}
+function dzDrop(e) {
+  e.preventDefault();
+  const dz = $('#dz_container');
+  if (dz) dz.classList.remove('dragover');
+  if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+    pickImg({ files: e.dataTransfer.files });
+  }
+}
+function clearImg() {
+  S.imgFile = null;
+  S.imgPreviewUrl = null;
+  const fi = $('#p_file_input');
+  if (fi) fi.value = '';
+  updateDzUI();
+  updPreviewCard();
+}
+
+function onCrop() {
+  const c = $('#p_crop');
+  if (!c) return;
+  S.fAdd.crop = c.value;
+  updHint();
+  updPreviewCard();
+}
+
+function updHint() {
+  const c = $('#p_crop') ? $('#p_crop').value : S.fAdd.crop;
+  const p = parseFloat($('#p_price') ? $('#p_price').value : S.fAdd.price) || 0;
+  const m = marketRef(c);
+  let h = `Market reference for ${c}: <b>${inr(m.ref)}/kg</b> (${m.src}).`;
+  if (p > 0) {
+    const b = priceBadge(p, m.ref);
+    h += ` Your price is <b>${Math.abs(Math.round(b.d * 100))}% ${b.d < 0 ? 'below' : 'above'}</b> the reference: <b>${b.t}</b>.`;
+  }
+  const el = $('#p_hint');
+  if (el) el.innerHTML = h;
+}
+
+function updPreviewCard() {
+  const c = $('#p_crop') ? $('#p_crop').value : S.fAdd.crop;
+  const p = parseFloat($('#p_price') ? $('#p_price').value : S.fAdd.price) || 30;
+  let q = parseFloat($('#p_qty') ? $('#p_qty').value : S.fAdd.qty) || 500;
+  const unitVal = $('#p_unit') ? $('#p_unit').value : S.fAdd.unit;
+  if (unitVal === 'tons') q *= 1000;
+  const grade = $('#p_grade') ? $('#p_grade').value : S.fAdd.grade;
+  const locLabel = $('#p_loc') ? $('#p_loc').value : (S.fAdd.loc || (CURRENT_USER ? CURRENT_USER.loc.label : 'Bhimavaram'));
+  const farmerName = CURRENT_USER ? CURRENT_USER.org : 'My Farm';
+
+  const mockItem = {
+    crop: c,
+    price: p,
+    qty: q,
+    grade,
+    loc: { label: locLabel },
+    farmerOrg: farmerName,
+    farmerName: CURRENT_USER ? CURRENT_USER.name : 'Farmer',
+    img: S.imgPreviewUrl
+  };
+
+  const pv = $('#live_card_prev');
+  if (pv) {
+    const m = marketRef(c);
+    const b = priceBadge(p, m.ref);
+    pv.innerHTML = `<div class="pcard" style="box-shadow:none">
+      <div class="pic">${pic(mockItem)}<span class="grade">Grade ${grade}</span></div>
+      <div class="pbody">
+        <div class="ptop"><h3>Fresh ${esc(c)}</h3><div class="price">${inr(p)}<small>/kg</small></div></div>
+        <div class="meta"><span>${ic('box', 14)} <b>${q} kg</b> available</span><span>${ic('pin', 14)} ${esc(locLabel)}</span></div>
+        <div class="meta"><span>${ic('user', 14)} ${esc(farmerName)}</span><span>★ 5.0 (New)</span></div>
+        <div><span class="badge ${b.c}">${ic('check', 13)} ${b.t}</span></div>
+      </div>
+    </div>`;
+  }
+}
+
+async function pickImg(inp) {
+  const f = inp.files && inp.files[0];
+  if (!f) return;
+  if (!/^image\//.test(f.type)) return toast('Choose an image file (JPG, PNG, or WebP).', 'err');
+  if (f.size > 5 * 1024 * 1024) return toast('Image must be under 5 MB.', 'err');
+
+  try {
+    const compressed = await compressImageToBlob(f, 1280, 0.82);
+    S.imgFile = compressed;
+    S.imgPreviewUrl = URL.createObjectURL(compressed);
+    toast('Photo selected and compressed');
+    updateDzUI();
+    updPreviewCard();
+  } catch(e) {
+    toast(e.message || 'Could not process photo.', 'err');
+  }
+}
+
+async function publish() {
+  if (S.isSubmitting) return;
+
+  const cropEl = $('#p_crop');
+  const qtyEl = $('#p_qty');
+  const priceEl = $('#p_price');
+  const gradeEl = $('#p_grade');
+  const dateEl = $('#p_date');
+  const locEl = $('#p_loc');
+  const noteEl = $('#p_note');
+  const unitEl = $('#p_unit');
+
+  const crop = cropEl ? cropEl.value : S.fAdd.crop;
+  let qty = parseFloat(qtyEl ? qtyEl.value : S.fAdd.qty);
+  const price = parseFloat(priceEl ? priceEl.value : S.fAdd.price);
+  const unit = unitEl ? unitEl.value : S.fAdd.unit;
+
+  if (unit === 'tons') qty *= 1000;
+  if (!(qty > 0)) return toast('Enter the quantity you have available.', 'err');
+  if (!(price > 0)) return toast('Enter your expected price per kg.', 'err');
+
+  S.isSubmitting = true;
+  const btn = $('#pubBtn');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner"></span> Publishing to database...`;
+  }
+
+  try {
+    let imgUrl = null;
+    let photoFailed = false;
+    if (S.imgFile) {
+      try {
+        imgUrl = await window.DFApi.uploadListingPhoto(S.imgFile);
+      } catch(photoErr) {
+        console.warn('Photo upload failed:', photoErr);
+        photoFailed = true;
+      }
+    }
+
+    const locVal = locEl ? locEl.value : (S.fAdd.loc || '');
+    const loc = town(locVal);
+    const grade = gradeEl ? gradeEl.value : (S.fAdd.grade || 'A');
+    const harvest = dateEl ? dateEl.value : (S.fAdd.date || null);
+    const note = (noteEl ? noteEl.value : S.fAdd.note).trim();
+
+    const newListingId = await window.DFApi.createListing({
+      crop,
+      qty,
+      price,
+      grade,
+      harvest,
+      loc,
+      note,
+      imageUrl: imgUrl
+    });
+
+    if (!newListingId) {
+      throw new Error('Failed to create listing in database.');
+    }
+
+    S.fAdd = {
+      crop: 'Tomato',
+      grade: 'A',
+      qty: '',
+      unit: 'kg',
+      price: '',
+      date: new Date().toISOString().slice(0, 10),
+      loc: CURRENT_USER ? CURRENT_USER.loc.label : '',
+      note: ''
+    };
+    S.imgFile = null;
+    S.imgPreviewUrl = null;
+
+    if (photoFailed) {
+      toast('Product was listed, but the photo could not be uploaded.', 'err');
+    } else {
+      toast('Produce published successfully to shared database!');
+    }
+
+    // Refresh farmer listings and visible marketplace data
+    MY_LISTINGS = await window.DFApi.myListings();
+    ACTIVE_LISTINGS = await window.DFApi.listListings((LISTINGS_PAGE + 1) * PAGE_SIZE, 0);
+
+    go('#/farmer/listings');
+  } catch(e) {
+    console.error('Publish produce error:', e);
+    toast(e.message || 'Failed to publish produce.', 'err');
+  } finally {
+    S.isSubmitting = false;
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = `${ic('leaf', 18)} Publish produce to marketplace`;
+    }
+  }
+}
+
+function fListings(u, mine) {
+  const act = mine.filter(l => l.status !== 'removed');
+  if (!act.length) {
+    return `<div class="empty">
+      <div class="empty-icon">${ic('leaf', 32)}</div>
+      <h3>No products listed yet</h3>
+      <p>List your harvest to start receiving orders directly from buyers.</p>
+      <a class="btn btn-primary" href="#/farmer/add">${ic('plus')} Add produce</a>
+    </div>`;
+  }
+
+  return `<div class="pgrid">${act.sort((a, b) => b.createdAt - a.createdAt).map(l => `
+    <article class="pcard">
+      <div class="pic">
+        ${pic(l)}
+        <span class="grade">Grade ${l.grade}</span>
+      </div>
+      <div class="pbody">
+        <div class="ptop">
+          <h3>${esc(l.crop)}</h3>
+          <div class="price">${inr(l.price)}<small>/kg</small></div>
+        </div>
+        <div class="meta">
+          <span>${ic('box', 14)} <b>${l.qty} kg</b> remaining</span>
+          <span>${ic('pin', 14)} ${esc(l.loc.label)}</span>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+          ${l.status === 'sold' ? '<span class="badge b-neutral">Sold out</span>' : pbadge(l.price, l.crop, l.id)}
+          <span class="small">Harvested ${fdate(l.harvest)}</span>
+        </div>
+        <div class="actions" style="margin-top:8px">
+          <button type="button" class="btn btn-light btn-sm" onclick="openModal('edit','${l.id}')">Edit</button>
+          <button type="button" class="btn btn-danger btn-sm" onclick="removeListing('${l.id}')">Remove</button>
+        </div>
+      </div>
+    </article>
+  `).join('')}</div>`;
+}
+
+async function removeListing(id) {
+  if (!confirm('Are you sure you want to remove this listing?')) return;
+  try {
+    await window.DFApi.removeListing(id);
+    toast('Listing removed');
+    await reloadAppData();
+    render();
+  } catch(e) {
+    toast(e.message || 'Could not remove listing.', 'err');
+  }
+}
+
+async function saveEdit(id) {
+  const p = parseFloat($('#e_price').value), q = parseFloat($('#e_qty').value);
+  if (!(p > 0) || !(q >= 0)) return toast('Enter a valid price and quantity.', 'err');
+
+  try {
+    await window.DFApi.updateListing(id, { price: p, qty: q });
+    S.modal = null;
+    toast('Listing updated');
+    await reloadAppData();
+    render();
+  } catch(e) {
+    toast(e.message || 'Failed to update listing.', 'err');
+  }
+}
+
+function fOrders(u, orders) {
+  if (!orders.length) {
+    return `<div class="empty">
+      <div class="empty-icon">${ic('box', 32)}</div>
+      <h3>No orders yet</h3>
+      <p>When buyers order your produce, their requests will appear here for confirmation and dispatch.</p>
+    </div>`;
+  }
+  const nextLabel = { placed: 'Confirm order', confirmed: 'Start preparing', preparing: 'Mark out for delivery', out: 'Mark delivered' };
+
+  return orders.slice().sort((a, b) => b.createdAt - a.createdAt).map(o => {
+    const phone = o.buyerPhone || COUNTERPARTY_PHONES[o.buyerId];
+    const ci = FLOW.indexOf(o.status);
+
+    return `<div class="orderbox">
+      <div class="top">
+        <div>
+          <h3 style="font-size:22px">${esc(o.crop)} · ${o.qty} kg</h3>
+          <div class="small">${esc(o.buyerName || o.buyerOrg)} · ${ago(o.createdAt)} · Order #${esc(o.id.slice(0, 8).toUpperCase())}</div>
+        </div>
+        ${stChip(o.status)}
+      </div>
+      <div class="meta" style="margin-bottom:12px">
+        <span>${ic('rupee', 15)} ${inr(o.price)}/kg · produce ${inr(o.qty * o.price)} + ${inr(o.deliveryFee)} delivery = <b>${inr(o.qty * o.price + o.deliveryFee)}</b></span>
+        <span>${ic('pin', 15)} Deliver to ${esc(o.dest.label)}${o.address ? ' – ' + esc(o.address) : ''}</span>
+        <span>${ic('clock', 15)} ${esc(o.pay)}</span>
+      </div>
+      ${o.status !== 'cancelled' ? `<div class="timeline">${FLOW.map((s, i) => {
+        const isDone = i < ci || o.status === 'delivered';
+        const isNow = i === ci && o.status !== 'delivered';
+        const hist = (o.statusHistory || []).find(h => h.status === s);
+        return `<div class="tl ${isDone ? 'done' : isNow ? 'now' : ''}">
+          ${SL[s]}
+          ${hist ? `<span class="tl-time">${ftime(hist.at)}</span>` : ''}
+        </div>`;
+      }).join('')}</div>` : ''}
+      <div class="actions" style="margin-top:18px">
+        ${nextLabel[o.status] ? `<button type="button" class="btn btn-primary btn-sm" onclick="advance('${o.id}')">${nextLabel[o.status]}</button>` : ''}
+        ${o.status === 'placed' ? `<button type="button" class="btn btn-danger btn-sm" onclick="cancelOrder('${o.id}')">Decline</button>` : ''}
+        ${phone ? `<a class="btn btn-light btn-sm" href="tel:${esc(phone)}">${ic('phone', 15)} Call buyer (${esc(phone)})</a>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function advance(id) {
+  try {
+    const nextStatus = await window.DFApi.advanceOrder(id);
+    toast('Order marked: ' + (SL[nextStatus] || nextStatus));
+    await reloadAppData();
+    render();
+  } catch(e) {
+    toast(e.message || 'Could not update order status.', 'err');
+  }
+}
+
+async function cancelOrder(id) {
+  if (!confirm('Are you sure you want to decline this order? Stock will be restored.')) return;
+  try {
+    await window.DFApi.declineOrder(id);
+    toast('Order declined and stock restored');
+    await reloadAppData();
+    render();
+  } catch(e) {
+    toast(e.message || 'Could not decline order.', 'err');
+  }
+}
+
+function whyChips(sub) {
+  return `<div class="why">${Object.entries(sub).map(([k, v]) => `<span>${k} ${Math.round(v * 100)}%</span>`).join('')}</div>`;
+}
+
+function fBuyers(u, fm) {
+  const demand = {};
+  OPEN_REQS.forEach(r => { demand[r.crop] = (demand[r.crop] || 0) + (r.qty - (r.filled || 0)); });
+  const dem = Object.entries(demand).sort((a, b) => b[1] - a[1]), mx = dem.length ? dem[0][1] : 1;
+
+  return `<div class="grid2" style="grid-template-columns:1.6fr 1fr">
+    <div class="panel">
+      <h3>Suitable buyers for your produce</h3>
+      <p class="sub">Open requirements ranked by match score against your active produce listings.</p>
+      ${fm.length ? fm.map((x, i) => {
+        const r = x.r, m = x.m, off = MY_OFFERS.find(o => o.reqId === r.id);
+        return `<div class="mcard ${i === 0 ? 'best' : ''}">
+          <div class="ring" style="--p:${m.pct}"><span>${m.pct}%</span></div>
+          <div class="info">
+            <h4>${esc(r.buyerOrg)}</h4>
+            <div class="small">${esc(r.buyerName)} · ${esc(r.loc.label)} · ${Math.round(m.dist)} km away</div>
+            <div class="meta" style="margin-top:6px">
+              <span>${ic('box', 14)} Needs ${r.qty - (r.filled || 0)} kg ${esc(r.crop)} (Grade ${r.grade}+)</span>
+              <span>${ic('rupee', 14)} Up to ${inr(r.maxPrice)}/kg</span>
+              <span>${ic('clock', 14)} By ${fdate(r.by)}</span>
+            </div>
+            ${whyChips(m.sub)}
+            <div class="actions" style="margin-top:12px">
+              ${off ? `${stChip(off.status)} <span class="small">Your offer: ${off.qty} kg at ${inr(off.price)}/kg</span>` : `<button type="button" class="btn btn-primary btn-sm" onclick="openModal('offer','${r.id}')">Send direct offer</button>`}
+            </div>
+          </div>
+        </div>`;
+      }).join('') : `
+        <div class="empty" style="padding:32px">
+          <h3 style="font-size:20px">No matching requirements yet</h3>
+          <p>${MY_LISTINGS.some(l => l.status === 'active') ? 'When a buyer posts a requirement matching your produce type and distance, it will appear here.' : 'List your produce first, and matching buyers will be identified automatically.'}</p>
+        </div>
+      `}
+    </div>
+
+    <div class="panel">
+      <h3>Aggregate demand on DirectFarm</h3>
+      <p class="sub">Quantities buyers currently need across the region.</p>
+      ${dem.length ? dem.map(([c, q]) => `
+        <div style="margin:14px 0">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <b>${esc(c)}</b>
+            <span class="small"><b>${Math.round(q)} kg</b> needed</span>
+          </div>
+          <div class="bar"><i style="width:${Math.round(q / mx * 100)}%"></i></div>
+        </div>
+      `).join('') : '<p class="small">No open buyer requirements yet.</p>'}
+    </div>
+  </div>`;
+}
+
+function fInsights(u, mine) {
+  const act = mine.filter(l => l.status === 'active' && l.qty > 0);
+  const crop = S.icrop || (act[0] ? act[0].crop : 'Tomato'), C = CROPS[crop], m0 = marketRef(crop), mn = new Date().getMonth();
+  const my = act.find(l => l.crop === crop), others = ACTIVE_LISTINGS.filter(l => l.crop === crop);
+  const fut = [0, 1, 2, 3, 4, 5].map(i => { const mi = (mn + i) % 12, idx = C.d[mi]; return { m: MONTHS[mi], idx, price: C.ref * (.85 + .35 * idx / 100) }; });
+  const peak = fut.reduce((a, b) => b.idx > a.idx ? b : a), now = fut[0], trend = peak.idx - now.idx;
+  const reqs = OPEN_REQS.filter(r => r.crop === crop), want = reqs.reduce((a, r) => a + r.qty - (r.filled || 0), 0);
+  const rec = trend >= 8 ? `Demand for ${crop} is expected to climb toward ${peak.m}. If your stock keeps, holding could yield a better return around ${inr(peak.price)}/kg.` : trend <= -8 ? `Seasonal demand for ${crop} is easing over the next months. Selling promptly is likely to secure the best price.` : `Demand for ${crop} looks steady. Price against the market reference and sell when you have buyers.`;
+  const mx = Math.max(...fut.map(f => f.idx));
+
+  return `<div class="panel">
+    <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center">
+      <div>
+        <h3>Price and demand intelligence for ${esc(crop)}</h3>
+        <p class="sub" style="margin:0">Benchmark your pricing against live AP Mandi rates and wholesale seasonal patterns.</p>
+      </div>
+      <select style="width:auto;border-radius:12px" onchange="S.icrop=this.value;render()" aria-label="Choose crop">
+        ${CROP_NAMES.map(c => `<option ${c === crop ? 'selected' : ''}>${c}</option>`).join('')}
+      </select>
+    </div>
+  </div>
+
+  <div class="cards4" style="grid-template-columns:repeat(3,1fr)">
+    <div class="kpi">
+      <span>${ic('rupee', 16)} Mandi reference rate</span>
+      <b>${inr(m0.ref)}/kg</b>
+      <span class="small" style="margin-top:4px">${m0.src}</span>
+    </div>
+    <div class="kpi">
+      <span>${ic('store', 16)} Live listings on platform</span>
+      <b>${others.length}</b>
+      <span class="small" style="margin-top:4px">${others.length ? 'Lowest: ' + inr(Math.min(...others.map(l => l.price))) + '/kg' : 'No competing listings'}</span>
+    </div>
+    <div class="kpi">
+      <span>${ic('rupee', 16)} Your current price</span>
+      <b>${my ? inr(my.price) + '/kg' : 'Not listed'}</b>
+      ${my ? `<span style="margin-top:6px;display:block">${pbadge(my.price, crop, my.id)}</span>` : `<span class="small" style="margin-top:4px">List ${esc(crop)} to compare</span>`}
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <h3>6-Month demand forecast</h3>
+      <p class="sub">Indicative seasonal wholesale demand index with an estimated price per kg.</p>
+      <div class="fbars">
+        ${fut.map(f => `<div class="fb ${f.idx === mx ? 'peak':''}">
+          <b>${f.idx}</b>
+          <i style="height:${Math.round(f.idx * 1.6)}px"></i>
+          <span>${f.m}</span>
+          <em>${inr(f.price)}</em>
+        </div>`).join('')}
+      </div>
+      <div class="note">${ic('spark', 16)} ${rec}</div>
+    </div>
+
+    <div class="panel">
+      <h3>Live buyer demand on DirectFarm</h3>
+      <p class="sub">From real procurement requirements posted right now in the database.</p>
+      ${reqs.length ? `
+        <div class="kpi" style="margin-bottom:14px">
+          <span>Total buyers still need</span>
+          <b>${Math.round(want)} kg</b>
+        </div>
+        <div class="small">${reqs.length} open requirement${reqs.length > 1 ? 's' : ''}, average ceiling price ${inr(reqs.reduce((a, r) => a + r.maxPrice, 0) / reqs.length)}/kg.</div>
+        <a class="btn btn-light btn-sm" style="margin-top:16px" href="#/farmer/buyers">View matching buyers</a>
+      ` : `<p class="small">No buyer has posted an active requirement for ${esc(crop)} yet.</p>`}
+    </div>
+  </div>`;
+}
+
+function fRoute(u, orders) {
+  const act = orders.filter(o => ['confirmed', 'preparing', 'out'].includes(o.status));
+  if (!act.length) {
+    return `<div class="empty">
+      <div class="empty-icon">${ic('truck', 32)}</div>
+      <h3>No deliveries to plan yet</h3>
+      <p>Confirm incoming orders and DirectFarm will automatically sequence your delivery stops into the shortest, lowest-fuel run.</p>
+      <a class="btn btn-primary" href="#/farmer/orders">Go to orders</a>
+    </div>`;
+  }
+
+  const stops = act.map(o => ({ o, loc: o.dest, label: o.dest.label })), origin = u.loc;
+  const { route, total } = planRoute(origin, stops), naive = naiveDist(origin, stops), saved = naive > 0 ? Math.max(0, Math.round((naive - total) / naive * 100)) : 0;
+  const pts = [origin, ...route.map(r => r.loc)];
+  const W = 760, H = 420, P = 60, lats = pts.map(p => p.lat), lngs = pts.map(p => p.lng);
+  const minLa = Math.min(...lats), maxLa = Math.max(...lats), minLo = Math.min(...lngs), maxLo = Math.max(...lngs), spLa = Math.max(maxLa - minLa, .15), spLo = Math.max(maxLo - minLo, .15);
+  const X = p => P + (p.lng - minLo) / spLo * (W - 2 * P), Y = p => H - P - (p.lat - minLa) / spLa * (H - 2 * P);
+  const line = pts.map((p, i) => (i ? 'L' : 'M') + X(p).toFixed(1) + ' ' + Y(p).toFixed(1)).join(' ');
+  const hours = total / 40 + route.length * .25, fuel = total * 12;
+  let cum = 0;
+
+  return `<div class="cards4">
+    <div class="kpi"><span>${ic('truck', 16)} Total delivery stops</span><b>${route.length}</b></div>
+    <div class="kpi"><span>${ic('pin', 16)} Optimised distance</span><b>${total.toFixed(0)} km</b></div>
+    <div class="kpi"><span>${ic('clock', 16)} Estimated duration</span><b>${Math.floor(hours)} h ${Math.round((hours % 1) * 60)} m</b></div>
+    <div class="kpi"><span>${ic('trend', 16)} Fuel distance saved</span><b>${saved}%</b></div>
+  </div>
+  <div class="grid2" style="grid-template-columns:1.5fr 1fr">
+    <div class="mapbox">
+      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Optimised delivery route map">
+        <path class="dash-line" d="${line}" fill="none" stroke="#3F5B2E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <g>
+          <circle cx="${X(origin)}" cy="${Y(origin)}" r="18" fill="#231C16"/>
+          <text x="${X(origin)}" y="${Y(origin)+5}" text-anchor="middle" fill="#FAF6EF" font-size="14" font-weight="700">F</text>
+          <text x="${X(origin)}" y="${Y(origin)-24}" text-anchor="middle" font-size="13" font-weight="700" style="fill:var(--ink)">${esc(origin.label)} (farm)</text>
+        </g>
+        ${route.map((r, i) => `
+          <g>
+            <circle cx="${X(r.loc)}" cy="${Y(r.loc)}" r="16" fill="#3F5B2E"/>
+            <text x="${X(r.loc)}" y="${Y(r.loc)+5}" text-anchor="middle" fill="#FAF6EF" font-size="14" font-weight="700">${i+1}</text>
+            <text x="${X(r.loc)}" y="${Y(r.loc)+32}" text-anchor="middle" font-size="13" font-weight="600" style="fill:var(--ink)">${esc(r.label)}</text>
+          </g>
+        `).join('')}
+      </svg>
+    </div>
+
+    <div class="panel">
+      <h3>Optimal delivery sequence</h3>
+      <p class="sub">2-Opt nearest-first delivery itinerary starting from ${esc(origin.label)}.</p>
+      ${route.map((r, i) => {
+        cum += r.leg;
+        return `<div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--soft)">
+          <span class="avatar" style="flex:none">${i+1}</span>
+          <div>
+            <b>${esc(r.label)}</b>
+            <div class="small">${esc(r.o.buyerOrg || r.o.buyerName)} · ${esc(r.o.crop)} ${r.o.qty} kg</div>
+            <div class="small">${r.leg.toFixed(0)} km leg · ${cum.toFixed(0)} km accumulated</div>
+          </div>
+        </div>`;
+      }).join('')}
+      <div class="note" style="margin-top:16px">${ic('spark', 15)} Estimated fuel cost: ${inr(fuel)} at ₹12/km. Average road speed calculated at 40 km/h with 15 mins per stop.</div>
+    </div>
+  </div>`;
+}
+
+/* ============ Buyer Views ============ */
+const BT = [
+  ['market', 'Marketplace', 'store'],
+  ['post', 'Post requirement', 'plus'],
+  ['reqs', 'My requirements', 'spark'],
+  ['orders', 'My orders', 'box']
+];
+
+function buyerApp(u, tab) {
+  const pendingOffers = MY_OFFERS.filter(o => o.status === 'pending').length;
+  const c = tab === 'post' ? bPost(u) : tab === 'reqs' ? bReqs(u) : tab === 'orders' ? bOrders(u) : bMarket(u);
+  return shell(u, 'buyer', BT, tab, { reqs: pendingOffers }, `${greet()}, ${esc(u.name.split(' ')[0])}`, `${esc(u.org)} · ${esc(u.buyerType || 'Procurement Buyer')} · ${esc(u.loc.label)}`, c);
+}
+
+function cardHTML(l, u) {
+  const d = km(u.loc, l.loc);
+  const farmerName = l.farmerOrg || (l.farmer && l.farmer.org) || l.farmerName || 'Farmer';
+  return `<button class="pcard click" onclick="openModal('buy','${l.id}')">
+    <div class="pic">
+      ${pic(l)}
+      <span class="grade">Grade ${l.grade}</span>
+    </div>
+    <div class="pbody">
+      <div class="ptop">
+        <h3>Fresh ${esc(l.crop)}</h3>
+        <div class="price">${inr(l.price)}<small>/kg</small></div>
+      </div>
+      <div class="meta">
+        <span>${ic('box', 14)} <b>${l.qty} kg</b> available</span>
+        <span>${ic('pin', 14)} ${esc(l.loc.label)} · ${Math.round(d)} km</span>
+      </div>
+      <div class="meta">
+        <span>${ic('user', 14)} ${esc(farmerName)}</span>
+        <span>${sellerTag(l)}</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px">
+        ${pbadge(l.price, l.crop, l.id)}
+        <span style="color:var(--olive);font-weight:700;font-size:13px">View produce →</span>
+      </div>
+    </div>
+  </button>`;
+}
+
+function mgrid() {
+  const u = CURRENT_USER, q = S.q.toLowerCase();
+  let ls = ACTIVE_LISTINGS.filter(l => l.status === 'active' && l.qty > 0 && (S.crop === 'All' || l.crop === S.crop) && (!q || (l.crop + ' ' + l.loc.label + ' ' + ((l.farmer && l.farmer.org) || '')).toLowerCase().includes(q)));
+  const dd = l => km(u.loc, l.loc);
+  ls.sort(S.sort === 'low' ? (a, b) => a.price - b.price : S.sort === 'near' ? (a, b) => dd(a) - dd(b) : S.sort === 'grade' ? (a, b) => GR[b.grade] - GR[a.grade] : (a, b) => b.createdAt - a.createdAt);
+
+  if (!ls.length) {
+    return `<div class="empty">
+      <div class="empty-icon">${ic('store', 32)}</div>
+      <h3>${ACTIVE_LISTINGS.length ? 'No produce matches your search filters' : 'No produce listed in the marketplace yet'}</h3>
+      <p>${ACTIVE_LISTINGS.length ? 'Try choosing a different crop or clearing your search keywords.' : 'Farmers list their fresh harvests continuously. Post your requirement and get notified the moment a match appears.'}</p>
+      <a class="btn btn-primary" href="#/buyer/post">Post procurement requirement</a>
+    </div>`;
+  }
+
+  return `<div class="pgrid">${ls.map(l => cardHTML(l, u)).join('')}</div>
+  ${HAS_MORE_LISTINGS ? `<div style="text-align:center;margin-top:28px"><button type="button" class="btn btn-light btn-lg" onclick="loadMoreListings()">Load more produce</button></div>` : ''}`;
+}
+
+async function loadMoreListings() {
+  try {
+    LISTINGS_PAGE++;
+    const nextBatch = await window.DFApi.listListings(PAGE_SIZE, LISTINGS_PAGE * PAGE_SIZE);
+    ACTIVE_LISTINGS = ACTIVE_LISTINGS.concat(nextBatch);
+    HAS_MORE_LISTINGS = nextBatch.length >= PAGE_SIZE;
+    render();
+  } catch(e) {
+    toast('Could not load more listings.', 'err');
+  }
+}
+
+function bMarket(u) {
+  const act = ACTIVE_LISTINGS;
+  const cnt = c => act.filter(l => l.crop === c).length;
+
+  return `<div class="toolbar">
+    <div class="search">
+      ${ic('search', 18)}
+      <input id="mq" value="${esc(S.q)}" placeholder="Search crop, farm town or grower..." aria-label="Search produce" oninput="S.q=this.value;$('#mgrid').innerHTML=mgrid()">
+    </div>
+    <select aria-label="Sort" onchange="S.sort=this.value;$('#mgrid').innerHTML=mgrid()">
+      <option value="new" ${S.sort === 'new' ? 'selected' : ''}>Newest harvests first</option>
+      <option value="low" ${S.sort === 'low' ? 'selected' : ''}>Price: low to high</option>
+      <option value="near" ${S.sort === 'near' ? 'selected' : ''}>Nearest to my location</option>
+      <option value="grade" ${S.sort === 'grade' ? 'selected' : ''}>Highest quality grade</option>
+    </select>
+  </div>
+
+  <div class="chips">
+    <button type="button" class="chip ${S.crop === 'All' ? 'on' : ''}" onclick="S.crop='All';render()">All crops <i>${act.length}</i></button>
+    ${CROP_NAMES.filter(c => cnt(c) > 0).map(c => `<button type="button" class="chip ${S.crop === c ? 'on' : ''}" onclick="S.crop='${c}';render()">${c} <i>${cnt(c)}</i></button>`).join('')}
+  </div>
+
+  <div id="mgrid">${mgrid()}</div>`;
+}
+
+function bPost(u) {
+  if (!S.bPost.loc && u && u.loc && u.loc.label) {
+    S.bPost.loc = u.loc.label;
+  }
+  const f = S.bPost;
+  return `<div class="panel" style="max-width:760px">
+    <h3>Post a procurement requirement</h3>
+    <p class="sub">Tell farmers what produce you need. DirectFarm automatically scores and ranks matching local harvests and notifies growers to send you offers.</p>
+    
+    <form id="bPostForm" onsubmit="event.preventDefault(); postReq();">
+    <div class="two">
+      <div class="field"><label for="r_crop">Crop / Produce</label><select id="r_crop" onchange="S.bPost.crop=this.value">${CROP_NAMES.map(c => `<option ${c === f.crop ? 'selected' : ''}>${c}</option>`).join('')}</select></div>
+      <div class="field"><label for="r_grade">Minimum acceptable quality</label><select id="r_grade" onchange="S.bPost.grade=this.value"><option value="A" ${f.grade === 'A' ? 'selected' : ''}>Grade A (Premium)</option><option value="B" ${f.grade === 'B' ? 'selected' : ''}>Grade B (Standard)</option><option value="C" ${f.grade === 'C' ? 'selected' : ''}>Grade C (Basic)</option></select></div>
+    </div>
+
+    <div class="two">
+      <div class="field"><label for="r_qty">Quantity needed (kg)</label><input id="r_qty" type="number" min="1" placeholder="2000" value="${esc(f.qty)}" oninput="S.bPost.qty=this.value"></div>
+      <div class="field"><label for="r_price">Maximum target price (₹ per kg)</label><input id="r_price" type="number" min="1" step="any" placeholder="30" value="${esc(f.price)}" oninput="S.bPost.price=this.value"></div>
+    </div>
+
+    <div class="two">
+      <div class="field"><label for="r_by">Required by date</label><input id="r_by" type="date" value="${esc(f.by || new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10))}" oninput="S.bPost.by=this.value"></div>
+      <div class="field"><label for="r_loc">Delivery location</label><select id="r_loc" onchange="S.bPost.loc=this.value">${townOpts(f.loc || u.loc.label)}</select></div>
+    </div>
+
+    <div class="field"><label for="r_dist">Farmer search radius (km)</label><input id="r_dist" type="number" min="5" value="${f.dist || 50}" oninput="S.bPost.dist=this.value"></div>
+    <button type="submit" id="postReqBtn" class="btn btn-primary btn-lg">${ic('spark', 18)} Post procurement requirement</button>
+    </form>
+  </div>`;
+}
+
+async function postReq() {
+  if (S.isSubmitting) return;
+  const cropEl = $('#r_crop');
+  const qtyEl = $('#r_qty');
+  const priceEl = $('#r_price');
+  const gradeEl = $('#r_grade');
+  const byEl = $('#r_by');
+  const locEl = $('#r_loc');
+  const distEl = $('#r_dist');
+
+  const crop = cropEl ? cropEl.value : S.bPost.crop;
+  const qty = parseFloat(qtyEl ? qtyEl.value : S.bPost.qty);
+  const mp = parseFloat(priceEl ? priceEl.value : S.bPost.price);
+  const grade = gradeEl ? gradeEl.value : (S.bPost.grade || 'A');
+  const byDate = byEl ? byEl.value : S.bPost.by;
+  const locVal = locEl ? locEl.value : (S.bPost.loc || '');
+  const md = parseFloat(distEl ? distEl.value : S.bPost.dist);
+
+  if (!(qty > 0)) return toast('Enter the quantity you need.', 'err');
+  if (!(mp > 0)) return toast('Enter the highest price you will pay.', 'err');
+  if (!(md > 0)) return toast('Enter a search distance in km.', 'err');
+
+  S.isSubmitting = true;
+  const btn = $('#postReqBtn');
+  if (btn) { btn.disabled = true; btn.innerHTML = `<span class="spinner"></span> Posting...`; }
+
+  try {
+    const loc = town(locVal);
+    await window.DFApi.createRequirement({
+      crop,
+      qty,
+      maxPrice: mp,
+      grade,
+      byDate,
+      loc,
+      maxDist: md
+    });
+
+    S.bPost = {
+      crop: 'Tomato',
+      grade: 'A',
+      qty: '',
+      price: '',
+      by: new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10),
+      loc: CURRENT_USER ? CURRENT_USER.loc.label : '',
+      dist: 50
+    };
+
+    toast('Requirement posted to shared database. Farmers will be matched.');
+    await reloadAppData();
+    go('#/buyer/reqs');
+  } catch(e) {
+    toast(e.message || 'Failed to post requirement.', 'err');
+  } finally {
+    S.isSubmitting = false;
+    if (btn) { btn.disabled = false; btn.innerHTML = `${ic('spark', 18)} Post procurement requirement`; }
+  }
+}
+
+function bReqs(u) {
+  const rs = MY_REQS.slice().sort((a, b) => b.createdAt - a.createdAt);
+  if (!rs.length) {
+    return `<div class="empty">
+      <div class="empty-icon">${ic('spark', 32)}</div>
+      <h3>No requirements posted</h3>
+      <p>Post what produce you need and let AI find ranked farmer matches.</p>
+      <a class="btn btn-primary" href="#/buyer/post">Post a requirement</a>
+    </div>`;
+  }
+
+  return rs.map(r => {
+    const ms = r.status === 'open' ? ACTIVE_LISTINGS.map(l => matchScore(r, l, l.farmer)).filter(Boolean).sort((a, b) => b.total - a.total) : [];
+    const combo = bestCombo(r, ms);
+    const offs = MY_OFFERS.filter(o => o.reqId === r.id);
+    const filled = r.filled || 0;
+
+    return `<div class="panel">
+      <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div>
+          <h3>${r.qty} kg ${esc(r.crop)} <span class="small" style="font-family:var(--sans)">Grade ${r.grade}+</span></h3>
+          <div class="meta" style="margin-top:6px">
+            <span>${ic('rupee', 14)} Target up to ${inr(r.maxPrice)}/kg</span>
+            <span>${ic('pin', 14)} ${esc(r.loc.label)} · within ${r.maxDist} km</span>
+            <span>${ic('clock', 14)} By ${fdate(r.by)}</span>
+          </div>
+        </div>
+        <div>${stChip(r.status)}</div>
+      </div>
+
+      <div style="margin:16px 0">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px" class="small">
+          <span><b>${filled} kg</b> secured</span>
+          <span><b>${Math.max(0, r.qty - filled)} kg</b> remaining</span>
+        </div>
+        <div class="bar"><i style="width:${Math.min(100, filled / r.qty * 100)}%"></i></div>
+      </div>
+
+      ${r.status === 'open' ? `
+        <h4 style="font-size:18px;margin:20px 0 12px">Matched regional farmers</h4>
+        ${ms.length ? ms.slice(0, 4).map((m, i) => `
+          <div class="mcard ${i === 0 ? 'best' : ''}">
+            <div class="ring" style="--p:${m.pct}"><span>${m.pct}%</span></div>
+            <div class="info">
+              <h4>${esc((m.f && m.f.org) || 'Farmer')} ${i === 0 ? '<span class="badge b-good" style="vertical-align:middle">Best match</span>' : ''}</h4>
+              <div class="meta">
+                <span>${ic('box', 14)} ${m.l.qty} kg</span>
+                <span>${ic('rupee', 14)} ${inr(m.l.price)}/kg</span>
+                <span>${ic('pin', 14)} ${Math.round(m.dist)} km</span>
+                <span>Grade ${m.l.grade}</span>
+                <span>${sellerTag(m.l.farmerId)}</span>
+              </div>
+              ${whyChips(m.sub)}
+              <div class="actions" style="margin-top:12px">
+                <button type="button" class="btn btn-primary btn-sm" onclick="openModal('buy','${m.l.id}')">View &amp; buy</button>
+              </div>
+            </div>
+          </div>
+        `).join('') : '<p class="small">No active listings match yet. Farmers who list this crop in your vicinity will be matched automatically.</p>'}
+        ${ms.length > 1 && combo.got ? `<div class="note">${ic('spark', 16)} Smart combination: ${combo.pick.length} farmer${combo.pick.length > 1 ? 's' : ''} can supply ${Math.round(combo.got)} kg at an average of <b>${inr(combo.avg)}/kg</b>${combo.short ? `, leaving ${Math.round(combo.short)} kg short.` : ', covering your full requirement.'}</div>` : ''}
+      ` : ''}
+
+      ${offs.length ? `
+        <h4 style="font-size:18px;margin:22px 0 12px">Direct offers from farmers</h4>
+        <div class="scroll-x"><table class="tbl">
+          <tr><th>Farmer</th><th>Quantity</th><th>Offered Price</th><th>Delivery</th><th>Status</th><th>Actions</th></tr>
+          ${offs.map(o => {
+            const fName = (o.farmer && o.farmer.org) || 'Farmer';
+            return `<tr>
+              <td><b>${esc(fName)}</b><div class="small">${sellerTag(o.farmerId)}</div></td>
+              <td>${o.qty} kg</td>
+              <td><b>${inr(o.price)}/kg</b></td>
+              <td>${o.delivery ? 'Farmer delivers' : 'Buyer pickup'}</td>
+              <td>${stChip(o.status)}</td>
+              <td>
+                ${o.status === 'pending' && r.status === 'open' ? `
+                  <div class="actions">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="acceptOffer('${o.id}')">Accept offer</button>
+                    <button type="button" class="btn btn-ghost btn-sm" onclick="declineOffer('${o.id}')">Decline</button>
+                  </div>
+                ` : ''}
+              </td>
+            </tr>`;
+          }).join('')}
+        </table></div>
+      ` : ''}
+
+      ${r.status === 'open' ? `<div class="actions" style="margin-top:18px"><button type="button" class="btn btn-ghost btn-sm" onclick="closeReq('${r.id}')">Close requirement</button></div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+async function closeReq(id) {
+  try {
+    await window.DFApi.closeRequirement(id);
+    toast('Requirement closed');
+    await reloadAppData();
+    render();
+  } catch(e) {
+    toast(e.message || 'Could not close requirement.', 'err');
+  }
+}
+
+async function declineOffer(id) {
+  try {
+    await window.DFApi.declineOffer(id);
+    toast('Offer declined');
+    await reloadAppData();
+    render();
+  } catch(e) {
+    toast(e.message || 'Could not decline offer.', 'err');
+  }
+}
+
+async function acceptOffer(id) {
+  try {
+    await window.DFApi.acceptOffer(id);
+    toast('Offer accepted! Order created successfully.');
+    await reloadAppData();
+    render();
+  } catch(e) {
+    toast(e.message || 'Could not accept offer.', 'err');
+  }
+}
+
+function bOrders(u) {
+  const os = MY_ORDERS.slice().sort((a, b) => b.createdAt - a.createdAt);
+  if (!os.length) {
+    return `<div class="empty">
+      <div class="empty-icon">${ic('box', 32)}</div>
+      <h3>No orders yet</h3>
+      <p>Browse live farm harvests and place your first direct order.</p>
+      <a class="btn btn-primary" href="#/buyer/market">Browse marketplace</a>
+    </div>`;
+  }
+
+  return os.map(o => {
+    const fName = o.farmerOrg || o.farmerName || 'Farmer';
+    const ci = FLOW.indexOf(o.status);
+    const phone = o.farmerPhone || COUNTERPARTY_PHONES[o.farmerId];
+
+    return `<div class="orderbox">
+      <div class="top">
+        <div>
+          <h3 style="font-size:22px">${esc(o.crop)} · ${o.qty} kg</h3>
+          <div class="small">From ${esc(fName)} · ${ago(o.createdAt)} · Order #${esc(o.id.slice(0, 8).toUpperCase())}</div>
+        </div>
+        ${stChip(o.status)}
+      </div>
+      <div class="meta" style="margin-bottom:12px">
+        <span>${ic('rupee', 15)} ${inr(o.price)}/kg · produce ${inr(o.qty * o.price)} + ${inr(o.deliveryFee)} delivery = <b>${inr(o.qty * o.price + o.deliveryFee)}</b></span>
+        <span>${ic('pin', 15)} Deliver to ${esc(o.dest.label)}</span>
+      </div>
+      ${o.status !== 'cancelled' ? `<div class="timeline">${FLOW.map((s, i) => {
+        const isDone = i < ci || o.status === 'delivered';
+        const isNow = i === ci && o.status !== 'delivered';
+        const hist = (o.statusHistory || []).find(h => h.status === s);
+        return `<div class="tl ${isDone ? 'done' : isNow ? 'now' : ''}">
+          ${SL[s]}
+          ${hist ? `<span class="tl-time">${ftime(hist.at)}</span>` : ''}
+        </div>`;
+      }).join('')}</div>` : '<p class="small" style="margin-top:12px">The farmer declined this order. Any reservation was released.</p>'}
+      <div class="actions" style="margin-top:18px">
+        ${phone ? `<a class="btn btn-light btn-sm" href="tel:${esc(phone)}">${ic('phone', 15)} Call farmer (${esc(phone)})</a>` : ''}
+        ${o.status === 'delivered' ? (o.rating ? `<span class="small">You rated this seller ${'★'.repeat(o.rating)}${'☆'.repeat(5 - o.rating)}</span>` : `<button type="button" class="btn btn-light btn-sm" onclick="openModal('rate','${o.id}')">${ic('star', 15)} Rate this seller</button>`) : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ============ Modals ============ */
+function openModal(type, id) {
+  S.modal = { type, id };
+  render();
+}
+function closeModal() {
+  S.modal = null;
+  render();
+}
+
+function modalHTML() {
+  const m = S.modal, u = CURRENT_USER;
+  if (!m || !u) return '';
+  let inner = '';
+
+  if (m.type === 'buy') {
+    const l = ACTIVE_LISTINGS.find(x => x.id === m.id);
+    if (!l) return '';
+    const mr = marketRef(l.crop, l.id), b = priceBadge(l.price, mr.ref), d = km(u.loc, l.loc);
+    const fName = l.farmerOrg || (l.farmer && l.farmer.org) || l.farmerName || 'Farmer';
+
+    inner = `<div class="mhead">${pic(l)}</div><div class="mbody">
+      <div class="ptop">
+        <h2 style="font-size:28px">Fresh ${esc(l.crop)} <span class="badge b-neutral" style="vertical-align:middle">Grade ${l.grade}</span></h2>
+        <div class="price">${inr(l.price)}<small>/kg</small></div>
+      </div>
+      <div class="meta" style="margin-top:8px">
+        <span>${ic('box', 14)} <b>${l.qty} kg</b> available</span>
+        <span>${ic('pin', 14)} ${esc(l.loc.label)} · ${Math.round(d)} km away</span>
+        <span>${ic('clock', 14)} Harvested ${fdate(l.harvest)}</span>
+      </div>
+      <div class="meta" style="margin-top:6px">
+        <span>${ic('user', 14)} ${esc(fName)}</span>
+        <span>${sellerTag(l)}</span>
+      </div>
+      ${l.note ? `<p class="small" style="margin-top:10px;font-style:italic">“${esc(l.note)}”</p>` : ''}
+      
+      <div class="tp">
+        <b>Price transparency &amp; benchmark</b>
+        <div class="row"><span>Farmer's price</span><b>${inr(l.price)}/kg</b></div>
+        <div class="row"><span>Market reference</span><b>${inr(mr.ref)}/kg</b></div>
+        <div class="row"><span>${b.d < 0 ? 'You save' : 'Difference'}</span><b>${inr(Math.abs(mr.ref - l.price))}/kg</b></div>
+        <div style="margin-top:8px">
+          <span class="badge ${b.c}">${b.t}</span>
+          <span class="small">Source: ${mr.src}. The grower is paid directly.</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Quantity to purchase (kg)</label>
+        <div class="qty">
+          <button type="button" onclick="stepQty(-10)" aria-label="Decrease">−</button>
+          <input id="b_qty" type="number" min="1" max="${l.qty}" value="${Math.min(10, l.qty)}" oninput="updBuy('${l.id}')">
+          <button type="button" onclick="stepQty(10)" aria-label="Increase">+</button>
+        </div>
+      </div>
+
+      <div class="two">
+        <div class="field"><label for="b_dest">Delivery destination</label><select id="b_dest" onchange="updBuy('${l.id}')">${townOpts(u.loc.label)}</select></div>
+        <div class="field"><label for="b_pay">Payment mode</label><select id="b_pay"><option>Cash on delivery</option><option>UPI on delivery</option></select></div>
+      </div>
+
+      <div class="field"><label for="b_addr">Delivery address or landmark</label><input id="b_addr" placeholder="Street, shop name or landmark"></div>
+      <div class="sumbox" id="b_sum"></div>
+      <button type="button" id="orderBtn" class="btn btn-primary btn-lg" style="width:100%" onclick="placeOrder('${l.id}')">Place direct order</button>
+    </div>`;
+  } else if (m.type === 'edit') {
+    const l = MY_LISTINGS.find(x => x.id === m.id);
+    if (!l) return '';
+    inner = `<div class="mbody">
+      <h2 style="font-size:26px;margin-bottom:16px">Edit ${esc(l.crop)} listing</h2>
+      <div class="two">
+        <div class="field"><label for="e_price">Price (₹ per kg)</label><input id="e_price" type="number" step="any" value="${l.price}"></div>
+        <div class="field"><label for="e_qty">Quantity available (kg)</label><input id="e_qty" type="number" step="any" value="${l.qty}"></div>
+      </div>
+      <button type="button" class="btn btn-primary" onclick="saveEdit('${l.id}')">Save changes</button>
+    </div>`;
+  } else if (m.type === 'offer') {
+    const r = OPEN_REQS.find(x => x.id === m.id);
+    if (!r) return '';
+    const ms = MY_LISTINGS.filter(l => l.status === 'active' && l.qty > 0).map(l => matchScore(r, l, u)).filter(Boolean);
+    if (!ms.length) return `<div class="mbody"><h2 style="font-size:22px">No active matching produce</h2><p class="small" style="margin:12px 0">You do not have active produce matching this requirement. Add produce first.</p><button type="button" class="btn btn-ghost" onclick="closeModal()">Close</button></div>`;
+
+    inner = `<div class="mbody">
+      <h2 style="font-size:26px">Send an offer to ${esc(r.buyerOrg)}</h2>
+      <p class="small" style="margin:6px 0 18px">They need ${r.qty - (r.filled || 0)} kg ${esc(r.crop)} at up to ${inr(r.maxPrice)}/kg.</p>
+      <div class="field"><label for="o_l">Which produce listing</label><select id="o_l">${ms.map(x => `<option value="${x.l.id}">${esc(x.l.crop)} · ${x.l.qty} kg at ${inr(x.l.price)}/kg (Grade ${x.l.grade})</option>`).join('')}</select></div>
+      <div class="two">
+        <div class="field"><label for="o_qty">Quantity you can supply (kg)</label><input id="o_qty" type="number" min="1" value="${Math.min(ms[0].l.qty, r.qty - (r.filled || 0))}"></div>
+        <div class="field"><label for="o_price">Your offered price (₹ per kg)</label><input id="o_price" type="number" step="any" value="${ms[0].l.price}"></div>
+      </div>
+      <div class="field"><label for="o_del">Delivery arrangement</label><select id="o_del"><option value="1">I can deliver to buyer location</option><option value="0">Buyer picks up at farm</option></select></div>
+      <button type="button" class="btn btn-primary" onclick="sendOffer('${r.id}')">Submit direct offer</button>
+    </div>`;
+  } else if (m.type === 'rate') {
+    inner = `<div class="mbody">
+      <h2 style="font-size:26px">Rate this seller</h2>
+      <p class="small" style="margin:6px 0 12px">Your feedback builds trust across the agricultural community.</p>
+      <div class="stars" id="stars">${[1, 2, 3, 4, 5].map(i => `<button type="button" onclick="setStar(${i})" aria-label="${i} star${i > 1 ? 's' : ''}">★</button>`).join('')}</div>
+      <button type="button" class="btn btn-primary" style="margin-top:16px" onclick="saveRating('${m.id}')">Submit rating</button>
+    </div>`;
+  }
+
+  return `<div class="overlay" onclick="if(event.target===this)closeModal()" role="dialog" aria-modal="true">
+    <div class="modal">
+      <button type="button" class="x" onclick="closeModal()" aria-label="Close">${ic('x', 18)}</button>
+      ${inner}
+    </div>
+  </div>`;
+}
+
+let starVal = 0;
+function setStar(n) {
+  starVal = n;
+  document.querySelectorAll('#stars button').forEach((b, i) => b.classList.toggle('on', i < n));
+}
+async function saveRating(id) {
+  if (!starVal) return toast('Pick a star rating first.', 'err');
+  try {
+    await window.DFApi.rateOrder(id, starVal);
+    starVal = 0;
+    S.modal = null;
+    toast('Thanks for rating this seller!');
+    await reloadAppData();
+    render();
+  } catch(e) {
+    toast(e.message || 'Could not submit rating.', 'err');
+  }
+}
+
+function stepQty(d) {
+  const i = $('#b_qty');
+  if (!i) return;
+  i.value = Math.max(1, Math.min(+i.max, (+i.value || 0) + d));
+  i.oninput();
+}
+function updBuy(id) {
+  const l = ACTIVE_LISTINGS.find(x => x.id === id);
+  if (!l || !$('#b_qty')) return;
+  const q = Math.max(0, Math.min(l.qty, parseFloat($('#b_qty').value) || 0));
+  const dest = town($('#b_dest').value);
+  const fee = deliveryFee(l.loc, dest);
+  $('#b_sum').innerHTML = `<div class="row"><span>${q} kg × ${inr(l.price)}</span><span>${inr(q * l.price)}</span></div><div class="row"><span>Delivery (${Math.round(km(l.loc, dest))} km)</span><span>${inr(fee)}</span></div><div class="row t"><span>Total payable</span><span>${inr(q * l.price + fee)}</span></div>`;
+}
+
+async function placeOrder(id) {
+  if (S.isSubmitting) return;
+  const l = ACTIVE_LISTINGS.find(x => x.id === id);
+  const q = parseFloat($('#b_qty').value);
+  if (!l || l.status !== 'active') return toast('This produce is no longer available.', 'err');
+  if (!(q >= 1) || q > l.qty) return toast(`Choose between 1 and ${l.qty} kg.`, 'err');
+
+  S.isSubmitting = true;
+  const btn = $('#orderBtn');
+  if (btn) { btn.disabled = true; btn.innerHTML = `<span class="spinner"></span> Processing order...`; }
+
+  try {
+    const dest = town($('#b_dest').value);
+    await window.DFApi.placeOrder({
+      listingId: l.id,
+      qty: q,
+      dest,
+      address: $('#b_addr').value.trim(),
+      pay: $('#b_pay').value
+    });
+
+    S.modal = null;
+    toast('Order placed successfully! Decremented in database.');
+    await reloadAppData();
+    go('#/buyer/orders');
+  } catch(e) {
+    toast(e.message || 'Failed to place order.', 'err');
+    await reloadAppData();
+    render();
+  } finally {
+    S.isSubmitting = false;
+    if (btn) { btn.disabled = false; btn.textContent = 'Place direct order'; }
+  }
+}
+
+async function sendOffer(rid) {
+  const r = OPEN_REQS.find(x => x.id === rid);
+  const l = MY_LISTINGS.find(x => x.id === $('#o_l').value);
+  const q = parseFloat($('#o_qty').value);
+  const p = parseFloat($('#o_price').value);
+
+  if (!l) return toast('Select a valid listing.', 'err');
+  if (!(q > 0) || q > l.qty) return toast(`Offer quantity must be between 1 and ${l.qty} kg.`, 'err');
+  if (!(p > 0)) return toast('Enter your price per kg.', 'err');
+
+  try {
+    await window.DFApi.createOffer({
+      reqId: rid,
+      listingId: l.id,
+      qty: q,
+      price: p,
+      delivery: $('#o_del').value === '1'
+    });
+
+    S.modal = null;
+    toast('Offer sent to ' + r.buyerOrg);
+    await reloadAppData();
+    render();
+  } catch(e) {
+    toast(e.message || 'Failed to send offer.', 'err');
+    await reloadAppData();
+    render();
+  }
+}
+
+/* ============ Data Synchronization ============ */
+async function reloadAppData() {
+  try {
+    PUBLIC_STATS = await window.DFApi.publicStats();
+    ACTIVE_LISTINGS = await window.DFApi.listListings((LISTINGS_PAGE + 1) * PAGE_SIZE, 0);
+    HAS_MORE_LISTINGS = ACTIVE_LISTINGS.length >= (LISTINGS_PAGE + 1) * PAGE_SIZE;
+
+    if (CURRENT_USER) {
+      if (CURRENT_USER.role === 'farmer') {
+        MY_LISTINGS = await window.DFApi.myListings();
+        MY_ORDERS = await window.DFApi.myOrders();
+        OPEN_REQS = await window.DFApi.listOpenRequirements();
+        MY_OFFERS = await window.DFApi.myOffers();
+      } else {
+        MY_ORDERS = await window.DFApi.myOrders();
+        MY_REQS = await window.DFApi.myRequirements();
+        MY_OFFERS = await window.DFApi.myOffers();
+      }
+    }
+  } catch(err) {
+    if (err.code === 'SESSION_EXPIRED' || err.message === 'SESSION_EXPIRED' || (err.message && err.message.includes('SESSION_EXPIRED'))) {
+      handleSessionExpired();
+      return;
+    }
+    console.error('Error loading app data:', err);
+    if (!navigator.onLine) {
+      toast('You are offline. Showing cached information.', 'err');
+    }
+  }
+}
+
+/* ============ Polling & Session Handling ============ */
+let pollTimer = null;
+let isPolling = false;
+
+function startPolling() {
+  stopPolling();
+  if (!CURRENT_USER) return;
+  pollTimer = setInterval(async () => {
+    if (document.visibilityState !== 'visible' || S.isSubmitting || S.modal || isPolling || !CURRENT_USER) {
+      return;
+    }
+    const p = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+    const isFormRoute = (p[0] === 'farmer' && p[1] === 'add') || (p[0] === 'buyer' && p[1] === 'post') || p[1] === 'login';
+    const activeTag = document.activeElement ? document.activeElement.tagName : '';
+    const isTyping = ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeTag);
+
+    isPolling = true;
+    try {
+      await reloadAppData();
+      if (!isFormRoute && !isTyping && !S.isSubmitting && !S.modal && CURRENT_USER) {
+        render();
+      }
+    } catch(e) {
+      if (e.code === 'SESSION_EXPIRED' || e.message === 'SESSION_EXPIRED' || (e.message && e.message.includes('SESSION_EXPIRED'))) {
+        handleSessionExpired();
+      }
+    } finally {
+      isPolling = false;
+    }
+  }, 10000);
+}
+
+function stopPolling() {
+  if (pollTimer) {
+    clearInterval(pollTimer);
+    pollTimer = null;
+  }
+  isPolling = false;
+}
+
+function handleSessionExpired(seq) {
+  if (seq && seq !== authSeq) return;
+  stopPolling();
+  window.DFApi.clearToken();
+  CURRENT_USER = null;
+  currentAuthState = AUTH_STATE.SESSION_EXPIRED;
+  const p = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+  if (p[0] === 'farmer' || p[0] === 'buyer') {
+    go('#/' + p[0] + '/login');
+    toast('Your session expired. Please log in again.', 'err');
+  } else {
+    render();
+  }
+}
+
+window.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && CURRENT_USER && !S.isSubmitting && !S.modal && !isPolling) {
+    const p = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+    const isFormRoute = (p[0] === 'farmer' && p[1] === 'add') || (p[0] === 'buyer' && p[1] === 'post') || p[1] === 'login';
+    const activeTag = document.activeElement ? document.activeElement.tagName : '';
+    const isTyping = ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeTag);
+
+    reloadAppData().then(() => {
+      if (!isFormRoute && !isTyping && !S.isSubmitting && !S.modal && CURRENT_USER) {
+        render();
+      }
+    }).catch(e => {
+      if (e.code === 'SESSION_EXPIRED' || e.message === 'SESSION_EXPIRED' || (e.message && e.message.includes('SESSION_EXPIRED'))) {
+        handleSessionExpired();
+      }
+    });
+  }
+});
+
+/* ============ Router & Lifecycle ============ */
+function render() {
+  const p = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+  const u = CURRENT_USER;
+  const a = p[0], b = p[1];
+  let body = '', hideFooter = false;
+
+  if (a === 'farmer' || a === 'buyer') {
+    if (b === 'login') {
+      if (u && u.role === a) return go('#/' + a);
+      body = authPage(a);
+      hideFooter = true;
+    } else if (currentAuthState === AUTH_STATE.INITIALIZING) {
+      body = `<main class="dash" style="display:flex;justify-content:center;align-items:center;min-height:50vh">
+        <div style="text-align:center">
+          <span class="spinner" style="width:36px;height:36px;border-width:3px"></span>
+          <p class="sub" style="margin-top:14px">Loading DirectFarm...</p>
+        </div>
+      </main>`;
+    } else if (!u || u.role !== a) {
+      return go('#/' + a + '/login');
+    } else {
+      body = a === 'farmer' ? farmerApp(u, b || 'overview') : buyerApp(u, b || 'market');
+    }
+  } else {
+    body = landing();
+  }
+
+  $('#app').innerHTML = navbar(u) + body + (hideFooter ? '' : footer()) + modalHTML();
+  document.title = 'DirectFarm – From farm to buyer, direct and fair';
+
+  if (S.modal && S.modal.type === 'buy') updBuy(S.modal.id);
+  if (a === 'farmer' && b === 'add') {
+    onCrop();
+    updPreviewCard();
+  }
+
+  document.querySelectorAll('.count').forEach(el => {
+    const to = +el.dataset.to, t0 = performance.now(), dur = matchMedia('(prefers-reduced-motion:reduce)').matches ? 0 : 1100;
+    const tick = t => {
+      const k = dur ? Math.min(1, (t - t0) / dur) : 1;
+      el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))).toLocaleString('en-IN');
+      if (k < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+}
+
+window.addEventListener('hashchange', () => {
+  S.modal = null;
+  stopPolling();
+  render();
+  if (CURRENT_USER) {
+    startPolling();
+  }
+  window.scrollTo(0, 0);
+});
+
+/* ============ App Initialization ============ */
+(async function init() {
+  const seq = ++authSeq;
+  currentAuthState = AUTH_STATE.INITIALIZING;
+
+  render();
+
+  try {
+    const user = await window.DFApi.me();
+    if (seq !== authSeq) return;
+    CURRENT_USER = user;
+    currentAuthState = user ? AUTH_STATE.AUTHENTICATED : AUTH_STATE.UNAUTHENTICATED;
+  } catch(e) {
+    if (seq !== authSeq) return;
+    if (e.code === 'SESSION_EXPIRED' || e.message === 'SESSION_EXPIRED' || (e.message && e.message.includes('SESSION_EXPIRED'))) {
+      currentAuthState = AUTH_STATE.SESSION_EXPIRED;
+      handleSessionExpired(seq);
+      return;
+    }
+    console.warn('Initial session check (keeping session if token present):', e);
+    currentAuthState = window.DFApi.getToken() ? AUTH_STATE.AUTHENTICATED : AUTH_STATE.UNAUTHENTICATED;
+  }
+
+  try {
+    await reloadAppData();
+  } catch(e) {
+    console.warn('Initial reloadAppData error:', e);
+  }
+
+  if (seq !== authSeq) return;
+  render();
+  if (CURRENT_USER) {
+    startPolling();
+  }
+})();
+</script>
+</body>
+</html>
