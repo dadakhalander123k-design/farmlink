@@ -2128,6 +2128,12 @@ function setMode(m) {
 
 async function doAuth(role) {
   if (S.isSubmitting) return;
+  stopPolling();
+  if (CURRENT_USER && CURRENT_USER.role !== role) {
+    window.DFApi.clearToken();
+    CURRENT_USER = null;
+    currentAuthState = AUTH_STATE.UNAUTHENTICATED;
+  }
   const seq = ++authSeq;
   const v = id => ($('#' + id) ? $('#' + id).value : '');
   const err = m => {
@@ -3136,6 +3142,14 @@ function bPost(u) {
 
 async function postReq() {
   if (S.isSubmitting) return;
+  if (!CURRENT_USER || CURRENT_USER.role !== 'buyer') {
+    return toast('Only buyers can do this.', 'err');
+  }
+  const token = window.DFApi.getToken();
+  if (!token) {
+    return handleSessionExpired();
+  }
+
   const cropEl = $('#r_crop');
   const qtyEl = $('#r_qty');
   const priceEl = $('#r_price');
@@ -3163,6 +3177,7 @@ async function postReq() {
   try {
     const loc = town(locVal);
     await window.DFApi.createRequirement({
+      token,
       crop,
       qty,
       maxPrice: mp,
@@ -3510,6 +3525,14 @@ function updBuy(id) {
 
 async function placeOrder(id) {
   if (S.isSubmitting) return;
+  if (!CURRENT_USER || CURRENT_USER.role !== 'buyer') {
+    return toast('Only buyers can do this.', 'err');
+  }
+  const token = window.DFApi.getToken();
+  if (!token) {
+    return handleSessionExpired();
+  }
+
   const l = ACTIVE_LISTINGS.find(x => x.id === id);
   const q = parseFloat($('#b_qty').value);
   if (!l || l.status !== 'active') return toast('This produce is no longer available.', 'err');
@@ -3522,6 +3545,7 @@ async function placeOrder(id) {
   try {
     const dest = town($('#b_dest').value);
     await window.DFApi.placeOrder({
+      token,
       listingId: l.id,
       qty: q,
       dest,
@@ -3688,6 +3712,12 @@ function render() {
   if (a === 'farmer' || a === 'buyer') {
     if (b === 'login') {
       if (u && u.role === a) return go('#/' + a);
+      if (u && u.role !== a) {
+        stopPolling();
+        window.DFApi.clearToken();
+        CURRENT_USER = null;
+        currentAuthState = AUTH_STATE.UNAUTHENTICATED;
+      }
       body = authPage(a);
       hideFooter = true;
     } else if (currentAuthState === AUTH_STATE.INITIALIZING) {
