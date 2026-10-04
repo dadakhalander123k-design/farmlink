@@ -620,40 +620,41 @@ section.s{padding:76px 0}
 /* Dashboard Welcome Banner */
 .dash-banner{
   position:relative;
-  border-radius:20px;
+  border-radius:22px;
   overflow:hidden;
   margin-bottom:24px;
   border:1px solid var(--latte);
   box-shadow:var(--shadow-sm);
-  min-height:170px;
+  min-height:240px;
   display:flex;
   align-items:center;
-  padding:32px 36px;
+  padding:36px 40px;
   background:var(--card);
 }
 .dash-banner-art{
   position:absolute;
   inset:0;
   background-size:cover;
-  background-position:center right;
-  opacity:.92;
+  background-position:right 45%;
+  opacity:1;
   transition:transform .6s ease;
 }
 .dash-banner:hover .dash-banner-art{
-  transform:scale(1.018);
+  transform:scale(1.012);
 }
 .dash-banner-overlay{
   position:absolute;
   inset:0;
-  background:linear-gradient(90deg, rgba(232,220,198,0.96) 0%, rgba(232,220,198,0.85) 38%, rgba(232,220,198,0.28) 72%, rgba(232,220,198,0.06) 100%);
+  background:linear-gradient(90deg, rgba(232,220,198,0.92) 0%, rgba(232,220,198,0.70) 28%, rgba(232,220,198,0.18) 46%, transparent 62%);
+  pointer-events:none;
 }
 [data-theme="dark"] .dash-banner-overlay{
-  background:linear-gradient(90deg, rgba(24,19,16,0.97) 0%, rgba(24,19,16,0.88) 38%, rgba(24,19,16,0.30) 72%, rgba(24,19,16,0.06) 100%);
+  background:linear-gradient(90deg, rgba(24,19,16,0.94) 0%, rgba(24,19,16,0.75) 28%, rgba(24,19,16,0.20) 46%, transparent 62%);
 }
 .dash-banner-content{
   position:relative;
   z-index:1;
-  max-width:640px;
+  max-width:540px;
 }
 .dash-banner-badge{
   display:inline-flex;
@@ -693,12 +694,13 @@ section.s{padding:76px 0}
 }
 .dash-banner-tagline svg{color:var(--burgundy);flex:none}
 @media (max-width:640px){
-  .dash-banner{padding:22px 20px;min-height:160px}
+  .dash-banner{padding:26px 20px;min-height:220px}
+  .dash-banner-art{background-position:68% center}
   .dash-banner-overlay{
-    background:linear-gradient(180deg, rgba(232,220,198,0.95) 0%, rgba(232,220,198,0.88) 55%, rgba(232,220,198,0.35) 100%);
+    background:linear-gradient(180deg, rgba(232,220,198,0.94) 0%, rgba(232,220,198,0.72) 48%, rgba(232,220,198,0.20) 100%);
   }
   [data-theme="dark"] .dash-banner-overlay{
-    background:linear-gradient(180deg, rgba(24,19,16,0.97) 0%, rgba(24,19,16,0.90) 55%, rgba(24,19,16,0.40) 100%);
+    background:linear-gradient(180deg, rgba(24,19,16,0.95) 0%, rgba(24,19,16,0.78) 48%, rgba(24,19,16,0.25) 100%);
   }
 }
 
