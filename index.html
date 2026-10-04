@@ -438,6 +438,15 @@ img,svg{max-width:100%;height:auto}
 @media (max-width:960px){
   .float-chip{display:none}
 }
+@media (max-width:768px){
+  .hero-img-wrap{
+    aspect-ratio:16/9;
+    border-radius:18px;
+  }
+  .hero-img-wrap img{
+    image-rendering:-webkit-optimize-contrast;
+  }
+}
 
 /* ==================== Stats Bar ==================== */
 .stats-band{
@@ -780,51 +789,107 @@ section.s{padding:76px 0}
 }
 @media (max-width:768px){
   .dash-banner{
-    min-height:58vh;
-    height:clamp(440px, 58vh, 560px);
+    display:flex;
+    flex-direction:column;
+    height:auto;
+    min-height:auto;
+    width:100%;
+    background:#0E0B09;
+    overflow:hidden;
+    padding-bottom:24px;
+    border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+  .dash-banner-bg{
+    position:relative;
+    inset:auto;
+    width:100%;
+    height:auto;
+    aspect-ratio:16/9;
+    object-fit:cover;
+    object-position:center;
+    display:block;
+    filter:contrast(1.04) brightness(1);
+    image-rendering:-webkit-optimize-contrast;
+  }
+  .dash-banner-overlay{
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:calc(100vw * 9 / 16);
+    max-height:380px;
+    background:linear-gradient(180deg, rgba(8,6,5,0.06) 0%, rgba(8,6,5,0.25) 55%, rgba(8,6,5,0.78) 100%);
+    pointer-events:none;
+    z-index:1;
+  }
+  [data-theme="dark"] .dash-banner-overlay{
+    background:linear-gradient(180deg, rgba(6,4,3,0.08) 0%, rgba(6,4,3,0.3) 55%, rgba(6,4,3,0.85) 100%);
   }
   .dash-banner-inner{
-    padding:32px 20px;
+    position:relative;
+    z-index:2;
+    padding:0 20px 8px;
+    margin-top:-38px;
+    width:100%;
   }
   .dash-banner-content{
     max-width:100%;
-    gap:12px;
+    gap:10px;
   }
-  .dash-banner-bg{
-    object-position:center;
+  .dash-banner-badge{
+    font-size:11.5px;
+    padding:5px 12px;
+    background:rgba(14,11,9,0.8);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,0.25);
+    box-shadow:0 4px 12px rgba(0,0,0,0.4);
   }
-  .dash-banner-overlay{
-    background:linear-gradient(180deg, rgba(8,6,5,0.45) 0%, rgba(8,6,5,0.72) 45%, rgba(8,6,5,0.92) 100%);
+  .dash-banner h1{
+    font-size:clamp(24px, 6.2vw, 32px);
+    color:#FFFDFC !important;
+    text-shadow:0 2px 14px rgba(0,0,0,0.85);
+    line-height:1.15;
   }
-  [data-theme="dark"] .dash-banner-overlay{
-    background:linear-gradient(180deg, rgba(6,4,3,0.5) 0%, rgba(6,4,3,0.78) 45%, rgba(6,4,3,0.95) 100%);
+  .dash-banner-sub{
+    font-size:14px;
+    color:rgba(255,255,255,0.92) !important;
+    line-height:1.45;
+    text-shadow:0 1px 6px rgba(0,0,0,0.7);
+  }
+  .dash-banner-tagline{
+    font-size:12.5px;
+    color:#E8DCC6 !important;
+  }
+  .dash-banner-actions{
+    display:flex;
+    flex-direction:row;
+    gap:10px;
+    margin-top:10px;
+    width:100%;
+  }
+  .btn-hero-primary, .btn-hero-secondary{
+    flex:1;
+    min-width:0;
+    padding:11px 14px;
+    font-size:13.5px;
+    justify-content:center;
+    text-align:center;
   }
 }
-@media (max-width:540px){
-  .dash-banner{
-    min-height:64vh;
-    height:auto;
-    align-items:flex-end;
-  }
+@media (max-width:480px){
   .dash-banner-inner{
-    padding:24px 16px 28px;
-  }
-  .dash-banner-bg{
-    object-position:center;
-  }
-  .dash-banner-overlay{
-    background:linear-gradient(180deg, rgba(8,6,5,0.3) 0%, rgba(8,6,5,0.75) 40%, rgba(8,6,5,0.95) 100%);
-  }
-  [data-theme="dark"] .dash-banner-overlay{
-    background:linear-gradient(180deg, rgba(6,4,3,0.35) 0%, rgba(6,4,3,0.8) 40%, rgba(6,4,3,0.97) 100%);
+    padding:0 16px 6px;
+    margin-top:-30px;
   }
   .dash-banner-actions{
     flex-direction:column;
-    align-items:stretch;
+    gap:8px;
   }
   .btn-hero-primary, .btn-hero-secondary{
-    justify-content:center;
     width:100%;
+    padding:12px 16px;
+    font-size:14px;
   }
 }
 
