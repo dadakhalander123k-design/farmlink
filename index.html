@@ -496,11 +496,12 @@ section.s{padding:76px 0}
 /* Category Row */
 .cat-grid{
   display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:16px;
+  grid-template-columns:repeat(7,1fr);
+  gap:14px;
 }
-@media (max-width:1040px){.cat-grid{grid-template-columns:repeat(3,1fr)}}
-@media (max-width:580px){.cat-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:1100px){.cat-grid{grid-template-columns:repeat(4,1fr)}}
+@media (max-width:760px){.cat-grid{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:520px){.cat-grid{grid-template-columns:repeat(2,1fr)}}
 .cat-card{
   background:var(--card);
   border:1px solid var(--latte);
@@ -510,28 +511,29 @@ section.s{padding:76px 0}
   display:flex;
   flex-direction:column;
   text-align:left;
-  transition:transform .2s,box-shadow .2s,border-color .2s;
+  transition:transform .2s cubic-bezier(.16,1,.3,1),box-shadow .2s,border-color .2s;
   cursor:pointer;
   color:inherit;
 }
 .cat-card:hover{
-  transform:translateY(-3px);
+  transform:translateY(-4px);
   box-shadow:var(--shadow);
   border-color:var(--latte-dark);
 }
 .cat-card .cat-img{
-  height:110px;
+  height:120px;
   overflow:hidden;
   background:var(--bg-subtle);
+  border-bottom:1px solid var(--latte);
 }
 .cat-card .cat-img img{
   width:100%;
   height:100%;
   object-fit:cover;
   display:block;
-  transition:transform .3s;
+  transition:transform .4s cubic-bezier(.16,1,.3,1);
 }
-.cat-card:hover .cat-img img{transform:scale(1.05)}
+.cat-card:hover .cat-img img{transform:scale(1.06)}
 .cat-card .cat-info{
   padding:12px 14px;
   display:flex;
@@ -539,6 +541,166 @@ section.s{padding:76px 0}
 }
 .cat-card b{font-size:15px;color:var(--ink)}
 .cat-card span{font-size:12.5px;color:var(--ink2);margin-top:2px}
+
+/* Direct Farm-to-Buyer Story Visuals */
+.story-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+@media (max-width:860px){
+  .story-grid{grid-template-columns:1fr;gap:18px}
+}
+.story-card{
+  background:var(--card);
+  border:1px solid var(--latte);
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:var(--shadow-sm);
+  transition:transform .25s cubic-bezier(.16,1,.3,1),box-shadow .25s cubic-bezier(.16,1,.3,1),border-color .25s;
+  display:flex;
+  flex-direction:column;
+}
+.story-card:hover{
+  transform:translateY(-3px);
+  box-shadow:var(--shadow);
+  border-color:var(--latte-dark);
+}
+.story-media{
+  position:relative;
+  height:190px;
+  overflow:hidden;
+  background:var(--bg-subtle);
+}
+.story-media img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transition:transform .4s cubic-bezier(.16,1,.3,1);
+}
+.story-card:hover .story-media img{
+  transform:scale(1.03);
+}
+.story-tag{
+  position:absolute;
+  left:14px;
+  top:14px;
+  background:rgba(42,33,24,0.72);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  color:#E8DCC6;
+  font-size:11.5px;
+  font-weight:700;
+  letter-spacing:.04em;
+  padding:4px 10px;
+  border-radius:8px;
+  border:1px solid rgba(232,220,198,0.25);
+  z-index:2;
+}
+.story-caption{
+  padding:18px 20px 20px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  flex:1;
+}
+.story-caption b{
+  font-size:16px;
+  color:var(--burgundy);
+  font-family:var(--serif);
+}
+.story-caption p{
+  font-size:13.5px;
+  color:var(--ink2);
+  line-height:1.5;
+  margin:0;
+}
+
+/* Dashboard Welcome Banner */
+.dash-banner{
+  position:relative;
+  border-radius:20px;
+  overflow:hidden;
+  margin-bottom:24px;
+  border:1px solid var(--latte);
+  box-shadow:var(--shadow-sm);
+  min-height:130px;
+  display:flex;
+  align-items:center;
+  padding:24px 28px;
+  background:var(--card);
+}
+.dash-banner-art{
+  position:absolute;
+  inset:0;
+  background-size:cover;
+  background-position:center 30%;
+  opacity:.88;
+  transition:transform .6s ease;
+}
+.dash-banner:hover .dash-banner-art{
+  transform:scale(1.015);
+}
+.dash-banner-overlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg, rgba(232,220,198,0.96) 0%, rgba(232,220,198,0.91) 50%, rgba(232,220,198,0.70) 100%);
+}
+[data-theme="dark"] .dash-banner-overlay{
+  background:linear-gradient(90deg, rgba(24,19,16,0.97) 0%, rgba(24,19,16,0.92) 50%, rgba(24,19,16,0.65) 100%);
+}
+.dash-banner-content{
+  position:relative;
+  z-index:1;
+  max-width:640px;
+}
+.dash-banner-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:11.5px;
+  font-weight:700;
+  color:var(--burgundy);
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  background:rgba(183,168,154,.25);
+  padding:3px 10px;
+  border-radius:6px;
+  border:1px solid var(--latte);
+}
+.dash-banner h1{
+  font-family:var(--serif);
+  font-size:clamp(22px,3vw,30px);
+  color:var(--burgundy);
+  margin:6px 0 4px;
+  line-height:1.2;
+}
+.dash-banner p{
+  color:var(--ink2);
+  font-size:14px;
+  margin:0;
+  line-height:1.45;
+}
+.dash-banner-tagline{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:8px;
+  font-size:13px;
+  font-weight:600;
+  color:var(--burgundy);
+}
+.dash-banner-tagline svg{color:var(--burgundy);flex:none}
+@media (max-width:640px){
+  .dash-banner{padding:20px}
+  .dash-banner-overlay{
+    background:linear-gradient(180deg, rgba(232,220,198,0.96) 0%, rgba(232,220,198,0.93) 100%);
+  }
+  [data-theme="dark"] .dash-banner-overlay{
+    background:linear-gradient(180deg, rgba(24,19,16,0.97) 0%, rgba(24,19,16,0.94) 100%);
+  }
+}
 
 /* Supply Chain */
 .chain{display:grid;gap:16px}
@@ -2554,11 +2716,12 @@ function landing() {
 
   const popularCrops = [
     { name: 'Tomato', category: 'Vegetables', img: 'assets/images/crop_tomato.jpg' },
-    { name: 'Rice', category: 'Grains & Paddy', img: 'assets/images/crop_rice.jpg' },
-    { name: 'Chilli', category: 'Spices', img: 'assets/images/crop_chilli.jpg' },
+    { name: 'Onion', category: 'Root Vegetables', img: 'assets/images/crop_onion.jpg' },
     { name: 'Potato', category: 'Tubers', img: 'assets/images/crop_potato.jpg' },
+    { name: 'Chilli', category: 'Spices', img: 'assets/images/crop_chilli.jpg' },
     { name: 'Brinjal', category: 'Vegetables', img: 'assets/images/crop_brinjal.jpg' },
-    { name: 'Banana', category: 'Fruits', img: 'assets/images/crop_banana.jpg' }
+    { name: 'Banana', category: 'Fruits', img: 'assets/images/crop_banana.jpg' },
+    { name: 'Rice', category: 'Grains & Paddy', img: 'assets/images/crop_rice.jpg' }
   ];
 
   return `<section class="hero"><div class="wrap hero-grid">
@@ -2688,6 +2851,39 @@ function landing() {
     <div class="s-head">
       <div class="kicker">Workflow</div>
       <h2>How a deal happens</h2>
+      <p>From early dawn harvest to AI-dispatched direct delivery.</p>
+    </div>
+    <div class="story-grid" style="margin-bottom:32px">
+      <div class="story-card">
+        <div class="story-media">
+          <span class="story-tag">Step 1 &bull; Direct Harvest</span>
+          <img src="assets/images/farm_harvest_journey.jpg" alt="Farmer harvesting fresh crops directly in Indian farm fields" loading="lazy">
+        </div>
+        <div class="story-caption">
+          <b>Harvested Fresh at Dawn</b>
+          <p>Produce is picked at peak freshness by verified growers and graded honestly without artificial post-harvest manipulation.</p>
+        </div>
+      </div>
+      <div class="story-card">
+        <div class="story-media">
+          <span class="story-tag">Step 2 &bull; Direct Listing</span>
+          <img src="assets/images/farmer_inspecting.jpg" alt="Farmer checking crop health and listing on DirectFarm platform" loading="lazy">
+        </div>
+        <div class="story-caption">
+          <b>Listed with Mandi Transparency</b>
+          <p>Real-time market reference benchmarks guide fair pricing. Zero middleman margins taken from grower income.</p>
+        </div>
+      </div>
+      <div class="story-card">
+        <div class="story-media">
+          <span class="story-tag">Step 3 &bull; Farm-to-Buyer Delivery</span>
+          <img src="assets/images/farm_logistics_truck.jpg" alt="Pickup truck loaded with farm harvest crates for direct dispatch" loading="lazy">
+        </div>
+        <div class="story-caption">
+          <b>Direct Dispatch &amp; Settlement</b>
+          <p>AI-optimized routing sequences orders for rapid transit directly to restaurants, retailers, and homes with instant settlement.</p>
+        </div>
+      </div>
     </div>
     <div class="steps">
       <div class="step"><h4>1. Add produce</h4><p>The farmer lists crop, quantity, grade, price and location.</p></div>
@@ -2719,7 +2915,7 @@ function authPage(role) {
     ? ['List produce in under a minute with photo preview', 'See buyers that match your crop and price expectation', 'Get an AI-optimised delivery route for your orders', 'Direct cash or UPI settlement on delivery']
     : ['See live prices compared against mandi references', 'Post procurement requirements and compare matches', 'Track orders from farm confirmation to final delivery', 'Verified farmer profiles and peer ratings'];
 
-  const bgImg = f ? 'assets/images/farmer_inspecting.jpg' : 'assets/images/buyer_procure.jpg';
+  const bgImg = f ? 'assets/images/farm_harvest_journey.jpg' : 'assets/images/market_produce_display.jpg';
 
   return `<main class="auth">
   <section class="auth-art ${role}" style="background-image:url('${bgImg}')">
@@ -2852,13 +3048,31 @@ async function doAuth(role) {
 
 /* ============ Dashboard Shell ============ */
 function shell(u, base, tabs, cur, badges, title, sub, content) {
-  return `<main class="dash">
+  const isOverview = cur === tabs[0][0];
+  const bannerImg = base === 'farmer' ? 'assets/images/farm_harvest_journey.jpg' : 'assets/images/market_produce_display.jpg';
+  const bannerBadge = base === 'farmer' ? `${ic('leaf', 14)} Verified Regional Farmer Portal` : `${ic('store', 14)} Direct Farm-to-Buyer Marketplace`;
+  const bannerTagline = base === 'farmer' ? `${ic('check', 15)} 0% Middleman Margin &bull; Live Mandi Price Benchmark` : `${ic('check', 15)} Direct Farm-Fresh Sourcing &bull; Verified Farm Quality`;
+
+  const banner = isOverview ? `
+  <div class="dash-banner">
+    <div class="dash-banner-art" style="background-image:url('${bannerImg}')"></div>
+    <div class="dash-banner-overlay"></div>
+    <div class="dash-banner-content">
+      <div class="dash-banner-badge">${bannerBadge}</div>
+      <h1>${title}</h1>
+      <p>${sub}</p>
+      <div class="dash-banner-tagline">${bannerTagline}</div>
+    </div>
+  </div>` : `
   <div class="dash-head">
     <div>
       <h1>${title}</h1>
       <p>${sub}</p>
     </div>
-  </div>
+  </div>`;
+
+  return `<main class="dash">
+  ${banner}
   <nav class="tabs" aria-label="Dashboard sections">
     ${tabs.map(t => `<a class="${t[0] === cur ? 'on' : ''}" href="#/${base}/${t[0]}">${ic(t[2], 17)}<span>${t[1]}</span>${badges[t[0]] ? `<span class="cnt">${badges[t[0]]}</span>` : ''}</a>`).join('')}
   </nav>
