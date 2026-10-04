@@ -3773,10 +3773,11 @@ function bPost(u) {
 
 async function postReq() {
   if (S.isSubmitting) return;
-  if (!CURRENT_USER || CURRENT_USER.role !== 'buyer') {
-    return toast('Only buyers can do this.', 'err');
+  if (!CURRENT_USER) {
+    go('#/buyer/login');
+    return toast('Please log in to post a requirement.', 'err');
   }
-  const token = window.DFApi.getToken();
+  const token = (typeof localStorage !== 'undefined' && localStorage.getItem('df_buyer_token')) || window.DFApi.getToken();
   if (!token) {
     return handleSessionExpired();
   }
@@ -4286,10 +4287,11 @@ function updBuy(id) {
 
 async function placeOrder(id) {
   if (S.isSubmitting) return;
-  if (!CURRENT_USER || CURRENT_USER.role !== 'buyer') {
-    return toast('Only buyers can do this.', 'err');
+  if (!CURRENT_USER) {
+    go('#/buyer/login');
+    return toast('Please log in to place an order.', 'err');
   }
-  const token = window.DFApi.getToken();
+  const token = (typeof localStorage !== 'undefined' && localStorage.getItem('df_buyer_token')) || window.DFApi.getToken();
   if (!token) {
     return handleSessionExpired();
   }
@@ -4488,7 +4490,7 @@ function render() {
           <p class="sub" style="margin-top:14px">Loading DirectFarm...</p>
         </div>
       </main>`;
-    } else if (!u || u.role !== a) {
+    } else if (!u) {
       return go('#/' + a + '/login');
     } else {
       body = a === 'farmer' ? farmerApp(u, b || 'overview') : buyerApp(u, b || 'market');
