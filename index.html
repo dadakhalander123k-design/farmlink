@@ -617,44 +617,50 @@ section.s{padding:76px 0}
   margin:0;
 }
 
-/* Dashboard Welcome Banner */
+/* Dashboard Full-Bleed Photographic Canvas Hero */
 .dash-banner{
   position:relative;
-  border-radius:22px;
+  border-radius:24px;
   overflow:hidden;
   margin-bottom:24px;
   border:1px solid var(--latte);
   box-shadow:var(--shadow-sm);
-  min-height:240px;
+  min-height:300px;
   display:flex;
   align-items:center;
-  padding:36px 40px;
   background:var(--card);
 }
-.dash-banner-art{
+.dash-banner-bg{
   position:absolute;
   inset:0;
-  background-size:cover;
-  background-position:right 45%;
-  opacity:1;
-  transition:transform .6s ease;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:right 25%;
+  display:block;
+  pointer-events:none;
+  transition:transform .6s cubic-bezier(.16,1,.3,1);
 }
-.dash-banner:hover .dash-banner-art{
+.dash-banner:hover .dash-banner-bg{
   transform:scale(1.012);
 }
 .dash-banner-overlay{
   position:absolute;
   inset:0;
-  background:linear-gradient(90deg, rgba(232,220,198,0.92) 0%, rgba(232,220,198,0.70) 28%, rgba(232,220,198,0.18) 46%, transparent 62%);
+  background:linear-gradient(90deg, rgba(232,220,198,0.95) 0%, rgba(232,220,198,0.85) 34%, rgba(232,220,198,0.22) 58%, transparent 74%);
   pointer-events:none;
 }
 [data-theme="dark"] .dash-banner-overlay{
-  background:linear-gradient(90deg, rgba(24,19,16,0.94) 0%, rgba(24,19,16,0.75) 28%, rgba(24,19,16,0.20) 46%, transparent 62%);
+  background:linear-gradient(90deg, rgba(24,19,16,0.96) 0%, rgba(24,19,16,0.88) 34%, rgba(24,19,16,0.28) 58%, transparent 74%);
 }
 .dash-banner-content{
   position:relative;
-  z-index:1;
+  z-index:2;
   max-width:540px;
+  padding:36px 42px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
 }
 .dash-banner-badge{
   display:inline-flex;
@@ -665,21 +671,27 @@ section.s{padding:76px 0}
   color:var(--burgundy);
   text-transform:uppercase;
   letter-spacing:.05em;
-  background:rgba(183,168,154,.25);
-  padding:3px 10px;
-  border-radius:6px;
+  background:rgba(232,220,198,0.85);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  padding:4px 12px;
+  border-radius:8px;
   border:1px solid var(--latte);
+  width:fit-content;
+}
+[data-theme="dark"] .dash-banner-badge{
+  background:rgba(42,33,24,0.85);
 }
 .dash-banner h1{
   font-family:var(--serif);
-  font-size:clamp(22px,3vw,30px);
+  font-size:clamp(24px,3.2vw,34px);
   color:var(--burgundy);
-  margin:6px 0 4px;
-  line-height:1.2;
+  margin:2px 0;
+  line-height:1.15;
 }
-.dash-banner p{
+.dash-banner-sub{
   color:var(--ink2);
-  font-size:14px;
+  font-size:14.5px;
   margin:0;
   line-height:1.45;
 }
@@ -687,20 +699,53 @@ section.s{padding:76px 0}
   display:flex;
   align-items:center;
   gap:8px;
-  margin-top:8px;
+  margin-top:2px;
   font-size:13px;
   font-weight:600;
   color:var(--burgundy);
 }
 .dash-banner-tagline svg{color:var(--burgundy);flex:none}
-@media (max-width:640px){
-  .dash-banner{padding:26px 20px;min-height:220px}
-  .dash-banner-art{background-position:68% center}
+.dash-banner-actions{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-top:10px;
+  flex-wrap:wrap;
+}
+@media (max-width:768px){
+  .dash-banner{
+    min-height:260px;
+  }
+  .dash-banner-content{
+    padding:28px 24px;
+    max-width:100%;
+  }
+  .dash-banner-bg{
+    object-position:78% center;
+  }
   .dash-banner-overlay{
-    background:linear-gradient(180deg, rgba(232,220,198,0.94) 0%, rgba(232,220,198,0.72) 48%, rgba(232,220,198,0.20) 100%);
+    background:linear-gradient(90deg, rgba(232,220,198,0.95) 0%, rgba(232,220,198,0.85) 50%, rgba(232,220,198,0.40) 100%);
   }
   [data-theme="dark"] .dash-banner-overlay{
-    background:linear-gradient(180deg, rgba(24,19,16,0.95) 0%, rgba(24,19,16,0.78) 48%, rgba(24,19,16,0.25) 100%);
+    background:linear-gradient(90deg, rgba(24,19,16,0.96) 0%, rgba(24,19,16,0.88) 50%, rgba(24,19,16,0.45) 100%);
+  }
+}
+@media (max-width:540px){
+  .dash-banner{
+    min-height:300px;
+    align-items:flex-end;
+  }
+  .dash-banner-content{
+    padding:22px 18px;
+  }
+  .dash-banner-bg{
+    object-position:70% 20%;
+  }
+  .dash-banner-overlay{
+    background:linear-gradient(180deg, rgba(232,220,198,0.30) 0%, rgba(232,220,198,0.85) 45%, rgba(232,220,198,0.98) 100%);
+  }
+  [data-theme="dark"] .dash-banner-overlay{
+    background:linear-gradient(180deg, rgba(24,19,16,0.35) 0%, rgba(24,19,16,0.88) 45%, rgba(24,19,16,0.98) 100%);
   }
 }
 
@@ -3060,13 +3105,18 @@ function shell(u, base, tabs, cur, badges, title, sub, content) {
 
   const banner = isOverview ? `
   <div class="dash-banner">
-    <div class="dash-banner-art" style="background-image:url('${bannerImg}')"></div>
+    <img class="dash-banner-bg" src="${bannerImg}" alt="${base === 'farmer' ? 'Indian farmer harvesting fresh crops' : 'Fresh farm harvest and produce'}" loading="eager">
     <div class="dash-banner-overlay"></div>
     <div class="dash-banner-content">
       <div class="dash-banner-badge">${bannerBadge}</div>
       <h1>${title}</h1>
-      <p>${sub}</p>
+      <p class="dash-banner-sub">${sub}</p>
       <div class="dash-banner-tagline">${bannerTagline}</div>
+      <div class="dash-banner-actions">
+        ${base === 'farmer' 
+          ? `<a class="btn btn-primary btn-sm" href="#/farmer/add">${ic('plus', 15)} List produce</a><a class="btn btn-ghost btn-sm" href="#/farmer/buyers">${ic('spark', 15)} Buyer matches</a>` 
+          : `<a class="btn btn-primary btn-sm" href="#/buyer/post">${ic('plus', 15)} Post requirement</a><a class="btn btn-ghost btn-sm" href="#/buyer/orders">${ic('box', 15)} My orders</a>`}
+      </div>
     </div>
   </div>` : `
   <div class="dash-head">
