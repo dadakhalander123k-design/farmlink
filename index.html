@@ -625,30 +625,30 @@ section.s{padding:76px 0}
   margin-bottom:24px;
   border:1px solid var(--latte);
   box-shadow:var(--shadow-sm);
-  min-height:130px;
+  min-height:170px;
   display:flex;
   align-items:center;
-  padding:24px 28px;
+  padding:32px 36px;
   background:var(--card);
 }
 .dash-banner-art{
   position:absolute;
   inset:0;
   background-size:cover;
-  background-position:center 30%;
-  opacity:.88;
+  background-position:center right;
+  opacity:.92;
   transition:transform .6s ease;
 }
 .dash-banner:hover .dash-banner-art{
-  transform:scale(1.015);
+  transform:scale(1.018);
 }
 .dash-banner-overlay{
   position:absolute;
   inset:0;
-  background:linear-gradient(90deg, rgba(232,220,198,0.96) 0%, rgba(232,220,198,0.91) 50%, rgba(232,220,198,0.70) 100%);
+  background:linear-gradient(90deg, rgba(232,220,198,0.96) 0%, rgba(232,220,198,0.85) 38%, rgba(232,220,198,0.28) 72%, rgba(232,220,198,0.06) 100%);
 }
 [data-theme="dark"] .dash-banner-overlay{
-  background:linear-gradient(90deg, rgba(24,19,16,0.97) 0%, rgba(24,19,16,0.92) 50%, rgba(24,19,16,0.65) 100%);
+  background:linear-gradient(90deg, rgba(24,19,16,0.97) 0%, rgba(24,19,16,0.88) 38%, rgba(24,19,16,0.30) 72%, rgba(24,19,16,0.06) 100%);
 }
 .dash-banner-content{
   position:relative;
@@ -693,12 +693,12 @@ section.s{padding:76px 0}
 }
 .dash-banner-tagline svg{color:var(--burgundy);flex:none}
 @media (max-width:640px){
-  .dash-banner{padding:20px}
+  .dash-banner{padding:22px 20px;min-height:160px}
   .dash-banner-overlay{
-    background:linear-gradient(180deg, rgba(232,220,198,0.96) 0%, rgba(232,220,198,0.93) 100%);
+    background:linear-gradient(180deg, rgba(232,220,198,0.95) 0%, rgba(232,220,198,0.88) 55%, rgba(232,220,198,0.35) 100%);
   }
   [data-theme="dark"] .dash-banner-overlay{
-    background:linear-gradient(180deg, rgba(24,19,16,0.97) 0%, rgba(24,19,16,0.94) 100%);
+    background:linear-gradient(180deg, rgba(24,19,16,0.97) 0%, rgba(24,19,16,0.90) 55%, rgba(24,19,16,0.40) 100%);
   }
 }
 
@@ -2446,8 +2446,11 @@ const CROP_PHOTOS = {
   'Rice': 'assets/images/crop_rice.jpg',
   'Brinjal': 'assets/images/crop_brinjal.jpg',
   'Banana': 'assets/images/crop_banana.jpg',
-  'Okra': 'assets/images/crop_tomato.jpg',
-  'Mango': 'assets/images/crop_banana.jpg',
+  'Okra': 'assets/images/crop_okra.jpg',
+  'Mango': 'assets/images/crop_mango.jpg',
+  'Carrot': 'assets/images/crop_carrot.jpg',
+  'Spinach': 'assets/images/crop_spinach.jpg',
+  'Cauliflower': 'assets/images/crop_cauliflower.jpg',
   'Coconut': 'assets/images/crop_rice.jpg',
   'Turmeric': 'assets/images/crop_onion.jpg'
 };
@@ -3049,7 +3052,7 @@ async function doAuth(role) {
 /* ============ Dashboard Shell ============ */
 function shell(u, base, tabs, cur, badges, title, sub, content) {
   const isOverview = cur === tabs[0][0];
-  const bannerImg = base === 'farmer' ? 'assets/images/farm_harvest_journey.jpg' : 'assets/images/market_produce_display.jpg';
+  const bannerImg = base === 'farmer' ? 'assets/images/farmer_dashboard_hero.jpg' : 'assets/images/buyer_dashboard_hero.jpg';
   const bannerBadge = base === 'farmer' ? `${ic('leaf', 14)} Verified Regional Farmer Portal` : `${ic('store', 14)} Direct Farm-to-Buyer Marketplace`;
   const bannerTagline = base === 'farmer' ? `${ic('check', 15)} 0% Middleman Margin &bull; Live Mandi Price Benchmark` : `${ic('check', 15)} Direct Farm-Fresh Sourcing &bull; Verified Farm Quality`;
 
