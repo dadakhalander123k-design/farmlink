@@ -1461,54 +1461,669 @@ input:focus,select:focus,textarea:focus{
 .mobile-dock{
   display:none;
 }
-@media (max-width:768px){
-  body.has-dock{padding-bottom:calc(74px + env(safe-area-inset-bottom, 0px))}
+
+/* ==================== Phone & Small Screen Perfect Fit ==================== */
+@media (max-width: 768px){
+  :root{
+    padding-top:env(safe-area-inset-top, 0px);
+    padding-bottom:env(safe-area-inset-bottom, 0px);
+  }
+  html, body{
+    max-width:100vw;
+    overflow-x:hidden;
+  }
+  input, select, textarea{
+    font-size:16px !important; /* Prevents auto-zoom on iOS */
+    padding:11px 13px;
+  }
+  .wrap{
+    padding:0 16px;
+  }
+  
+  /* Compact Navigation */
+  .nav{
+    padding:10px 14px;
+    gap:8px;
+  }
+  .nav-links{
+    display:none;
+  }
+  .brand{
+    font-size:19px;
+    gap:8px;
+  }
+  .brand svg{
+    width:30px;
+    height:30px;
+  }
+  .nav-right{
+    gap:6px;
+  }
+  .theme-btn{
+    width:36px;
+    height:36px;
+    border-radius:10px;
+  }
+  .profile-btn{
+    padding:4px 8px 4px 4px;
+    gap:6px;
+    border-radius:12px;
+  }
+  .profile-btn b{
+    font-size:13.5px;
+    max-width:80px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .role-tag{
+    display:none;
+  }
+  .menu{
+    width:min(290px, calc(100vw - 28px));
+    right:0;
+    top:calc(100% + 8px);
+    border-radius:18px;
+  }
+  
+  /* Hero & Landing */
+  .hero{
+    padding:24px 0 36px;
+  }
+  .hero-grid{
+    grid-template-columns:1fr;
+    gap:24px;
+  }
+  .hero-chip{
+    font-size:12px;
+    padding:5px 12px;
+  }
+  .hero h1{
+    font-size:clamp(26px, 7.5vw, 38px);
+    line-height:1.15;
+  }
+  .hero p.lead{
+    font-size:14.5px;
+    line-height:1.5;
+  }
+  .hero .cta{
+    flex-direction:column;
+    width:100%;
+    gap:10px;
+    margin-top:4px;
+  }
+  .hero .cta .btn{
+    width:100%;
+    padding:12px 18px;
+    font-size:15px;
+    justify-content:center;
+  }
+  .hero-trust{
+    flex-direction:column;
+    gap:8px;
+    font-size:13px;
+    margin-top:8px;
+  }
+  .hero-visual{
+    margin-top:8px;
+  }
+  .hero-img-wrap{
+    border-radius:18px;
+    aspect-ratio:16/10;
+  }
+  .float-chip{
+    display:none;
+  }
+  
+  /* Stats Band */
+  .stats-band{
+    margin:12px 0 0;
+  }
+  .stats-band .stats{
+    grid-template-columns:1fr 1fr;
+  }
+  .stat{
+    padding:16px 12px;
+  }
+  .stat b{
+    font-size:clamp(22px, 5.5vw, 28px);
+  }
+  .stat span{
+    font-size:12px;
+    margin-top:4px;
+  }
+  
+  /* Sections */
+  section.s{
+    padding:40px 0;
+  }
+  .s-head{
+    margin-bottom:20px;
+  }
+  .s-head h2{
+    font-size:clamp(22px, 5.8vw, 30px);
+  }
+  .s-head p{
+    font-size:14.5px;
+    margin-top:6px;
+  }
+  
+  /* Categories Grid */
+  .cat-grid{
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .cat-card{
+    border-radius:14px;
+  }
+  .cat-card .cat-img{
+    height:85px;
+  }
+  .cat-card .cat-info{
+    padding:10px 12px;
+  }
+  .cat-card b{
+    font-size:14px;
+  }
+  .cat-card span{
+    font-size:11.5px;
+  }
+  
+  /* Supply Chain Flow on Phone */
+  .chain-row{
+    flex-direction:column;
+    align-items:stretch;
+    gap:6px;
+    padding:14px 16px;
+    text-align:center;
+    border-radius:16px;
+  }
+  .chain-row .sep{
+    transform:rotate(90deg);
+    display:inline-block;
+    font-size:16px;
+    margin:2px auto;
+  }
+  .chain-row .node{
+    width:100%;
+    text-align:center;
+    padding:7px 12px;
+    font-size:13.5px;
+  }
+  .chain-note{
+    margin-left:0;
+    margin-top:8px;
+    text-align:center;
+    font-size:13px;
+  }
+  
+  /* Roles Cards */
+  .roles{
+    grid-template-columns:1fr;
+    gap:18px;
+  }
+  .role{
+    border-radius:20px;
+  }
+  .role .role-photo{
+    height:180px;
+  }
+  .role .body{
+    padding:18px 16px;
+    gap:10px;
+  }
+  .role h3{
+    font-size:22px;
+  }
+  .role ul li{
+    font-size:14px;
+  }
+  .role .btn{
+    width:100%;
+    justify-content:center;
+  }
+  
+  /* Features Grid */
+  .feat{
+    grid-template-columns:1fr;
+    border-radius:18px;
+  }
+  .feat > div{
+    padding:20px 16px;
+    border-right:0 !important;
+    border-bottom:1px solid var(--latte) !important;
+  }
+  .feat > div:last-child{
+    border-bottom:0 !important;
+  }
+  .feat .ficon{
+    width:38px;
+    height:38px;
+    margin-bottom:12px;
+  }
+  .feat h3{
+    font-size:18px;
+  }
+  .feat p{
+    font-size:14px;
+  }
+  
+  /* Steps */
+  .steps{
+    grid-template-columns:1fr;
+    gap:14px;
+  }
+  .step{
+    padding-left:48px;
+  }
+  .step::before{
+    position:absolute;
+    left:0;
+    top:0;
+    width:34px;
+    height:34px;
+    font-size:14px;
+    border-radius:10px;
+  }
+  .step h4{
+    font-size:17px;
+  }
+  .step p{
+    font-size:13.5px;
+  }
+  
+  /* CTA Banner */
+  .cta-band{
+    padding:28px 18px;
+    border-radius:20px;
+  }
+  .cta-band h2{
+    font-size:23px;
+  }
+  .cta-band p{
+    font-size:14.5px;
+    margin-top:8px;
+  }
+  .cta-band .cta{
+    flex-direction:column;
+    width:100%;
+    gap:10px;
+    margin-top:18px;
+  }
+  .cta-band .cta .btn{
+    width:100%;
+    justify-content:center;
+  }
+  
+  /* Footer */
+  footer.ft{
+    padding:32px 0 calc(40px + env(safe-area-inset-bottom, 0px));
+    margin-top:40px;
+  }
+  footer .row{
+    flex-direction:column;
+    gap:24px;
+  }
+  
+  /* Auth Page */
+  .auth{
+    grid-template-columns:1fr;
+    min-height:auto;
+  }
+  .auth-art{
+    min-height:150px;
+    padding:20px 16px;
+    justify-content:center;
+  }
+  .auth-art h2{
+    font-size:19px;
+    max-width:100%;
+  }
+  .auth-art ul{
+    display:none; /* Keep form visible without scrolling */
+  }
+  .auth-form{
+    padding:16px 12px;
+  }
+  .auth-card{
+    padding:20px 16px;
+    border-radius:20px;
+    width:100%;
+  }
+  .auth-card h1{
+    font-size:23px;
+    margin:12px 0 4px;
+  }
+  .auth-card .sub{
+    font-size:13.5px;
+    margin-bottom:14px;
+  }
+  
+  /* Dashboard Shell */
+  body.has-dock{
+    padding-bottom:calc(76px + env(safe-area-inset-bottom, 0px));
+  }
+  .dash{
+    padding:14px 12px calc(80px + env(safe-area-inset-bottom, 0px));
+  }
+  .dash-head{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:6px;
+    margin-bottom:14px;
+  }
+  .dash-head h1{
+    font-size:22px;
+  }
+  .dash-head p{
+    font-size:13px;
+    margin-top:2px;
+  }
+  .tabs{
+    padding:4px;
+    gap:4px;
+    border-radius:14px;
+    margin-bottom:16px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .tabs a{
+    padding:7px 12px;
+    font-size:13px;
+    border-radius:10px;
+  }
+  
+  /* KPI & Panels */
+  .cards4{
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:16px;
+  }
+  .kpi{
+    padding:12px 10px;
+    border-radius:14px;
+  }
+  .kpi span{
+    font-size:11.5px;
+    gap:4px;
+  }
+  .kpi b{
+    font-size:20px;
+    margin-top:4px;
+    word-break:break-word;
+  }
+  .panel{
+    padding:16px 14px;
+    border-radius:18px;
+    margin-bottom:14px;
+  }
+  .panel h3{
+    font-size:19px;
+  }
+  .panel .sub{
+    font-size:13px;
+    margin-bottom:14px;
+  }
+  .grid2{
+    grid-template-columns:1fr;
+    gap:14px;
+  }
+  
+  /* Marketplace */
+  .mandi-ticker{
+    padding:8px 12px;
+    font-size:12.5px;
+    margin-bottom:14px;
+    border-radius:12px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .toolbar{
+    flex-direction:column;
+    align-items:stretch;
+    gap:8px;
+    margin-bottom:14px;
+  }
+  .search{
+    min-width:100%;
+    width:100%;
+  }
+  .toolbar select{
+    width:100%;
+    padding:10px 14px;
+  }
+  .chips{
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    padding-bottom:6px;
+    margin-bottom:14px;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .chips::-webkit-scrollbar{
+    display:none;
+  }
+  .chip{
+    flex:none;
+    font-size:13px;
+    padding:6px 12px;
+    border-radius:10px;
+  }
+  .pgrid{
+    grid-template-columns:1fr;
+    gap:14px;
+  }
+  .pcard{
+    border-radius:18px;
+  }
+  .pcard .pic{
+    height:180px;
+  }
+  .pbody{
+    padding:14px 14px 16px;
+    gap:8px;
+  }
+  .ptop h3{
+    font-size:20px;
+  }
+  .price{
+    font-size:22px;
+  }
+  .dropzone{
+    padding:20px 14px;
+    border-radius:16px;
+  }
+  .two{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+  
+  /* Order Management & Responsive Timeline */
+  .orderbox{
+    padding:16px 14px;
+    border-radius:18px;
+    margin-bottom:14px;
+  }
+  .orderbox .top{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:6px;
+  }
+  .timeline{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    margin:16px 0 14px 6px;
+    padding-left:28px;
+    position:relative;
+  }
+  .timeline::before{
+    content:"";
+    position:absolute;
+    left:7px;
+    top:8px;
+    bottom:8px;
+    width:2px;
+    background:var(--soft);
+    z-index:1;
+  }
+  .tl{
+    padding-top:0;
+    text-align:left;
+    font-size:13px;
+    position:relative;
+  }
+  .tl::after{
+    display:none;
+  }
+  .tl::before{
+    top:2px;
+    left:-28px;
+    width:16px;
+    height:16px;
+    transform:none;
+    z-index:2;
+  }
+  .tl-time{
+    font-size:11px;
+    margin-top:2px;
+  }
+  .actions{
+    gap:8px;
+  }
+  .actions .btn{
+    flex:1 1 auto;
+  }
+  
+  /* Match Cards & Intelligence */
+  .mcard{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:12px;
+    padding:14px;
+    border-radius:16px;
+  }
+  .fbars{
+    height:150px;
+    gap:6px;
+    margin:12px 0;
+  }
+  .fb i{
+    max-width:36px;
+    border-radius:6px 6px 3px 3px;
+  }
+  .fb b{
+    font-size:11px;
+  }
+  .fb em{
+    font-size:10px;
+  }
+  
+  /* Native Mobile Bottom Sheet Modals */
+  .overlay{
+    padding:0;
+    align-items:flex-end;
+  }
+  .modal{
+    width:100%;
+    max-height:90vh;
+    border-radius:24px 24px 0 0;
+    border-bottom:0;
+    margin:0;
+    animation:sheetUp .24s cubic-bezier(.16,1,.3,1);
+    box-shadow:0 -8px 32px rgba(42,33,24,0.18);
+  }
+  .modal::before{
+    content:"";
+    display:block;
+    width:40px;
+    height:4.5px;
+    border-radius:999px;
+    background:var(--latte);
+    margin:10px auto 2px;
+    opacity:.7;
+  }
+  .modal .mhead{
+    height:150px;
+  }
+  .modal .mbody{
+    padding:16px 16px calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+  .modal .x{
+    top:12px;
+    right:12px;
+    width:34px;
+    height:34px;
+  }
+  .qty button{
+    width:44px;
+    height:44px;
+    font-size:22px;
+    border-radius:12px;
+  }
+  .qty input{
+    width:80px;
+    height:44px;
+    font-size:16px;
+  }
+  
+  /* Floating Mobile Dock */
   .mobile-dock{
     display:flex;
     position:fixed;
     bottom:0;
     left:0;
     right:0;
-    background:color-mix(in srgb, var(--bg) 95%, transparent);
+    background:color-mix(in srgb, var(--card-elevated) 94%, transparent);
     backdrop-filter:blur(20px);
     -webkit-backdrop-filter:blur(20px);
     border-top:1px solid var(--latte);
-    padding:8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+    padding:6px 8px calc(8px + env(safe-area-inset-bottom, 0px));
     justify-content:space-around;
     align-items:center;
     z-index:90;
-    box-shadow:0 -4px 20px rgba(42,33,24,0.08);
+    box-shadow:0 -4px 20px rgba(42,33,24,0.1);
   }
   .mobile-dock a{
     display:flex;
     flex-direction:column;
     align-items:center;
-    gap:4px;
+    justify-content:center;
+    gap:3px;
     font-size:11px;
     font-weight:600;
     color:var(--ink2);
     text-decoration:none;
-    padding:4px 8px;
-    border-radius:10px;
-    transition:color .15s, transform .15s;
+    padding:5px 10px;
+    border-radius:12px;
+    transition:color .15s, transform .15s, background .15s;
     position:relative;
+    min-width:48px;
+    min-height:44px;
   }
   .mobile-dock a.on{
     color:var(--burgundy);
     font-weight:700;
+    background:var(--soft);
   }
-  .mobile-dock a svg{width:20px;height:20px}
+  .mobile-dock a svg{
+    width:20px;
+    height:20px;
+  }
   .mobile-dock .dock-badge{
     position:absolute;
-    top:2px;
-    right:4px;
-    background:var(--terra);
+    top:3px;
+    right:6px;
+    background:var(--burgundy);
     color:#fff;
     font-size:10px;
     font-weight:700;
     padding:1px 5px;
     border-radius:999px;
   }
+}
+
+@keyframes sheetUp{
+  from{transform:translateY(100%)}
+  to{transform:translateY(0)}
 }
 </style>
 
@@ -1863,10 +2478,26 @@ async function logout() {
 
 /* ============ Navigation & Footer ============ */
 function navbar(u) {
-  const right = u ? `<button type="button" class="profile-btn" onclick="toggleMenu(event)" aria-haspopup="true"><span class="avatar">${esc((u.name||'U')[0].toUpperCase())}</span><b>${esc(u.name)}</b><span class="role-tag">${u.role === 'farmer' ? 'Farmer' : 'Buyer'}</span>${ic('down', 14)}</button>
-  <div class="menu" id="menu"><div class="who"><b>${esc(u.name)}</b><span>${esc(u.org)}</span><span>${esc(u.loc.label)}</span></div>
-  <a href="#/${u.role}">${ic('home')} My dashboard</a><button type="button" onclick="logout()">${ic('logout')} Log out</button></div>`
-  : `<a class="btn btn-ghost btn-sm" href="#/farmer/login">Farmer login</a><a class="btn btn-primary btn-sm" href="#/buyer/login">Buyer login</a>`;
+  const profileButton = u ? `<button type="button" class="profile-btn" onclick="toggleMenu(event)" aria-haspopup="true" aria-label="Account menu for ${esc(u.name)}" title="Profile: ${esc(u.name)} (${u.role === 'farmer' ? 'Farmer' : 'Buyer'})">
+    <span class="avatar">${esc((u.name||'U')[0].toUpperCase())}</span>
+    <b>${esc(u.name)}</b>
+    <span class="role-tag">${u.role === 'farmer' ? 'Farmer' : 'Buyer'}</span>
+    ${ic('down', 14)}
+  </button>
+  <div class="menu" id="menu">
+    <div class="who">
+      <b>${esc(u.name)}</b>
+      <span>${esc(u.org)}</span>
+      <span>${esc(u.loc.label)} · ${u.role === 'farmer' ? 'Farmer Account' : 'Buyer Account'}</span>
+    </div>
+    <a href="#/${u.role}">${ic('home')} My dashboard</a>
+    <button type="button" onclick="openModal('profile_auth')">${ic('user')} Switch / Sign in</button>
+    <button type="button" onclick="logout()">${ic('logout')} Log out</button>
+  </div>`
+  : `<button type="button" class="profile-btn nav-profile-btn" onclick="openModal('profile_auth')" aria-label="Profile and account login" title="Login with Unique ID and Password">
+      <span class="avatar" style="background:var(--burgundy);color:var(--onolive)">${ic('user', 18)}</span>
+      <b style="font-size:13.5px">Sign in</b>
+    </button>`;
 
   const links = u
     ? `<a href="#/${u.role}">${ic('home', 15)} Dashboard</a><a onclick="goSec('categories')">Produce</a><a onclick="goSec('how')">How it works</a><a onclick="goSec('smart')">Smart tools</a>`
@@ -1874,7 +2505,7 @@ function navbar(u) {
 
   return `<header class="nav"><a class="brand" href="#/">${logoSVG}DirectFarm</a>
   <nav class="nav-links" aria-label="Primary">${links}</nav>
-  <div class="nav-right"><button type="button" class="theme-btn" onclick="toggleTheme()" aria-label="Toggle light and dark theme">${ic('moon', 17)}</button>${right}</div></header>`;
+  <div class="nav-right"><button type="button" class="theme-btn" onclick="toggleTheme()" aria-label="Toggle light and dark theme">${ic('moon', 17)}</button>${profileButton}</div></header>`;
 }
 
 function footer() {
@@ -3390,10 +4021,55 @@ function closeModal() {
 
 function modalHTML() {
   const m = S.modal, u = CURRENT_USER;
-  if (!m || !u) return '';
+  if (!m) return '';
+  if (m.type !== 'profile_auth' && !u) return '';
   let inner = '';
 
-  if (m.type === 'buy') {
+  if (m.type === 'profile_auth') {
+    inner = `<div class="mbody" style="max-width:440px;margin:0 auto">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
+        <div class="avatar" style="width:48px;height:48px;border-radius:14px;font-size:22px;flex:none;background:var(--burgundy);color:var(--onolive)">
+          ${ic('user', 24)}
+        </div>
+        <div>
+          <h2 style="font-size:24px;color:var(--burgundy);margin:0">Account Sign-In</h2>
+          <p class="small" style="margin-top:2px">Enter your Unique ID / Email &amp; Password to access your respective account.</p>
+        </div>
+      </div>
+
+      <div class="seg" style="margin-bottom:16px" id="profRoleSeg">
+        <button type="button" class="${selectedProfileRole === 'auto' ? 'on' : ''}" onclick="setProfileRole(this, 'auto')">Auto-Detect Role</button>
+        <button type="button" class="${selectedProfileRole === 'farmer' ? 'on' : ''}" onclick="setProfileRole(this, 'farmer')">Farmer</button>
+        <button type="button" class="${selectedProfileRole === 'buyer' ? 'on' : ''}" onclick="setProfileRole(this, 'buyer')">Buyer</button>
+      </div>
+
+      <div id="profileAuthErr" class="err" hidden></div>
+
+      <form id="profileAuthForm" onsubmit="event.preventDefault();doProfileAuthLogin()">
+        <div class="field">
+          <label for="p_uid">Unique ID / Email address</label>
+          <input id="p_uid" type="text" autocomplete="username" placeholder="e.g. farmer@example.com or unique ID" required>
+        </div>
+        <div class="field">
+          <label for="p_pwd">Password</label>
+          <input id="p_pwd" type="password" autocomplete="current-password" placeholder="Enter your account password" required>
+        </div>
+        <button type="submit" id="profLoginBtn" class="btn btn-primary btn-lg" style="width:100%;margin-top:10px">
+          ${ic('user', 18)} Sign in to Account
+        </button>
+      </form>
+
+      <div class="hr"></div>
+
+      <div style="text-align:center" class="small">
+        <span style="color:var(--ink2)">Don't have an account yet?</span>
+        <div style="display:flex;justify-content:center;gap:10px;margin-top:8px;flex-wrap:wrap">
+          <a class="btn btn-light btn-sm" href="#/farmer/login" onclick="closeModal();S.authMode='signup'">Create Farmer account</a>
+          <a class="btn btn-light btn-sm" href="#/buyer/login" onclick="closeModal();S.authMode='signup'">Create Buyer account</a>
+        </div>
+      </div>
+    </div>`;
+  } else if (m.type === 'buy') {
     const l = ACTIVE_LISTINGS.find(x => x.id === m.id);
     if (!l) return '';
     const mr = marketRef(l.crop, l.id), b = priceBadge(l.price, mr.ref), d = km(u.loc, l.loc);
@@ -3487,6 +4163,91 @@ function modalHTML() {
       ${inner}
     </div>
   </div>`;
+}
+
+let selectedProfileRole = 'auto';
+function setProfileRole(btn, role) {
+  selectedProfileRole = role;
+  const seg = document.querySelectorAll('#profRoleSeg button');
+  seg.forEach(b => b.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+}
+
+async function doProfileAuthLogin() {
+  if (S.isSubmitting) return;
+  const uidInput = $('#p_uid');
+  const pwdInput = $('#p_pwd');
+  const errBox = $('#profileAuthErr');
+  const btn = $('#profLoginBtn');
+
+  const uid = (uidInput ? uidInput.value : '').trim().toLowerCase();
+  const pwd = pwdInput ? pwdInput.value : '';
+
+  const showErr = msg => {
+    if (errBox) {
+      errBox.textContent = msg;
+      errBox.hidden = false;
+    }
+    toast(msg, 'err');
+  };
+
+  if (!uid) return showErr('Please enter your Unique ID or Email.');
+  if (!pwd) return showErr('Please enter your password.');
+
+  S.isSubmitting = true;
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner"></span> Authenticating...`;
+  }
+  if (errBox) errBox.hidden = true;
+
+  try {
+    let res = null;
+    let targetRole = selectedProfileRole;
+
+    if (targetRole === 'auto') {
+      try {
+        res = await window.DFApi.login({ email: uid, password: pwd, role: 'farmer' });
+        targetRole = 'farmer';
+      } catch (fErr) {
+        const msg = (fErr.message || '').toLowerCase();
+        if (msg.includes('buyer') || msg.includes('not registered as a farmer') || msg.includes('wrong role') || msg.includes('role')) {
+          res = await window.DFApi.login({ email: uid, password: pwd, role: 'buyer' });
+          targetRole = 'buyer';
+        } else {
+          try {
+            res = await window.DFApi.login({ email: uid, password: pwd, role: 'buyer' });
+            targetRole = 'buyer';
+          } catch (bErr) {
+            throw fErr;
+          }
+        }
+      }
+    } else {
+      res = await window.DFApi.login({ email: uid, password: pwd, role: targetRole });
+    }
+
+    if (!res || !res.user) {
+      throw new Error('Authentication succeeded but user profile could not be loaded.');
+    }
+
+    CURRENT_USER = res.user;
+    currentAuthState = AUTH_STATE.AUTHENTICATED;
+    closeModal();
+    toast(`Welcome back, ${CURRENT_USER.name}! Logged into ${CURRENT_USER.role} account.`);
+    await reloadAppData();
+    go('#/' + CURRENT_USER.role);
+    startPolling();
+  } catch (err) {
+    console.error('Profile login error:', err);
+    showErr(err.message || 'Login failed. Please check your credentials.');
+  } finally {
+    S.isSubmitting = false;
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = `${ic('user', 18)} Sign in to Account`;
+    }
+  }
 }
 
 let starVal = 0;
