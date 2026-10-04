@@ -1341,6 +1341,108 @@ input:focus,select:focus,textarea:focus{
 }
 @keyframes skeleton-shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* ==================== Award-Winning UI Enhancements ==================== */
+.mandi-ticker{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:10px 18px;
+  margin-bottom:22px;
+  font-size:13.5px;
+  box-shadow:var(--shadow-sm);
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.mandi-ticker::-webkit-scrollbar{display:none}
+.mandi-ticker-label{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-weight:700;
+  color:var(--olive);
+  white-space:nowrap;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  font-size:12px;
+}
+:root[data-theme="dark"] .mandi-ticker-label{color:#9fd489}
+.mandi-ticker-track{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  white-space:nowrap;
+}
+.mandi-ticker-item{color:var(--ink);font-weight:600}
+.mandi-ticker-item small{color:var(--ink2);font-weight:500;font-size:11.5px;margin-left:4px}
+.mandi-ticker-sep{color:var(--latte);opacity:.7}
+
+@keyframes pulseNode{
+  0%{box-shadow:0 0 0 0 rgba(63,91,46,0.6)}
+  70%{box-shadow:0 0 0 10px rgba(63,91,46,0)}
+  100%{box-shadow:0 0 0 0 rgba(63,91,46,0)}
+}
+.tl.now::before{
+  animation:pulseNode 2s infinite ease-in-out;
+}
+
+/* Floating Mobile Navigation Dock */
+.mobile-dock{
+  display:none;
+}
+@media (max-width:768px){
+  body.has-dock{padding-bottom:calc(74px + env(safe-area-inset-bottom, 0px))}
+  .mobile-dock{
+    display:flex;
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    background:color-mix(in srgb, var(--card-elevated) 92%, transparent);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    border-top:1px solid var(--line);
+    padding:8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+    justify-content:space-around;
+    align-items:center;
+    z-index:90;
+    box-shadow:0 -4px 20px rgba(0,0,0,0.06);
+  }
+  .mobile-dock a{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+    font-size:11px;
+    font-weight:600;
+    color:var(--ink2);
+    text-decoration:none;
+    padding:4px 8px;
+    border-radius:10px;
+    transition:color .15s, transform .15s;
+    position:relative;
+  }
+  .mobile-dock a.on{
+    color:var(--olive);
+    font-weight:700;
+  }
+  :root[data-theme="dark"] .mobile-dock a.on{color:#9fd489}
+  .mobile-dock a svg{width:20px;height:20px}
+  .mobile-dock .dock-badge{
+    position:absolute;
+    top:2px;
+    right:4px;
+    background:var(--terra);
+    color:#fff;
+    font-size:10px;
+    font-weight:700;
+    padding:1px 5px;
+    border-radius:999px;
+  }
+}
 </style>
 
 <!-- Supabase SDK + Configuration + Pure Domain Logic + Data Access Layer -->
@@ -2050,6 +2152,9 @@ function shell(u, base, tabs, cur, badges, title, sub, content) {
     ${tabs.map(t => `<a class="${t[0] === cur ? 'on' : ''}" href="#/${base}/${t[0]}">${ic(t[2], 17)}<span>${t[1]}</span>${badges[t[0]] ? `<span class="cnt">${badges[t[0]]}</span>` : ''}</a>`).join('')}
   </nav>
   ${content}
+  <nav class="mobile-dock" aria-label="Quick mobile navigation">
+    ${tabs.slice(0, 5).map(t => `<a class="${t[0] === cur ? 'on' : ''}" href="#/${base}/${t[0]}">${ic(t[2], 20)}<span>${t[1].split(' ')[0]}</span>${badges[t[0]] ? `<span class="dock-badge">${badges[t[0]]}</span>` : ''}</a>`).join('')}
+  </nav>
 </main>`;
 }
 
@@ -2305,10 +2410,33 @@ function updHint() {
   const c = $('#p_crop') ? $('#p_crop').value : S.fAdd.crop;
   const p = parseFloat($('#p_price') ? $('#p_price').value : S.fAdd.price) || 0;
   const m = marketRef(c);
-  let h = `Market reference for ${c}: <b>${inr(m.ref)}/kg</b> (${m.src}).`;
+  let demandStatus = 'Balanced market rate';
+  let demandClass = 'b-neutral';
+
+  if (p > 0) {
+    const diff = (p - m.ref) / m.ref;
+    if (diff < -0.15) {
+      demandStatus = '🔥 High Demand Zone · Fast Buyer Clearance';
+      demandClass = 'b-good';
+    } else if (diff <= 0.10) {
+      demandStatus = '⚖️ Optimal Mandi Equilibrium · Highly Competitive';
+      demandClass = 'b-good';
+    } else {
+      demandStatus = '✨ Premium Grade Pricing · Verified Quality';
+      demandClass = 'b-warn';
+    }
+  }
+
+  let h = `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:6px">
+    <span>${ic('spark', 15)} <b>Smart Price Advisor</b></span>
+    <span class="badge ${demandClass}">${demandStatus}</span>
+  </div>
+  <div>Market reference for ${c}: <b>${inr(m.ref)}/kg</b> (${m.src}).`;
   if (p > 0) {
     const b = priceBadge(p, m.ref);
-    h += ` Your price is <b>${Math.abs(Math.round(b.d * 100))}% ${b.d < 0 ? 'below' : 'above'}</b> the reference: <b>${b.t}</b>.`;
+    h += ` Your price is <b>${Math.abs(Math.round(b.d * 100))}% ${b.d < 0 ? 'below' : 'above'}</b> the reference: <span class="badge ${b.c}">${b.t}</span></div>`;
+  } else {
+    h += `</div>`;
   }
   const el = $('#p_hint');
   if (el) el.innerHTML = h;
@@ -2776,13 +2904,16 @@ function fRoute(u, orders) {
       <p class="sub">2-Opt nearest-first delivery itinerary starting from ${esc(origin.label)}.</p>
       ${route.map((r, i) => {
         cum += r.leg;
-        return `<div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--soft)">
-          <span class="avatar" style="flex:none">${i+1}</span>
-          <div>
-            <b>${esc(r.label)}</b>
-            <div class="small">${esc(r.o.buyerOrg || r.o.buyerName)} · ${esc(r.o.crop)} ${r.o.qty} kg</div>
-            <div class="small">${r.leg.toFixed(0)} km leg · ${cum.toFixed(0)} km accumulated</div>
+        return `<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--soft)">
+          <div style="display:flex;gap:12px;align-items:center">
+            <span class="avatar" style="flex:none">${i+1}</span>
+            <div>
+              <b>${esc(r.label)}</b>
+              <div class="small">${esc(r.o.buyerOrg || r.o.buyerName)} · ${esc(r.o.crop)} ${r.o.qty} kg</div>
+              <div class="small">${r.leg.toFixed(0)} km leg · ${cum.toFixed(0)} km accumulated</div>
+            </div>
           </div>
+          <a class="btn btn-light btn-sm" style="flex:none" href="https://www.google.com/maps/dir/?api=1&destination=${r.loc.lat},${r.loc.lng}" target="_blank" rel="noopener">${ic('pin', 13)} Directions</a>
         </div>`;
       }).join('')}
       <div class="note" style="margin-top:16px">${ic('spark', 15)} Estimated fuel cost: ${inr(fuel)} at ₹12/km. Average road speed calculated at 40 km/h with 15 mins per stop.</div>
@@ -2867,8 +2998,17 @@ async function loadMoreListings() {
 function bMarket(u) {
   const act = ACTIVE_LISTINGS;
   const cnt = c => act.filter(l => l.crop === c).length;
+  const tickerItems = CROP_NAMES.slice(0, 7).map(c => {
+    const m = marketRef(c);
+    return `<span class="mandi-ticker-item">${c}: <b>₹${m.ref}/kg</b><small>(${m.src.split(' ')[0]})</small></span>`;
+  }).join('<span class="mandi-ticker-sep">•</span>');
 
-  return `<div class="toolbar">
+  return `<div class="mandi-ticker" role="region" aria-label="Live Mandi Benchmark Rates">
+    <div class="mandi-ticker-label">${ic('trend', 14)} Live Mandi Rates</div>
+    <div class="mandi-ticker-track">${tickerItems}</div>
+  </div>
+
+  <div class="toolbar">
     <div class="search">
       ${ic('search', 18)}
       <input id="mq" value="${esc(S.q)}" placeholder="Search crop, farm town or grower..." aria-label="Search produce" oninput="S.q=this.value;$('#mgrid').innerHTML=mgrid()">
@@ -3494,6 +3634,7 @@ function render() {
 
   $('#app').innerHTML = navbar(u) + body + (hideFooter ? '' : footer()) + modalHTML();
   document.title = 'DirectFarm – From farm to buyer, direct and fair';
+  document.body.classList.toggle('has-dock', Boolean(u && (a === 'farmer' || a === 'buyer') && b !== 'login'));
 
   if (S.modal && S.modal.type === 'buy') updBuy(S.modal.id);
   if (a === 'farmer' && b === 'add') {
