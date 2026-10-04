@@ -620,16 +620,17 @@ section.s{padding:76px 0}
 /* Dashboard Full-Screen Photographic Canvas Hero */
 .dash-banner{
   position:relative;
-  border-radius:24px;
+  width:100%;
   overflow:hidden;
-  margin-bottom:32px;
-  border:1px solid var(--latte);
-  box-shadow:var(--shadow-sm);
-  min-height:78vh;
-  height:clamp(540px, 78vh, 760px);
+  min-height:72vh;
+  height:clamp(520px, 75vh, 760px);
   display:flex;
   align-items:center;
-  background:var(--card);
+  background:#0E0B09;
+  border-radius:0;
+  border:none;
+  margin:0;
+  border-bottom:1px solid rgba(255,255,255,0.08);
 }
 .dash-banner-bg{
   position:absolute;
@@ -640,6 +641,8 @@ section.s{padding:76px 0}
   object-position:center;
   display:block;
   pointer-events:none;
+  filter:contrast(1.04) brightness(0.98);
+  image-rendering:-webkit-optimize-contrast;
   transition:transform .6s cubic-bezier(.16,1,.3,1);
 }
 .dash-banner:hover .dash-banner-bg{
@@ -648,107 +651,180 @@ section.s{padding:76px 0}
 .dash-banner-overlay{
   position:absolute;
   inset:0;
-  background:linear-gradient(90deg, rgba(232,220,198,0.95) 0%, rgba(232,220,198,0.82) 32%, rgba(232,220,198,0.20) 56%, transparent 74%);
+  background:linear-gradient(90deg, rgba(8,6,5,0.88) 0%, rgba(8,6,5,0.62) 42%, rgba(8,6,5,0.18) 72%, transparent 100%),
+             linear-gradient(180deg, rgba(8,6,5,0.4) 0%, transparent 35%, rgba(8,6,5,0.65) 100%);
   pointer-events:none;
 }
 [data-theme="dark"] .dash-banner-overlay{
-  background:linear-gradient(90deg, rgba(24,19,16,0.96) 0%, rgba(24,19,16,0.86) 32%, rgba(24,19,16,0.25) 56%, transparent 74%);
+  background:linear-gradient(90deg, rgba(6,4,3,0.92) 0%, rgba(6,4,3,0.68) 42%, rgba(6,4,3,0.22) 72%, transparent 100%),
+             linear-gradient(180deg, rgba(6,4,3,0.45) 0%, transparent 35%, rgba(6,4,3,0.7) 100%);
+}
+.dash-banner-inner{
+  max-width:1200px;
+  width:100%;
+  margin:0 auto;
+  padding:48px 24px;
+  position:relative;
+  z-index:2;
 }
 .dash-banner-content{
   position:relative;
   z-index:2;
-  max-width:560px;
-  padding:44px 48px;
+  max-width:620px;
   display:flex;
   flex-direction:column;
-  gap:10px;
+  gap:16px;
 }
 .dash-banner-badge{
   display:inline-flex;
   align-items:center;
-  gap:6px;
-  font-size:12px;
+  gap:8px;
+  font-size:12.5px;
   font-weight:700;
-  color:var(--burgundy);
+  color:#FFFDFC;
   text-transform:uppercase;
   letter-spacing:.05em;
-  background:rgba(232,220,198,0.85);
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
-  padding:5px 14px;
-  border-radius:8px;
-  border:1px solid var(--latte);
+  background:rgba(255,255,255,0.14);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  padding:6px 14px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.25);
   width:fit-content;
+  box-shadow:0 2px 10px rgba(0,0,0,0.25);
 }
 [data-theme="dark"] .dash-banner-badge{
-  background:rgba(42,33,24,0.85);
+  background:rgba(255,255,255,0.12);
+  border-color:rgba(255,255,255,0.2);
 }
 .dash-banner h1{
-  font-family:var(--serif);
-  font-size:clamp(28px,3.8vw,42px);
-  color:var(--burgundy);
-  margin:4px 0 2px;
-  line-height:1.15;
+  font-family:var(--sans);
+  font-weight:800;
+  font-size:clamp(36px, 5.2vw, 56px);
+  color:#FFFDFC !important;
+  margin:0;
+  line-height:1.1;
+  letter-spacing:-.02em;
+  text-shadow:0 2px 18px rgba(0,0,0,0.7);
 }
 .dash-banner-sub{
-  color:var(--ink2);
-  font-size:15.5px;
+  color:rgba(255,255,255,0.92) !important;
+  font-size:clamp(16px, 1.8vw, 19px);
   margin:0;
-  line-height:1.45;
+  line-height:1.5;
+  text-shadow:0 1px 8px rgba(0,0,0,0.55);
 }
 .dash-banner-tagline{
   display:flex;
   align-items:center;
   gap:8px;
-  margin-top:4px;
-  font-size:13.5px;
+  font-size:14px;
   font-weight:600;
-  color:var(--burgundy);
+  color:#E8DCC6 !important;
+  text-shadow:0 1px 6px rgba(0,0,0,0.55);
 }
-.dash-banner-tagline svg{color:var(--burgundy);flex:none}
+.dash-banner-tagline svg{
+  color:#E8DCC6 !important;
+  flex:none;
+}
 .dash-banner-actions{
   display:flex;
   align-items:center;
-  gap:12px;
-  margin-top:14px;
+  gap:14px;
+  margin-top:8px;
   flex-wrap:wrap;
+}
+.btn-hero-primary{
+  background:linear-gradient(135deg, #8B3A44 0%, #722F37 100%);
+  color:#FFFDFC !important;
+  border:1px solid rgba(255,255,255,0.3);
+  padding:13px 26px;
+  border-radius:12px;
+  font-weight:700;
+  font-size:15px;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.25);
+  transition:transform .2s, box-shadow .2s, background .2s;
+  text-decoration:none;
+}
+.btn-hero-primary:hover{
+  background:linear-gradient(135deg, #A0424D 0%, #853740 100%);
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.5);
+  color:#FFFDFC !important;
+}
+.btn-hero-secondary{
+  background:rgba(255,255,255,0.15);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,0.35);
+  color:#FFFDFC !important;
+  padding:13px 24px;
+  border-radius:12px;
+  font-weight:600;
+  font-size:15px;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  box-shadow:0 4px 16px rgba(0,0,0,0.25);
+  transition:transform .2s, background .2s, border-color .2s;
+  text-decoration:none;
+}
+.btn-hero-secondary:hover{
+  background:rgba(255,255,255,0.25);
+  border-color:rgba(255,255,255,0.55);
+  transform:translateY(-2px);
+  color:#FFFDFC !important;
 }
 @media (max-width:768px){
   .dash-banner{
-    min-height:65vh;
-    height:clamp(460px, 65vh, 600px);
+    min-height:58vh;
+    height:clamp(440px, 58vh, 560px);
+  }
+  .dash-banner-inner{
+    padding:32px 20px;
   }
   .dash-banner-content{
-    padding:32px 24px;
     max-width:100%;
+    gap:12px;
   }
   .dash-banner-bg{
     object-position:center;
   }
   .dash-banner-overlay{
-    background:linear-gradient(90deg, rgba(232,220,198,0.95) 0%, rgba(232,220,198,0.85) 50%, rgba(232,220,198,0.40) 100%);
+    background:linear-gradient(180deg, rgba(8,6,5,0.45) 0%, rgba(8,6,5,0.72) 45%, rgba(8,6,5,0.92) 100%);
   }
   [data-theme="dark"] .dash-banner-overlay{
-    background:linear-gradient(90deg, rgba(24,19,16,0.96) 0%, rgba(24,19,16,0.88) 50%, rgba(24,19,16,0.45) 100%);
+    background:linear-gradient(180deg, rgba(6,4,3,0.5) 0%, rgba(6,4,3,0.78) 45%, rgba(6,4,3,0.95) 100%);
   }
 }
 @media (max-width:540px){
   .dash-banner{
-    min-height:75vh;
+    min-height:64vh;
     height:auto;
     align-items:flex-end;
   }
-  .dash-banner-content{
-    padding:24px 20px;
+  .dash-banner-inner{
+    padding:24px 16px 28px;
   }
   .dash-banner-bg{
-    object-position:65% 15%;
+    object-position:center;
   }
   .dash-banner-overlay{
-    background:linear-gradient(180deg, rgba(232,220,198,0.25) 0%, rgba(232,220,198,0.85) 45%, rgba(232,220,198,0.98) 100%);
+    background:linear-gradient(180deg, rgba(8,6,5,0.3) 0%, rgba(8,6,5,0.75) 40%, rgba(8,6,5,0.95) 100%);
   }
   [data-theme="dark"] .dash-banner-overlay{
-    background:linear-gradient(180deg, rgba(24,19,16,0.30) 0%, rgba(24,19,16,0.88) 45%, rgba(24,19,16,0.98) 100%);
+    background:linear-gradient(180deg, rgba(6,4,3,0.35) 0%, rgba(6,4,3,0.8) 40%, rgba(6,4,3,0.97) 100%);
+  }
+  .dash-banner-actions{
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .btn-hero-primary, .btn-hero-secondary{
+    justify-content:center;
+    width:100%;
   }
 }
 
@@ -3565,15 +3641,17 @@ function shell(u, base, tabs, cur, badges, title, sub, content) {
   <div class="dash-banner">
     <img class="dash-banner-bg" src="${bannerImg}" alt="${base === 'farmer' ? 'Indian farmer harvesting fresh crops' : 'Fresh farm harvest and produce'}" loading="eager">
     <div class="dash-banner-overlay"></div>
-    <div class="dash-banner-content">
-      <div class="dash-banner-badge">${bannerBadge}</div>
-      <h1>${title}</h1>
-      <p class="dash-banner-sub">${sub}</p>
-      <div class="dash-banner-tagline">${bannerTagline}</div>
-      <div class="dash-banner-actions">
-        ${base === 'farmer' 
-          ? `<a class="btn btn-primary btn-sm" href="#/farmer/add">${ic('plus', 15)} List produce</a><a class="btn btn-ghost btn-sm" href="#/farmer/buyers">${ic('spark', 15)} Buyer matches</a>` 
-          : `<a class="btn btn-primary btn-sm" href="#/buyer/post">${ic('plus', 15)} Post requirement</a><a class="btn btn-ghost btn-sm" href="#/buyer/orders">${ic('box', 15)} My orders</a>`}
+    <div class="dash-banner-inner">
+      <div class="dash-banner-content">
+        <div class="dash-banner-badge">${bannerBadge}</div>
+        <h1>${title}</h1>
+        <p class="dash-banner-sub">${sub}</p>
+        <div class="dash-banner-tagline">${bannerTagline}</div>
+        <div class="dash-banner-actions">
+          ${base === 'farmer' 
+            ? `<a class="btn-hero-primary" href="#/farmer/add">${ic('plus', 16)} List produce</a><a class="btn-hero-secondary" href="#/farmer/buyers">${ic('spark', 16)} Buyer matches</a>` 
+            : `<a class="btn-hero-primary" href="#/buyer/post">${ic('plus', 16)} Post requirement</a><a class="btn-hero-secondary" href="#/buyer/orders">${ic('box', 16)} My orders</a>`}
+        </div>
       </div>
     </div>
   </div>` : `
@@ -3584,8 +3662,9 @@ function shell(u, base, tabs, cur, badges, title, sub, content) {
     </div>
   </div>`;
 
-  return `<main class="dash">
-  ${banner}
+  return `${isOverview ? banner : ''}
+<main class="dash">
+  ${!isOverview ? banner : ''}
   <nav class="tabs" aria-label="Dashboard sections">
     ${tabs.map(t => `<a class="${t[0] === cur ? 'on' : ''}" href="#/${base}/${t[0]}">${ic(t[2], 17)}<span>${t[1]}</span>${badges[t[0]] ? `<span class="cnt">${badges[t[0]]}</span>` : ''}</a>`).join('')}
   </nav>
