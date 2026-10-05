@@ -3414,9 +3414,6 @@ function mobileNavPanel(u) {
           </div>
         </div>
         <a href="#/${u.role}" onclick="closeMobileNav()">${ic('home', 18)} My dashboard</a>
-        <a onclick="closeMobileNav();goSec('categories')">${ic('store', 18)} Produce &amp; Categories</a>
-        <a onclick="closeMobileNav();goSec('how')">${ic('check', 18)} How it works</a>
-        <a onclick="closeMobileNav();goSec('smart')">${ic('spark', 18)} Smart tools</a>
         <div class="mobile-nav-divider"></div>
         <button type="button" class="menu-row" onclick="closeMobileNav();openModal('profile_auth')">${ic('user', 18)} Switch / Sign in</button>
         <button type="button" class="menu-row" style="color:var(--terra)" onclick="closeMobileNav();logout()">${ic('logout', 18)} Log out</button>
@@ -3463,11 +3460,11 @@ function navbar(u) {
     </button>`;
 
   const links = u
-    ? `<a href="#/${u.role}">${ic('home', 15)} Dashboard</a><a onclick="goSec('categories')">Produce</a><a onclick="goSec('how')">How it works</a><a onclick="goSec('smart')">Smart tools</a>`
+    ? ''
     : `<a onclick="goSec('categories')">Produce</a><a onclick="goSec('how')">How it works</a><a onclick="goSec('smart')">Smart tools</a><a href="#/farmer/login">For farmers</a><a href="#/buyer/login">For buyers</a>`;
 
   return `<header class="nav"><a class="brand" href="#/">${logoSVG}DirectFarm</a>
-  <nav class="nav-links" aria-label="Primary">${links}</nav>
+  ${links ? `<nav class="nav-links" aria-label="Primary">${links}</nav>` : ''}
   <div class="nav-right">
     <button type="button" class="theme-btn" onclick="toggleTheme()" aria-label="Toggle light and dark theme">${ic('moon', 17)}</button>
     ${profileButton}
