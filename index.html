@@ -1225,13 +1225,17 @@ input:focus,select:focus,textarea:focus{
 .dash-head p{color:var(--ink2);margin-top:6px;font-size:15px}
 .tabs{
   display:flex;
-  gap:6px;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  width:fit-content;
+  max-width:100%;
+  margin:0 auto 28px auto;
   overflow-x:auto;
-  padding:6px;
+  padding:6px 20px;
   border:1px solid var(--latte);
-  border-radius:16px;
+  border-radius:18px;
   background:var(--card);
-  margin-bottom:28px;
   scrollbar-width:none;
 }
 .tabs::-webkit-scrollbar{display:none}
@@ -2494,10 +2498,12 @@ input:focus,select:focus,textarea:focus{
     margin-top:2px;
   }
   .tabs{
-    padding:4px;
+    padding:4px 14px;
     gap:6px;
-    border-radius:14px;
-    margin-bottom:16px;
+    border-radius:16px;
+    margin:0 auto 16px auto;
+    width:fit-content;
+    max-width:100%;
     overflow-x:auto;
     flex-wrap:nowrap;
     -webkit-overflow-scrolling:touch;
@@ -4670,8 +4676,7 @@ function fRoute(u, orders) {
 /* ============ Buyer Views ============ */
 const BT = [
   ['market', 'Marketplace', 'store'],
-  ['post', 'Post requirement', 'plus'],
-  ['reqs', 'My requirements', 'spark'],
+  ['reqs', 'Requirements', 'spark'],
   ['orders', 'My orders', 'box'],
   ['track', 'Track Order', 'truck'],
   ['prices', 'Market Prices', 'chart']
@@ -4680,8 +4685,7 @@ const BT = [
 function buyerApp(u, tab) {
   const pendingOffers = MY_OFFERS.filter(o => o.status === 'pending').length;
   let c = '';
-  if (tab === 'post') c = bPost(u);
-  else if (tab === 'reqs') c = bReqs(u);
+  if (tab === 'post' || tab === 'reqs') c = bReqs(u);
   else if (tab === 'orders') c = bOrders(u);
   else if (tab === 'track') c = buyerTrackView(u);
   else if (tab === 'prices') c = marketPricesView(u, 'buyer');
@@ -4846,9 +4850,14 @@ function bPost(u) {
     S.bPost.loc = u.loc.label;
   }
   const f = S.bPost;
-  return `<div class="panel" style="max-width:760px">
-    <h3>Post a procurement requirement</h3>
-    <p class="sub">Tell farmers what produce you need. DirectFarm automatically scores and ranks matching local harvests and notifies growers to send you offers.</p>
+  return `<div class="panel">
+    <div style="border-bottom:1px solid var(--latte);padding-bottom:12px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <h3 style="font-size:22px;color:var(--burgundy);margin:0">Post a procurement requirement</h3>
+        <span class="badge b-good">Direct to Farmers</span>
+      </div>
+      <p class="sub" style="margin-top:4px">Tell farmers what produce you need. DirectFarm automatically scores and ranks matching local harvests and notifies growers to send you offers.</p>
+    </div>
     
     <form id="bPostForm" onsubmit="event.preventDefault(); postReq();">
     <div class="two">
@@ -4943,22 +4952,15 @@ async function postReq() {
 
 function bReqs(u) {
   const rs = MY_REQS.slice().sort((a, b) => b.createdAt - a.createdAt);
-  if (!rs.length) {
-    return `<div class="empty">
-      <div class="empty-icon">${ic('spark', 32)}</div>
-      <h3>No requirements posted</h3>
-      <p>Post what produce you need and let AI find ranked farmer matches.</p>
-      <a class="btn btn-primary" href="#/buyer/post">Post a requirement</a>
-    </div>`;
-  }
+  const postFormHtml = bPost(u);
 
-  return rs.map(r => {
+  const reqsListHtml = rs.length ? rs.map(r => {
     const ms = r.status === 'open' ? ACTIVE_LISTINGS.map(l => matchScore(r, l, l.farmer)).filter(Boolean).sort((a, b) => b.total - a.total) : [];
     const combo = bestCombo(r, ms);
     const offs = MY_OFFERS.filter(o => o.reqId === r.id);
     const filled = r.filled || 0;
 
-    return `<div class="panel">
+    return `<div class="panel" style="margin-top:16px">
       <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
         <div>
           <h3>${r.qty} kg ${esc(r.crop)} <span class="small" style="font-family:var(--sans)">Grade ${r.grade}+</span></h3>
@@ -5030,7 +5032,27 @@ function bReqs(u) {
 
       ${r.status === 'open' ? `<div class="actions" style="margin-top:18px"><button type="button" class="btn btn-ghost btn-sm" onclick="closeReq('${r.id}')">Close requirement</button></div>` : ''}
     </div>`;
-  }).join('');
+  }).join('') : `
+    <div class="empty" style="padding:28px 20px;margin-top:16px">
+      <div class="empty-icon">${ic('spark', 28)}</div>
+      <h4 style="font-size:18px">No active requirements posted yet</h4>
+      <p class="small">Fill the form above to post your first crop requirement and receive direct farmer offers.</p>
+    </div>`;
+
+  return `
+    <div style="display:flex;flex-direction:column;gap:28px">
+      ${postFormHtml}
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--latte);padding-bottom:12px;margin-bottom:14px">
+          <div>
+            <h3 style="font-size:22px;color:var(--burgundy);margin:0">My Requirements</h3>
+            <p class="sub" style="margin-top:2px">Track your posted requirements, matched local farmers, and incoming offers.</p>
+          </div>
+          <span class="badge b-neutral">${rs.length} Active</span>
+        </div>
+        ${reqsListHtml}
+      </div>
+    </div>`;
 }
 
 async function closeReq(id) {
