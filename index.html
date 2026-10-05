@@ -3415,7 +3415,6 @@ function mobileNavPanel(u) {
         </div>
         <a href="#/${u.role}" onclick="closeMobileNav()">${ic('home', 18)} My dashboard</a>
         <div class="mobile-nav-divider"></div>
-        <button type="button" class="menu-row" onclick="closeMobileNav();openModal('profile_auth')">${ic('user', 18)} Switch / Sign in</button>
         <button type="button" class="menu-row" style="color:var(--terra)" onclick="closeMobileNav();logout()">${ic('logout', 18)} Log out</button>
       </div>
     </div>`;
@@ -3431,7 +3430,6 @@ function mobileNavPanel(u) {
       <div class="mobile-nav-auth-grid">
         <a class="btn btn-primary" href="#/farmer/login" onclick="closeMobileNav()">${ic('leaf', 16)} Farmer Login</a>
         <a class="btn btn-secondary" href="#/buyer/login" onclick="closeMobileNav()">${ic('store', 16)} Buyer Login</a>
-        <button type="button" class="btn btn-light" onclick="closeMobileNav();openModal('profile_auth')" style="margin-top:2px">${ic('user', 16)} Sign in with ID</button>
       </div>
     </div>
   </div>`;
@@ -3451,13 +3449,9 @@ function navbar(u) {
       <span>${esc(u.loc.label)} · ${u.role === 'farmer' ? 'Farmer Account' : 'Buyer Account'}</span>
     </div>
     <a href="#/${u.role}">${ic('home')} My dashboard</a>
-    <button type="button" onclick="openModal('profile_auth')">${ic('user')} Switch / Sign in</button>
     <button type="button" onclick="logout()">${ic('logout')} Log out</button>
   </div>`
-  : `<button type="button" class="profile-btn nav-profile-btn" onclick="openModal('profile_auth')" aria-label="Profile and account login" title="Login with Unique ID and Password">
-      <span class="avatar" style="background:var(--burgundy);color:var(--onolive)">${ic('user', 18)}</span>
-      <b style="font-size:13.5px">Sign in</b>
-    </button>`;
+  : `<a class="btn btn-ghost btn-sm" href="#/farmer/login">Farmer login</a><a class="btn btn-primary btn-sm" href="#/buyer/login">Buyer login</a>`;
 
   const links = u
     ? ''
@@ -5696,55 +5690,10 @@ function closeModal() {
 
 function modalHTML() {
   const m = S.modal, u = CURRENT_USER;
-  if (!m) return '';
-  if (m.type !== 'profile_auth' && !u) return '';
+  if (!m || !u) return '';
   let inner = '';
 
-  if (m.type === 'profile_auth') {
-    inner = `<div class="mbody" style="max-width:440px;margin:0 auto">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
-        <div class="avatar" style="width:48px;height:48px;border-radius:14px;font-size:22px;flex:none;background:var(--burgundy);color:var(--onolive)">
-          ${ic('user', 24)}
-        </div>
-        <div>
-          <h2 style="font-size:24px;color:var(--burgundy);margin:0">Account Sign-In</h2>
-          <p class="small" style="margin-top:2px">Enter your Unique ID / Email &amp; Password to access your respective account.</p>
-        </div>
-      </div>
-
-      <div class="seg" style="margin-bottom:16px" id="profRoleSeg">
-        <button type="button" class="${selectedProfileRole === 'auto' ? 'on' : ''}" onclick="setProfileRole(this, 'auto')">Auto-Detect Role</button>
-        <button type="button" class="${selectedProfileRole === 'farmer' ? 'on' : ''}" onclick="setProfileRole(this, 'farmer')">Farmer</button>
-        <button type="button" class="${selectedProfileRole === 'buyer' ? 'on' : ''}" onclick="setProfileRole(this, 'buyer')">Buyer</button>
-      </div>
-
-      <div id="profileAuthErr" class="err" hidden></div>
-
-      <form id="profileAuthForm" onsubmit="event.preventDefault();doProfileAuthLogin()">
-        <div class="field">
-          <label for="p_uid">Unique ID / Email address</label>
-          <input id="p_uid" type="text" autocomplete="username" placeholder="e.g. farmer@example.com or unique ID" required>
-        </div>
-        <div class="field">
-          <label for="p_pwd">Password</label>
-          <input id="p_pwd" type="password" autocomplete="current-password" placeholder="Enter your account password" required>
-        </div>
-        <button type="submit" id="profLoginBtn" class="btn btn-primary btn-lg" style="width:100%;margin-top:10px">
-          ${ic('user', 18)} Sign in to Account
-        </button>
-      </form>
-
-      <div class="hr"></div>
-
-      <div style="text-align:center" class="small">
-        <span style="color:var(--ink2)">Don't have an account yet?</span>
-        <div style="display:flex;justify-content:center;gap:10px;margin-top:8px;flex-wrap:wrap">
-          <a class="btn btn-light btn-sm" href="#/farmer/login" onclick="closeModal();S.authMode='signup'">Create Farmer account</a>
-          <a class="btn btn-light btn-sm" href="#/buyer/login" onclick="closeModal();S.authMode='signup'">Create Buyer account</a>
-        </div>
-      </div>
-    </div>`;
-  } else if (m.type === 'buy') {
+  if (m.type === 'buy') {
     const l = ACTIVE_LISTINGS.find(x => x.id === m.id);
     if (!l) return '';
     const mr = marketRef(l.crop, l.id), b = priceBadge(l.price, mr.ref), d = km(u.loc, l.loc);
@@ -5838,91 +5787,6 @@ function modalHTML() {
       ${inner}
     </div>
   </div>`;
-}
-
-let selectedProfileRole = 'auto';
-function setProfileRole(btn, role) {
-  selectedProfileRole = role;
-  const seg = document.querySelectorAll('#profRoleSeg button');
-  seg.forEach(b => b.classList.remove('on'));
-  if (btn) btn.classList.add('on');
-}
-
-async function doProfileAuthLogin() {
-  if (S.isSubmitting) return;
-  const uidInput = $('#p_uid');
-  const pwdInput = $('#p_pwd');
-  const errBox = $('#profileAuthErr');
-  const btn = $('#profLoginBtn');
-
-  const uid = (uidInput ? uidInput.value : '').trim().toLowerCase();
-  const pwd = pwdInput ? pwdInput.value : '';
-
-  const showErr = msg => {
-    if (errBox) {
-      errBox.textContent = msg;
-      errBox.hidden = false;
-    }
-    toast(msg, 'err');
-  };
-
-  if (!uid) return showErr('Please enter your Unique ID or Email.');
-  if (!pwd) return showErr('Please enter your password.');
-
-  S.isSubmitting = true;
-  if (btn) {
-    btn.disabled = true;
-    btn.innerHTML = `<span class="spinner"></span> Authenticating...`;
-  }
-  if (errBox) errBox.hidden = true;
-
-  try {
-    let res = null;
-    let targetRole = selectedProfileRole;
-
-    if (targetRole === 'auto') {
-      try {
-        res = await window.DFApi.login({ email: uid, password: pwd, role: 'farmer' });
-        targetRole = 'farmer';
-      } catch (fErr) {
-        const msg = (fErr.message || '').toLowerCase();
-        if (msg.includes('buyer') || msg.includes('not registered as a farmer') || msg.includes('wrong role') || msg.includes('role')) {
-          res = await window.DFApi.login({ email: uid, password: pwd, role: 'buyer' });
-          targetRole = 'buyer';
-        } else {
-          try {
-            res = await window.DFApi.login({ email: uid, password: pwd, role: 'buyer' });
-            targetRole = 'buyer';
-          } catch (bErr) {
-            throw fErr;
-          }
-        }
-      }
-    } else {
-      res = await window.DFApi.login({ email: uid, password: pwd, role: targetRole });
-    }
-
-    if (!res || !res.user) {
-      throw new Error('Authentication succeeded but user profile could not be loaded.');
-    }
-
-    CURRENT_USER = res.user;
-    currentAuthState = AUTH_STATE.AUTHENTICATED;
-    closeModal();
-    toast(`Welcome back, ${CURRENT_USER.name}! Logged into ${CURRENT_USER.role} account.`);
-    await reloadAppData();
-    go('#/' + CURRENT_USER.role);
-    startPolling();
-  } catch (err) {
-    console.error('Profile login error:', err);
-    showErr(err.message || 'Login failed. Please check your credentials.');
-  } finally {
-    S.isSubmitting = false;
-    if (btn) {
-      btn.disabled = false;
-      btn.innerHTML = `${ic('user', 18)} Sign in to Account`;
-    }
-  }
 }
 
 let starVal = 0;
