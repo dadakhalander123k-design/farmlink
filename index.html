@@ -185,6 +185,51 @@ img,svg{max-width:100%;height:auto}
   transition:background .18s,border-color .18s,transform .18s;
 }
 .theme-btn:hover{background:var(--soft);transform:scale(1.04);border-color:var(--burgundy)}
+.nav-menu2-btn{
+  border:1px solid var(--latte);
+  background:var(--card);
+  color:var(--burgundy);
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  transition:background .18s,border-color .18s,transform .18s;
+  box-shadow:var(--shadow-sm);
+  flex:none;
+}
+.nav-menu2-btn:hover{background:var(--soft);transform:scale(1.04);border-color:var(--burgundy)}
+.nav-menu-dropdown{
+  position:absolute;
+  left:0;
+  top:calc(100% + 10px);
+  min-width:200px;
+  background:var(--card-elevated);
+  border:1px solid var(--latte);
+  border-radius:18px;
+  box-shadow:var(--shadow-lg);
+  padding:8px;
+  display:none;
+  flex-direction:column;
+  gap:4px;
+  z-index:120;
+}
+.nav-menu-dropdown.open{display:flex;animation:pop .18s cubic-bezier(.16,1,.3,1)}
+.nav-menu-dropdown a{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px;
+  border-radius:12px;
+  color:var(--ink);
+  font-weight:600;
+  font-size:14px;
+  cursor:pointer;
+  transition:background .15s,color .15s;
+  text-decoration:none;
+}
+.nav-menu-dropdown a:hover{background:var(--soft);color:var(--burgundy)}
 .profile-btn{
   display:flex;
   align-items:center;
@@ -3306,6 +3351,15 @@ function toggleMenu(e) {
   const m = $('#menu');
   if (m) m.classList.toggle('open');
 }
+function toggleNavMenu(e) {
+  if (e) e.stopPropagation();
+  const m = $('#navMenuDropdown');
+  if (m) m.classList.toggle('open');
+}
+function closeNavMenu() {
+  const m = $('#navMenuDropdown');
+  if (m) m.classList.remove('open');
+}
 function toggleMobileNav(e) {
   if (e) e.stopPropagation();
   const drawer = $('#mobileNavPanel');
@@ -3335,6 +3389,11 @@ function closeMobileNav() {
 document.addEventListener('click', e => {
   const m = $('#menu');
   if (m && !m.contains(e.target)) m.classList.remove('open');
+  const navDropdown = $('#navMenuDropdown');
+  const navBtn = $('#navMenuBtn');
+  if (navDropdown && !navDropdown.contains(e.target) && (!navBtn || !navBtn.contains(e.target))) {
+    navDropdown.classList.remove('open');
+  }
   const drawer = $('#mobileNavPanel');
   const btn = $('#menuToggleBtn');
   if (drawer && drawer.classList.contains('open')) {
@@ -3348,6 +3407,8 @@ document.addEventListener('keydown', e => {
     closeMobileNav();
     const m = $('#menu');
     if (m) m.classList.remove('open');
+    const navDropdown = $('#navMenuDropdown');
+    if (navDropdown) navDropdown.classList.remove('open');
   }
 });
 window.addEventListener('resize', () => {
@@ -3433,6 +3494,23 @@ function mobileNavPanel(u) {
 }
 
 function navbar(u) {
+  const p = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+  const isLoginPage = !u && (p[0] === 'login' || p[1] === 'login');
+
+  const navLeft = isLoginPage ? `<div style="position:relative;display:inline-block">
+    <button type="button" class="nav-menu2-btn" id="navMenuBtn" onclick="toggleNavMenu(event)" aria-label="Toggle navigation menu" title="Navigation menu">
+      <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+        <line x1="4" y1="8" x2="20" y2="8"></line>
+        <line x1="4" y1="16" x2="20" y2="16"></line>
+      </svg>
+    </button>
+    <div class="nav-menu-dropdown" id="navMenuDropdown">
+      <a onclick="closeNavMenu();goSec('categories')">${ic('store', 16)} Produce</a>
+      <a onclick="closeNavMenu();goSec('how')">${ic('check', 16)} How it works</a>
+      <a onclick="closeNavMenu();goSec('smart')">${ic('spark', 16)} Smart tools</a>
+    </div>
+  </div>` : '';
+
   const profileButton = u ? `<button type="button" class="profile-btn" onclick="toggleMenu(event)" aria-haspopup="true" aria-label="Account menu for ${esc(u.name)}" title="Profile: ${esc(u.name)} (${u.role === 'farmer' ? 'Farmer' : 'Buyer'})">
     <span class="avatar">${esc((u.name||'U')[0].toUpperCase())}</span>
     <b>${esc(u.name)}</b>
@@ -3450,11 +3528,14 @@ function navbar(u) {
   </div>`
   : `<a class="btn btn-primary btn-sm" href="#/login">Sign in</a>`;
 
-  const links = u
+  const links = (u || isLoginPage)
     ? ''
     : `<a onclick="goSec('categories')">Produce</a><a onclick="goSec('how')">How it works</a><a onclick="goSec('smart')">Smart tools</a>`;
 
-  return `<header class="nav"><a class="brand" href="#/">${logoSVG}DirectFarm</a>
+  return `<header class="nav"><div style="display:flex;align-items:center;gap:12px">
+    ${navLeft}
+    <a class="brand" href="#/">${logoSVG}DirectFarm</a>
+  </div>
   ${links ? `<nav class="nav-links" aria-label="Primary">${links}</nav>` : ''}
   <div class="nav-right">
     <button type="button" class="theme-btn" onclick="toggleTheme()" aria-label="Toggle light and dark theme">${ic('moon', 17)}</button>
