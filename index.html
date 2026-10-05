@@ -3010,9 +3010,12 @@ let trackingOrderId = null;
 let trackingDataCache = {};
 let trackingPollTimer = null;
 let _currentLeafletMap = null;
-let _currentLeafletMarkers = { orderId: null, truck: null, farm: null, buyer: null, polyline: null };
+let _currentLeafletMarkers = { orderId: null, truck: null, farm: null, buyer: null, polyline: null, hasFittedBounds: false };
 const _osrmRouteCache = {};
 let _lastCalculatedRouteDist = null;
+let _currentRouteCoordinates = null;
+let _currentVehiclePos = null;
+let _mapUserInteracted = false;
 let _trackingListeners = null;
 
 const S = {
@@ -5262,7 +5265,93 @@ async function fetchOsrmRoute(origin, destination) {
   return fallbackResult;
 }
 
-function updateTrackingMetricsUI(order, tracking, farmLoc, buyerLoc, curLoc, totalDist, maybeDurationMins) {
+function projectPointOnSegment(p, a, b) {
+  const dx = b[1] - a[1];
+  const dy = b[0] - a[0];
+  const lenSq = dx * dx + dy * dy;
+  if (lenSq === 0) return { lat: a[0], lng: a[1], dist: km(p, { lat: a[0], lng: a[1] }) };
+
+  const t = Math.max(0, Math.min(1, ((p.lng - a[1]) * dx + (p.lat - a[0]) * dy) / lenSq));
+  const snapLat = a[0] + t * dy;
+  const snapLng = a[1] + t * dx;
+  const snapPt = { lat: snapLat, lng: snapLng };
+  return {
+    lat: snapLat,
+    lng: snapLng,
+    dist: km(p, snapPt)
+  };
+}
+
+function snapToRoadPolyline(curLoc, routeCoordinates) {
+  if (!curLoc || typeof curLoc.lat !== 'number' || !routeCoordinates || routeCoordinates.length < 2) return curLoc;
+  let best = null;
+  let bestDist = Infinity;
+  let bestSegment = 0;
+
+  for (let i = 0; i < routeCoordinates.length - 1; i++) {
+    const proj = projectPointOnSegment(curLoc, routeCoordinates[i], routeCoordinates[i + 1]);
+    if (proj.dist < bestDist) {
+      bestDist = proj.dist;
+      best = proj;
+      bestSegment = i;
+    }
+  }
+
+  // If vehicle is within 1.2 km of the highway/road, snap smoothly along the road geometry!
+  if (best && bestDist <= 1.2) {
+    return {
+      lat: best.lat,
+      lng: best.lng,
+      segmentIdx: bestSegment,
+      speed: curLoc.speed,
+      label: curLoc.label,
+      isSnapped: true
+    };
+  }
+  return curLoc;
+}
+
+function calculateRoadRemainingKm(snappedLoc, routeCoordinates) {
+  if (!routeCoordinates || routeCoordinates.length < 2) return null;
+  const segIdx = (snappedLoc && typeof snappedLoc.segmentIdx === 'number') ? snappedLoc.segmentIdx : 0;
+  
+  if (segIdx >= routeCoordinates.length - 1) return 0;
+
+  let rem = km(snappedLoc, { lat: routeCoordinates[segIdx + 1][0], lng: routeCoordinates[segIdx + 1][1] });
+
+  for (let i = segIdx + 1; i < routeCoordinates.length - 1; i++) {
+    rem += km(
+      { lat: routeCoordinates[i][0], lng: routeCoordinates[i][1] },
+      { lat: routeCoordinates[i + 1][0], lng: routeCoordinates[i + 1][1] }
+    );
+  }
+  return Number(Math.max(0, rem).toFixed(1));
+}
+
+let _lastValidVehicleSpeed = 40;
+
+function calculateDynamicEta(remainingKm, curLoc, defaultDurationMins) {
+  if (remainingKm <= 0.05) return 'Arrived';
+  
+  const rawSpeed = curLoc && typeof curLoc.speed === 'number' ? curLoc.speed : null;
+  if (rawSpeed !== null && rawSpeed > 5) {
+    _lastValidVehicleSpeed = rawSpeed;
+    const mins = Math.max(1, Math.round((remainingKm / rawSpeed) * 60));
+    return `~${mins} mins (${rawSpeed} km/h)`;
+  }
+  
+  // When stopped at a signal or traffic: Maintain last valid speed estimate with traffic factor
+  const trafficFactor = 0.85;
+  const effectiveSpeed = Math.max(15, Math.round((_lastValidVehicleSpeed || 40) * trafficFactor));
+  const mins = Math.max(1, Math.round((remainingKm / effectiveSpeed) * 60));
+  
+  if (rawSpeed !== null && rawSpeed <= 5) {
+    return `~${mins} mins (traffic/signal)`;
+  }
+  return `~${mins} mins`;
+}
+
+function updateTrackingMetricsUI(order, tracking, farmLoc, buyerLoc, curLoc, totalDist, maybeRoadRemainingKm, maybeDurationMins) {
   const totalKm = Number(totalDist ? Number(totalDist).toFixed(1) : km(farmLoc, buyerLoc).toFixed(1));
   let remainingDist = totalKm;
   let coveredDist = 0;
@@ -5274,13 +5363,15 @@ function updateTrackingMetricsUI(order, tracking, farmLoc, buyerLoc, curLoc, tot
     coveredDist = totalKm;
     etaText = 'Delivered';
   } else if (order.status === 'out') {
-    if (curLoc && typeof curLoc.lat === 'number') {
+    if (maybeRoadRemainingKm != null) {
+      remainingDist = Math.min(totalKm, maybeRoadRemainingKm);
+      coveredDist = Number(Math.max(0, totalKm - remainingDist).toFixed(1));
+      etaText = calculateDynamicEta(remainingDist, curLoc, durMins);
+    } else if (curLoc && typeof curLoc.lat === 'number') {
       const directToBuyer = km(curLoc, buyerLoc);
       remainingDist = Number(Math.min(totalKm, Math.max(0, directToBuyer)).toFixed(1));
       coveredDist = Number(Math.max(0, totalKm - remainingDist).toFixed(1));
-      const effectiveSpeed = curLoc.speed && curLoc.speed > 5 ? curLoc.speed : 35;
-      const estMins = Math.max(1, Math.round(remainingDist / effectiveSpeed * 60));
-      etaText = `~${estMins} mins away`;
+      etaText = calculateDynamicEta(remainingDist, curLoc, durMins);
     }
   }
 
@@ -5305,7 +5396,7 @@ function updateTrackingMetricsUI(order, tracking, farmLoc, buyerLoc, curLoc, tot
   if (speedEl) {
     speedEl.textContent = (tracking && tracking.isLive && curLoc && curLoc.speed)
       ? `${curLoc.speed} km/h live speed`
-      : 'Real-time road estimate';
+      : 'Road network transit';
   }
   if (locEl) locEl.textContent = (curLoc && curLoc.label) || (order.status === 'out' ? 'In transit' : farmLoc.label);
   if (statusEl && order.status) statusEl.textContent = SL[order.status] || order.status;
@@ -5313,6 +5404,22 @@ function updateTrackingMetricsUI(order, tracking, farmLoc, buyerLoc, curLoc, tot
     liveBadgeEl.innerHTML = (tracking && tracking.isLive)
       ? `<span class="live-pulse">Live Driver GPS Active</span>`
       : `<span class="badge b-neutral">${order.status === 'out' ? 'In Transit' : 'Awaiting Dispatch'}</span>`;
+  }
+}
+
+function recenterOrderMap() {
+  if (!_currentLeafletMap || !_currentVehiclePos) return;
+  _mapUserInteracted = false;
+  _currentLeafletMap.setView([_currentVehiclePos.lat, _currentVehiclePos.lng], Math.max(14, _currentLeafletMap.getZoom()), { animate: true });
+}
+
+function fitRouteOrderMap() {
+  if (!_currentLeafletMap) return;
+  _mapUserInteracted = false;
+  if (_currentRouteCoordinates && _currentRouteCoordinates.length) {
+    _currentLeafletMap.fitBounds(L.latLngBounds(_currentRouteCoordinates), { padding: [40, 40], animate: true });
+  } else if (_currentLeafletMarkers && _currentLeafletMarkers.polyline) {
+    _currentLeafletMap.fitBounds(_currentLeafletMarkers.polyline.getBounds(), { padding: [40, 40], animate: true });
   }
 }
 
@@ -5359,7 +5466,6 @@ function buyerTrackView(u) {
 
   const lastUpdatedText = (tr && tr.lastUpdated) ? ago(tr.lastUpdated) : 'Just now';
 
-  // Initial road metrics estimate before async OSRM responds
   const initialEstKm = Number(km(farmLoc, buyerLoc).toFixed(1));
   const initialEstMins = Math.max(10, Math.round(initialEstKm / 35 * 60));
 
@@ -5447,9 +5553,15 @@ function buyerTrackView(u) {
 
       <!-- Live Location Map Component -->
       <div style="margin-top:24px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:8px">
           <h4 style="font-size:16px;color:var(--burgundy);margin:0">${ic('pin', 16)} Road Routing &amp; Current Location</h4>
-          <div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <button type="button" class="btn btn-sm btn-light" onclick="recenterOrderMap()" style="padding:4px 10px;font-size:12.5px" title="Zoom to delivery vehicle">
+              ${ic('truck', 14)} Recenter on Vehicle
+            </button>
+            <button type="button" class="btn btn-sm btn-light" onclick="fitRouteOrderMap()" style="padding:4px 10px;font-size:12.5px" title="View entire delivery route">
+              View Route
+            </button>
             ${isLiveGps
               ? `<span class="live-pulse">Live Driver GPS Active</span>`
               : `<span class="small" style="color:var(--ink2)">Awaiting vehicle departure broadcast</span>`
@@ -5539,29 +5651,34 @@ function initOrderMap(order, tracking) {
       curLoc = { lat: farmLoc.lat, lng: farmLoc.lng, label: farmLoc.label };
     }
 
+    // Snap to road polyline if road coordinates are already available
+    const snapped = (_currentRouteCoordinates && _currentRouteCoordinates.length)
+      ? snapToRoadPolyline(curLoc, _currentRouteCoordinates)
+      : curLoc;
+
+    _currentVehiclePos = snapped;
+
     // 1. Check if the Leaflet map is ALREADY correctly mounted on this exact DOM element in the document
     const existingContainer = _currentLeafletMap ? _currentLeafletMap.getContainer() : null;
     const isMapMounted = existingContainer && existingContainer === mapEl && document.body.contains(mapEl);
 
     if (isMapMounted && _currentLeafletMarkers.orderId === order.id && _currentLeafletMarkers.truck) {
-      // Smoothly update vehicle marker location without any flicker or lag
-      _currentLeafletMarkers.truck.setLatLng([curLoc.lat, curLoc.lng]);
-      const popupText = curLoc.speed
-        ? `<b>Delivery Vehicle: In Transit (${curLoc.speed} km/h)</b>`
-        : `<b>Delivery Vehicle: ${esc(curLoc.label || 'In Transit')}</b>`;
+      // ISOLATED MARKER UPDATE: Never recreate DOM or touch user's zoom/pan
+      _currentLeafletMarkers.truck.setLatLng([snapped.lat, snapped.lng]);
+      const popupText = snapped.speed
+        ? `<b>Delivery Vehicle: In Transit (${snapped.speed} km/h)</b>`
+        : `<b>Delivery Vehicle: ${esc(snapped.label || 'In Transit')}</b>`;
       _currentLeafletMarkers.truck.setPopupContent(popupText);
 
-      // Pan to keep truck visible if it travels near map edge
-      if (_currentLeafletMap && !_currentLeafletMap.getBounds().contains([curLoc.lat, curLoc.lng])) {
-        _currentLeafletMap.panTo([curLoc.lat, curLoc.lng], { animate: true, duration: 0.5 });
-      }
+      const remainingKm = (_currentRouteCoordinates && _currentRouteCoordinates.length)
+        ? calculateRoadRemainingKm(snapped, _currentRouteCoordinates)
+        : null;
 
-      // Update metrics directly
-      updateTrackingMetricsUI(order, tracking, farmLoc, buyerLoc, curLoc, _lastCalculatedRouteDist || km(farmLoc, buyerLoc));
+      updateTrackingMetricsUI(order, tracking, farmLoc, buyerLoc, snapped, _lastCalculatedRouteDist || km(farmLoc, buyerLoc), remainingKm);
       return;
     }
 
-    // 2. Otherwise initialize fresh Leaflet map on this DOM element
+    // 2. Otherwise initialize fresh Leaflet map on this DOM element (first load of track screen)
     if (_currentLeafletMap) {
       try { _currentLeafletMap.remove(); } catch(e) {}
       _currentLeafletMap = null;
@@ -5577,9 +5694,15 @@ function initOrderMap(order, tracking) {
       zoomControl: true,
       fadeAnimation: true,
       zoomAnimation: true
-    }).setView([curLoc.lat, curLoc.lng], 11);
+    }).setView([snapped.lat, snapped.lng], 11);
 
     _currentLeafletMap = map;
+    _mapUserInteracted = false;
+
+    // Track user drag/zoom to prevent any automated zoom resets
+    map.on('zoomstart dragstart touchstart movestart', () => {
+      _mapUserInteracted = true;
+    });
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
@@ -5610,18 +5733,17 @@ function initOrderMap(order, tracking) {
       .addTo(map)
       .bindPopup(`<b>Delivery Destination: ${esc(buyerLoc.label)}</b>${order.address ? `<br><span style="font-size:12px">${esc(order.address)}</span>` : ''}`);
 
-    const truckPopup = curLoc.speed
-      ? `<b>Delivery Vehicle: In Transit (${curLoc.speed} km/h)</b>`
-      : `<b>Delivery Vehicle: ${esc(curLoc.label || 'In Transit')}</b>`;
+    const truckPopup = snapped.speed
+      ? `<b>Delivery Vehicle: In Transit (${snapped.speed} km/h)</b>`
+      : `<b>Delivery Vehicle: ${esc(snapped.label || 'In Transit')}</b>`;
 
-    const truckMarker = L.marker([curLoc.lat, curLoc.lng], { icon: truckIcon })
+    const truckMarker = L.marker([snapped.lat, snapped.lng], { icon: truckIcon })
       .addTo(map)
       .bindPopup(truckPopup);
 
-    // Draw initial polyline immediately for zero-lag display
     let initialCoords = [[farmLoc.lat, farmLoc.lng], [buyerLoc.lat, buyerLoc.lng]];
-    if (curLoc && (curLoc.lat !== farmLoc.lat || curLoc.lng !== farmLoc.lng)) {
-      initialCoords = [[farmLoc.lat, farmLoc.lng], [curLoc.lat, curLoc.lng], [buyerLoc.lat, buyerLoc.lng]];
+    if (snapped && (snapped.lat !== farmLoc.lat || snapped.lng !== farmLoc.lng)) {
+      initialCoords = [[farmLoc.lat, farmLoc.lng], [snapped.lat, snapped.lng], [buyerLoc.lat, buyerLoc.lng]];
     }
 
     const polyline = L.polyline(initialCoords, {
@@ -5636,11 +5758,14 @@ function initOrderMap(order, tracking) {
       farm: farmMarker,
       buyer: buyerMarker,
       truck: truckMarker,
-      polyline: polyline
+      polyline: polyline,
+      hasFittedBounds: false
     };
 
+    // Fit bounds ONLY ONCE on initial map creation!
     const initialBounds = L.latLngBounds(initialCoords);
     map.fitBounds(initialBounds, { padding: [40, 40] });
+    _currentLeafletMarkers.hasFittedBounds = true;
 
     // Invalidate size after mount to prevent grey/missing tiles
     setTimeout(() => {
@@ -5650,20 +5775,27 @@ function initOrderMap(order, tracking) {
       if (_currentLeafletMap) _currentLeafletMap.invalidateSize();
     }, 250);
 
-    // Initial metrics update
     const estTotalKm = Number(km(farmLoc, buyerLoc).toFixed(1));
-    updateTrackingMetricsUI(order, tracking, farmLoc, buyerLoc, curLoc, estTotalKm);
+    updateTrackingMetricsUI(order, tracking, farmLoc, buyerLoc, snapped, estTotalKm);
 
     // 3. Asynchronously fetch full road geometry from OSRM without blocking UI!
     fetchOsrmRoute(farmLoc, buyerLoc).then(route => {
       if (!route || !route.coordinates || !route.coordinates.length) return;
+      _currentRouteCoordinates = route.coordinates;
+      _lastCalculatedRouteDist = route.distanceKm;
+
       if (_currentLeafletMap && _currentLeafletMarkers.orderId === order.id && _currentLeafletMarkers.polyline) {
         _currentLeafletMarkers.polyline.setLatLngs(route.coordinates);
-        _lastCalculatedRouteDist = route.distanceKm;
-        updateTrackingMetricsUI(order, tracking, farmLoc, buyerLoc, curLoc, route.distanceKm, route.durationMins);
-        const b = L.latLngBounds(route.coordinates);
-        b.extend([curLoc.lat, curLoc.lng]);
-        _currentLeafletMap.fitBounds(b, { padding: [40, 40] });
+        
+        // Snap vehicle to the true road geometry
+        const resnapped = snapToRoadPolyline(curLoc, route.coordinates);
+        _currentVehiclePos = resnapped;
+        if (_currentLeafletMarkers.truck) {
+          _currentLeafletMarkers.truck.setLatLng([resnapped.lat, resnapped.lng]);
+        }
+
+        const remainingKm = calculateRoadRemainingKm(resnapped, route.coordinates);
+        updateTrackingMetricsUI(order, tracking, farmLoc, buyerLoc, resnapped, route.distanceKm, remainingKm, route.durationMins);
       }
     }).catch(err => {
       console.warn('Background OSRM route fetch error:', err);
@@ -5698,7 +5830,6 @@ function startTrackingPoll(orderId, orderStatus) {
     initOrderMap(ord, cached);
   };
 
-  // Instant local listener for same-device farmer/buyer updates
   const onCustomUpdate = (e) => {
     if (e.detail) handleInstantUpdate(e.detail);
   };
@@ -5748,10 +5879,8 @@ function startTrackingPoll(orderId, orderStatus) {
     }
   };
 
-  // Poll immediately on startup
   pollAction();
 
-  // Fast polling interval (2.5s for out for delivery, 5s otherwise)
   const interval = orderStatus === 'out' ? 2500 : 5000;
   trackingPollTimer = setInterval(pollAction, interval);
 }
@@ -6337,7 +6466,7 @@ function startPolling() {
       return;
     }
     const p = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
-    const isFormRoute = (p[0] === 'farmer' && p[1] === 'add') || (p[0] === 'buyer' && p[1] === 'post') || p[1] === 'login';
+    const isFormRoute = (p[0] === 'farmer' && p[1] === 'add') || (p[0] === 'buyer' && p[1] === 'post') || p[1] === 'login' || p[1] === 'track';
     const activeTag = document.activeElement ? document.activeElement.tagName : '';
     const isTyping = ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeTag);
 
