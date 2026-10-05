@@ -3020,6 +3020,9 @@ let _trackingListeners = null;
 
 const S = {
   authMode: 'login',
+  authDetectedLoc: null,
+  editDetectedLoc: null,
+  buyDetectedLoc: null,
   q: '',
   crop: 'All',
   sort: 'new',
@@ -3036,6 +3039,7 @@ const S = {
     price: '',
     date: new Date().toISOString().slice(0, 10),
     loc: '',
+    detectedLoc: null,
     note: ''
   },
   bPost: {
@@ -3121,6 +3125,34 @@ const TOWNS = [
 ];
 const town = n => { const t = TOWNS.find(x => x.n === n) || TOWNS[0]; return { label: t.n, lat: t.lat, lng: t.lng }; };
 const townOpts = sel => TOWNS.map(t => `<option ${t.n === sel ? 'selected' : ''}>${t.n}</option>`).join('');
+
+function findClosestTown(lat, lng) {
+  let closest = TOWNS[0];
+  let minD = Infinity;
+  for (const t of TOWNS) {
+    const d = km({ lat, lng }, { lat: t.lat, lng: t.lng });
+    if (d < minD) {
+      minD = d;
+      closest = t;
+    }
+  }
+  return closest;
+}
+
+function applyUserLocOverride(u) {
+  if (!u || !u.id) return u;
+  try {
+    const raw = localStorage.getItem('df_user_loc_' + u.id);
+    if (raw) {
+      const savedLoc = JSON.parse(raw);
+      if (savedLoc && typeof savedLoc.lat === 'number' && typeof savedLoc.lng === 'number') {
+        u.loc = savedLoc;
+      }
+    }
+  } catch(e) {}
+  return u;
+}
+
 
 const CROPS = window.DFPricing.CROPS;
 const CROP_NAMES = Object.keys(CROPS);
@@ -3417,10 +3449,11 @@ function mobileNavPanel(u) {
               <b style="font-size:15px;color:var(--burgundy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(u.name)}</b>
               <span class="role-tag" style="display:inline-block">${u.role === 'farmer' ? 'Farmer' : 'Buyer'}</span>
             </div>
-            <span style="font-size:12px;color:var(--ink2);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(u.org || u.loc.label)}</span>
+            <span style="font-size:12px;color:var(--ink2);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">📍 ${esc(u.loc.label)}${u.loc && u.loc.isGps ? ' (GPS)' : ''} · ${esc(u.org)}</span>
           </div>
         </div>
         <a href="#/${u.role}" onclick="closeMobileNav()">${ic('home', 18)} My dashboard</a>
+        <button type="button" class="menu-row" onclick="closeMobileNav();openEditLocationModal()">${ic('map-pin', 18)} ${u.role === 'farmer' ? 'Update Farm Location' : 'Update Delivery Address'}</button>
         <div class="mobile-nav-divider"></div>
         <button type="button" class="menu-row" style="color:var(--terra)" onclick="closeMobileNav();logout()">${ic('logout', 18)} Log out</button>
       </div>
@@ -3495,9 +3528,10 @@ function navbar(u) {
     <div class="who">
       <b>${esc(u.name)}</b>
       <span>${esc(u.org)}</span>
-      <span>${esc(u.loc.label)} · ${u.role === 'farmer' ? 'Farmer Account' : 'Buyer Account'}</span>
+      <span>📍 ${esc(u.loc.label)}${u.loc && u.loc.isGps ? ' (GPS)' : ''} · ${u.role === 'farmer' ? 'Farmer Account' : 'Buyer Account'}</span>
     </div>
     <a href="#/${u.role}">${ic('home')} My dashboard</a>
+    <button type="button" onclick="closeNavMenu();openEditLocationModal()">${ic('map-pin')} ${u.role === 'farmer' ? 'Update Farm Location' : 'Update Delivery Address'}</button>
     <button type="button" onclick="logout()">${ic('logout')} Log out</button>
   </div>`
   : `<a class="btn btn-primary btn-sm" href="#/login">Sign in</a>`;
@@ -3784,13 +3818,70 @@ function authPage(role) {
       ${su ? `<div class="field"><label for="a_phone">Phone number</label><input id="a_phone" inputmode="numeric" maxlength="10" autocomplete="tel" placeholder="10-digit mobile number"></div>
       <div class="two">
         <div class="field"><label for="a_org">${f ? 'Farm or FPO name' : 'Business name'}</label><input id="a_org" placeholder="${f ? 'e.g. Ramesh Farms' : 'e.g. Hotel Grand Bay'}"></div>
-        <div class="field"><label for="a_loc">${f ? 'Farm location' : 'Delivery location'}</label><select id="a_loc">${townOpts('Bhimavaram')}</select></div>
+        <div class="field">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <label for="a_loc" style="margin:0">${f ? 'Farm location' : 'Delivery location'}</label>
+            <button type="button" class="btn btn-sm btn-subtle" id="a_gps_btn" onclick="detectAuthGpsLocation('${role}')" style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;font-size:12px">
+              ${ic('map-pin', 13)} Use GPS
+            </button>
+          </div>
+          <select id="a_loc" onchange="S.authDetectedLoc = null; updateAuthLocBadge();">${townOpts(S.authDetectedLoc ? S.authDetectedLoc.nearestTown : 'Bhimavaram')}</select>
+          <div id="a_loc_badge" style="margin-top:4px;font-size:11.5px;color:var(--ink2)">
+            ${S.authDetectedLoc ? `<span style="color:var(--burgundy);font-weight:600">📍 GPS Verified: ${S.authDetectedLoc.lat.toFixed(4)}, ${S.authDetectedLoc.lng.toFixed(4)}</span>` : 'Tip: Tap "Use GPS" to detect genuine coordinates.'}
+          </div>
+        </div>
       </div>
       ${f ? '' : `<div class="field"><label for="a_type">Buyer type</label><select id="a_type"><option>Consumer</option><option>Retailer</option><option>Restaurant or hotel</option><option>Wholesaler</option></select></div>`}` : ''}
       <div class="field"><label for="a_pw">Password</label><input id="a_pw" type="password" autocomplete="${su ? 'new-password' : 'current-password'}" placeholder="${su ? 'At least 8 characters' : 'Your password'}"></div>
       <button type="submit" id="authBtn" class="btn btn-primary btn-lg" style="width:100%">${su ? 'Create account' : 'Log in'}</button>
     </form>
   </div></section></main>`;
+}
+
+function detectAuthGpsLocation(role) {
+  if (!navigator.geolocation) {
+    toast('Geolocation is not supported by your browser', 'err');
+    return;
+  }
+  const btn = $('#a_gps_btn');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner" style="width:12px;height:12px;border-width:2px;display:inline-block"></span> Locating...`;
+  }
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      const closest = findClosestTown(lat, lng);
+      S.authDetectedLoc = { lat, lng, nearestTown: closest.n, isGps: true };
+      const sel = $('#a_loc');
+      if (sel) sel.value = closest.n;
+      updateAuthLocBadge();
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = `${ic('map-pin', 13)} GPS Set`;
+      }
+      toast(`GPS location detected: ${closest.n} (${lat.toFixed(4)}, ${lng.toFixed(4)})`, 'ok');
+    },
+    err => {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = `${ic('map-pin', 13)} Use GPS`;
+      }
+      toast('Could not detect location: ' + (err.message || 'Permission denied'), 'err');
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+  );
+}
+
+function updateAuthLocBadge() {
+  const badge = $('#a_loc_badge');
+  if (!badge) return;
+  if (S.authDetectedLoc) {
+    badge.innerHTML = `<span style="color:var(--burgundy);font-weight:600">📍 GPS Verified: ${S.authDetectedLoc.lat.toFixed(4)}, ${S.authDetectedLoc.lng.toFixed(4)}</span>`;
+  } else {
+    badge.innerHTML = `<span style="color:var(--ink2)">Selected from regional hub list.</span>`;
+  }
 }
 
 function setRole(r) {
@@ -3849,7 +3940,17 @@ async function doAuth(role) {
       if (org.length < 2) throw new Error(role === 'farmer' ? 'Enter your farm or FPO name.' : 'Enter your business name.');
       if (!/^\d{10}$/.test(phone)) throw new Error('Enter a valid 10-digit mobile number for order contact.');
 
-      const loc = town(v('a_loc'));
+      let loc;
+      if (S.authDetectedLoc && S.authDetectedLoc.nearestTown === v('a_loc')) {
+        loc = {
+          label: v('a_loc'),
+          lat: S.authDetectedLoc.lat,
+          lng: S.authDetectedLoc.lng,
+          isGps: true
+        };
+      } else {
+        loc = town(v('a_loc'));
+      }
       const buyerType = role === 'buyer' ? v('a_type') : null;
 
       const res = await window.DFApi.signup({
@@ -3864,7 +3965,10 @@ async function doAuth(role) {
       });
 
       if (seq !== authSeq) return;
-      CURRENT_USER = res.user;
+      CURRENT_USER = applyUserLocOverride(res.user);
+      if (loc.isGps && CURRENT_USER) {
+        try { localStorage.setItem('df_user_loc_' + CURRENT_USER.id, JSON.stringify(loc)); } catch(e) {}
+      }
       currentAuthState = AUTH_STATE.AUTHENTICATED;
       toast(`Welcome, ${name.split(' ')[0]}! Profile created.`);
       await reloadAppData();
@@ -3878,7 +3982,7 @@ async function doAuth(role) {
         role
       });
       if (seq !== authSeq) return;
-      CURRENT_USER = res.user;
+      CURRENT_USER = applyUserLocOverride(res.user);
       currentAuthState = AUTH_STATE.AUTHENTICATED;
       toast(`Logged in as ${CURRENT_USER.name}`);
       await reloadAppData();
@@ -3983,7 +4087,9 @@ function farmerApp(u, tab) {
   else if (tab === 'route') c = fRoute(u, orders);
   else c = fOverview(u, mine, orders, fm);
 
-  return shell(u, 'farmer', FT, tab, badges, `${greet()}, ${esc(u.name.split(' ')[0])}`, `${esc(u.org)} · ${esc(u.loc.label)} · Farmer Account`, c);
+  const locDisplay = `📍 ${esc(u.loc.label)}${u.loc && u.loc.isGps ? ' (GPS Verified)' : ''}`;
+  const editLocBtn = `<button type="button" class="btn btn-xs btn-subtle" onclick="openEditLocationModal()" style="display:inline-flex;align-items:center;gap:3px;margin-left:6px;vertical-align:middle;padding:2px 8px;font-size:11px;border-radius:999px;background:rgba(255,255,255,0.22);color:inherit;border:1px solid currentColor;cursor:pointer">${ic('map-pin', 11)} Change</button>`;
+  return shell(u, 'farmer', FT, tab, badges, `${greet()}, ${esc(u.name.split(' ')[0])}`, `${esc(u.org)} · ${locDisplay}${editLocBtn} · Farmer Account`, c);
 }
 
 function fOverview(u, mine, orders, fm) {
@@ -4084,8 +4190,16 @@ function fAdd(u) {
             <input id="p_date" type="date" value="${esc(f.date || new Date().toISOString().slice(0, 10))}" oninput="S.fAdd.date=this.value">
           </div>
           <div class="field">
-            <label for="p_loc">Pickup location</label>
-            <select id="p_loc" onchange="S.fAdd.loc=this.value; updPreviewCard()">${townOpts(f.loc || u.loc.label)}</select>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <label for="p_loc" style="margin:0">Pickup location</label>
+              <button type="button" class="btn btn-sm btn-subtle" id="p_gps_btn" onclick="detectListingGpsLocation()" style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;font-size:12px">
+                ${ic('map-pin', 13)} Field GPS
+              </button>
+            </div>
+            <select id="p_loc" onchange="S.fAdd.detectedLoc=null; S.fAdd.loc=this.value; updPreviewCard(); updateListingLocBadge();">${townOpts(f.loc || (u && u.loc ? u.loc.label : 'Bhimavaram'))}</select>
+            <div id="p_loc_badge" style="margin-top:4px;font-size:11.5px;color:var(--ink2)">
+              ${u && u.loc && u.loc.isGps ? `<span style="color:var(--burgundy);font-weight:600">📍 Using Farm GPS Profile (${u.loc.lat.toFixed(4)}, ${u.loc.lng.toFixed(4)})</span>` : 'Defaults to farm profile. Tap "Field GPS" to pinpoint harvest.'}
+            </div>
           </div>
         </div>
 
@@ -4311,7 +4425,19 @@ async function publish() {
     }
 
     const locVal = locEl ? locEl.value : (S.fAdd.loc || '');
-    const loc = town(locVal);
+    let loc;
+    if (S.fAdd.detectedLoc && S.fAdd.detectedLoc.nearestTown === locVal) {
+      loc = {
+        label: locVal,
+        lat: S.fAdd.detectedLoc.lat,
+        lng: S.fAdd.detectedLoc.lng,
+        isGps: true
+      };
+    } else if (CURRENT_USER && CURRENT_USER.loc && CURRENT_USER.loc.isGps && CURRENT_USER.loc.label === locVal) {
+      loc = { ...CURRENT_USER.loc };
+    } else {
+      loc = town(locVal);
+    }
     const grade = gradeEl ? gradeEl.value : (S.fAdd.grade || 'A');
     const harvest = dateEl ? dateEl.value : (S.fAdd.date || null);
     const note = (noteEl ? noteEl.value : S.fAdd.note).trim();
@@ -4339,6 +4465,7 @@ async function publish() {
       price: '',
       date: new Date().toISOString().slice(0, 10),
       loc: CURRENT_USER ? CURRENT_USER.loc.label : '',
+      detectedLoc: null,
       note: ''
     };
     S.imgFile = null;
@@ -4364,6 +4491,56 @@ async function publish() {
       btn.disabled = false;
       btn.innerHTML = `${ic('leaf', 18)} Publish produce to marketplace`;
     }
+  }
+}
+
+function detectListingGpsLocation() {
+  if (!navigator.geolocation) {
+    toast('Geolocation is not supported by your browser', 'err');
+    return;
+  }
+  const btn = $('#p_gps_btn');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner" style="width:12px;height:12px;border-width:2px;display:inline-block"></span> Locating...`;
+  }
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      const closest = findClosestTown(lat, lng);
+      S.fAdd.detectedLoc = { lat, lng, nearestTown: closest.n, isGps: true };
+      S.fAdd.loc = closest.n;
+      const sel = $('#p_loc');
+      if (sel) sel.value = closest.n;
+      updateListingLocBadge();
+      updPreviewCard();
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = `${ic('map-pin', 13)} GPS Set`;
+      }
+      toast(`Harvest location set: ${closest.n} (${lat.toFixed(4)}, ${lng.toFixed(4)})`, 'ok');
+    },
+    err => {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = `${ic('map-pin', 13)} Field GPS`;
+      }
+      toast('Could not detect field GPS: ' + (err.message || 'Permission denied'), 'err');
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+  );
+}
+
+function updateListingLocBadge() {
+  const badge = $('#p_loc_badge');
+  if (!badge) return;
+  if (S.fAdd.detectedLoc) {
+    badge.innerHTML = `<span style="color:var(--burgundy);font-weight:600">📍 Exact Field GPS: ${S.fAdd.detectedLoc.lat.toFixed(4)}, ${S.fAdd.detectedLoc.lng.toFixed(4)}</span>`;
+  } else if (CURRENT_USER && CURRENT_USER.loc && CURRENT_USER.loc.isGps && $('#p_loc') && $('#p_loc').value === CURRENT_USER.loc.label) {
+    badge.innerHTML = `<span style="color:var(--burgundy);font-weight:600">📍 Using Farm GPS Profile (${CURRENT_USER.loc.lat.toFixed(4)}, ${CURRENT_USER.loc.lng.toFixed(4)})</span>`;
+  } else {
+    badge.innerHTML = `<span style="color:var(--ink2)">Selected from regional hub list.</span>`;
   }
 }
 
@@ -4730,7 +4907,9 @@ function buyerApp(u, tab) {
   else if (tab === 'prices') c = marketPricesView(u, 'buyer');
   else c = bMarket(u);
 
-  return shell(u, 'buyer', BT, tab, { reqs: pendingOffers }, `${greet()}, ${esc(u.name.split(' ')[0])}`, `${esc(u.org)} · ${esc(u.buyerType || 'Procurement Buyer')} · ${esc(u.loc.label)}`, c);
+  const locDisplay = `📍 ${esc(u.loc.label)}${u.loc && u.loc.isGps ? ' (GPS Verified)' : ''}`;
+  const editLocBtn = `<button type="button" class="btn btn-xs btn-subtle" onclick="openEditLocationModal()" style="display:inline-flex;align-items:center;gap:3px;margin-left:6px;vertical-align:middle;padding:2px 8px;font-size:11px;border-radius:999px;background:rgba(255,255,255,0.22);color:inherit;border:1px solid currentColor;cursor:pointer">${ic('map-pin', 11)} Change</button>`;
+  return shell(u, 'buyer', BT, tab, { reqs: pendingOffers }, `${greet()}, ${esc(u.name.split(' ')[0])}`, `${esc(u.org)} · ${esc(u.buyerType || 'Procurement Buyer')} · ${locDisplay}${editLocBtn}`, c);
 }
 
 function cardHTML(l, u) {
@@ -6313,13 +6492,74 @@ function modalHTML() {
       </div>
 
       <div class="two">
-        <div class="field"><label for="b_dest">Delivery destination</label><select id="b_dest" onchange="updBuy('${l.id}')">${townOpts(u.loc.label)}</select></div>
+        <div class="field">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <label for="b_dest" style="margin:0">Delivery destination</label>
+            <button type="button" class="btn btn-sm btn-subtle" id="b_gps_btn" onclick="detectBuyGpsLocation('${l.id}')" style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;font-size:12px">
+              ${ic('map-pin', 13)} Use GPS
+            </button>
+          </div>
+          <select id="b_dest" onchange="S.buyDetectedLoc=null; updBuy('${l.id}'); updateBuyLocBadge()">${townOpts(u.loc.label)}</select>
+          <div id="b_dest_badge" style="margin-top:4px;font-size:11.5px;color:var(--ink2)">
+            ${u && u.loc && u.loc.isGps ? `<span style="color:var(--burgundy);font-weight:600">📍 Using Buyer GPS Profile (${u.loc.lat.toFixed(4)}, ${u.loc.lng.toFixed(4)})</span>` : 'Defaults to profile address. Tap "Use GPS" to pinpoint this delivery.'}
+          </div>
+        </div>
         <div class="field"><label for="b_pay">Payment mode</label><select id="b_pay"><option>Cash on delivery</option><option>UPI on delivery</option></select></div>
       </div>
 
       <div class="field"><label for="b_addr">Delivery address or landmark</label><input id="b_addr" placeholder="Street, shop name or landmark"></div>
       <div class="sumbox" id="b_sum"></div>
       <button type="button" id="orderBtn" class="btn btn-primary btn-lg" style="width:100%" onclick="placeOrder('${l.id}')">Place direct order</button>
+    </div>`;
+  } else if (m.type === 'edit_loc') {
+    const isFarmer = u.role === 'farmer';
+    const locTitle = isFarmer ? 'Update Farm Location' : 'Update Delivery Address';
+    const locSub = isFarmer
+      ? 'Set your verified farm coordinates so buyers see exact distance, road ETA, and accurate delivery fees.'
+      : 'Set your delivery location so farmers and delivery partners navigate directly to your shop or warehouse.';
+
+    inner = `<div class="mbody">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <div style="width:36px;height:36px;border-radius:10px;background:var(--soft);color:var(--burgundy);display:flex;align-items:center;justify-content:center;flex:none">${ic('map-pin', 20)}</div>
+        <h2 style="font-size:24px;margin:0">${locTitle}</h2>
+      </div>
+      <p class="small" style="margin:4px 0 16px;color:var(--ink2)">${locSub}</p>
+
+      <div style="background:var(--cream);border:1px solid var(--latte);border-radius:12px;padding:14px;margin-bottom:16px">
+        <div style="font-size:11.5px;color:var(--ink2);letter-spacing:0.5px;font-weight:600;margin-bottom:4px">CURRENT SAVED LOCATION</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+          <div>
+            <b style="font-size:16px;color:var(--ink)">${esc(u.loc.label)}</b>
+            ${(u.loc.isGps || (u.loc.lat && u.loc.lng)) ? `<div style="font-size:12px;color:var(--burgundy);font-weight:600;margin-top:2px">📍 GPS: ${Number(u.loc.lat).toFixed(4)}, ${Number(u.loc.lng).toFixed(4)}</div>` : ''}
+          </div>
+          <span class="badge ${u.loc.isGps ? 'b-good' : 'b-neutral'}">${u.loc.isGps ? 'GPS Verified' : 'Regional Hub'}</span>
+        </div>
+      </div>
+
+      <div class="field" style="margin-bottom:14px">
+        <label style="font-weight:600">Option 1: Detect Current GPS (Recommended)</label>
+        <button type="button" id="edit_gps_btn" class="btn btn-secondary" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px" onclick="detectEditProfileGpsLocation()">
+          ${ic('map-pin', 16)} Auto-Detect My Current GPS Location
+        </button>
+        <div id="edit_gps_status" style="font-size:12px;color:var(--ink2);margin-top:6px">
+          ${S.editDetectedLoc ? `<span style="color:var(--burgundy);font-weight:600">📍 Detected: ${S.editDetectedLoc.nearestTown} (${S.editDetectedLoc.lat.toFixed(4)}, ${S.editDetectedLoc.lng.toFixed(4)})</span>` : 'One-tap detection from your phone or device GPS.'}
+        </div>
+      </div>
+
+      <div style="position:relative;text-align:center;margin:16px 0">
+        <hr style="border:none;border-top:1px solid var(--latte);margin:0">
+        <span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--card-bg, #fff);padding:0 10px;font-size:11.5px;color:var(--ink2)">OR SELECT MANUALLY</span>
+      </div>
+
+      <div class="field">
+        <label for="edit_town_sel">Option 2: Select regional town / market hub</label>
+        <select id="edit_town_sel" onchange="S.editDetectedLoc = null; updateEditLocBadge();">${townOpts(S.editDetectedLoc ? S.editDetectedLoc.nearestTown : u.loc.label)}</select>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:20px">
+        <button type="button" class="btn btn-ghost" style="flex:1" onclick="closeModal()">Cancel</button>
+        <button type="button" id="saveLocBtn" class="btn btn-primary" style="flex:2" onclick="saveUserLocation()">Save Location</button>
+      </div>
     </div>`;
   } else if (m.type === 'edit') {
     const l = MY_LISTINGS.find(x => x.id === m.id);
@@ -6366,6 +6606,88 @@ function modalHTML() {
   </div>`;
 }
 
+function openEditLocationModal() {
+  S.editDetectedLoc = null;
+  S.modal = { type: 'edit_loc' };
+  render();
+}
+
+function detectEditProfileGpsLocation() {
+  if (!navigator.geolocation) {
+    toast('Geolocation is not supported by your browser', 'err');
+    return;
+  }
+  const btn = $('#edit_gps_btn');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner" style="width:12px;height:12px;border-width:2px;display:inline-block"></span> Detecting GPS...`;
+  }
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      const closest = findClosestTown(lat, lng);
+      S.editDetectedLoc = { lat, lng, nearestTown: closest.n, isGps: true };
+      const sel = $('#edit_town_sel');
+      if (sel) sel.value = closest.n;
+      updateEditLocBadge();
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = `${ic('map-pin', 16)} GPS Detected (${closest.n})`;
+      }
+      toast(`GPS location detected: ${closest.n} (${lat.toFixed(4)}, ${lng.toFixed(4)})`, 'ok');
+    },
+    err => {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = `${ic('map-pin', 16)} Auto-Detect My Current GPS Location`;
+      }
+      toast('Could not detect GPS: ' + (err.message || 'Permission denied'), 'err');
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+  );
+}
+
+function updateEditLocBadge() {
+  const el = $('#edit_gps_status');
+  if (!el) return;
+  if (S.editDetectedLoc) {
+    el.innerHTML = `<span style="color:var(--burgundy);font-weight:600">📍 Detected: ${S.editDetectedLoc.nearestTown} (${S.editDetectedLoc.lat.toFixed(4)}, ${S.editDetectedLoc.lng.toFixed(4)})</span>`;
+  } else {
+    el.innerHTML = `<span style="color:var(--ink2)">Selected from regional hub list.</span>`;
+  }
+}
+
+function saveUserLocation() {
+  if (!CURRENT_USER) return;
+  const selTown = $('#edit_town_sel') ? $('#edit_town_sel').value : CURRENT_USER.loc.label;
+  let newLoc;
+  if (S.editDetectedLoc && S.editDetectedLoc.nearestTown === selTown) {
+    newLoc = {
+      label: selTown,
+      lat: S.editDetectedLoc.lat,
+      lng: S.editDetectedLoc.lng,
+      isGps: true
+    };
+  } else {
+    newLoc = town(selTown);
+  }
+
+  CURRENT_USER.loc = newLoc;
+  try {
+    localStorage.setItem('df_user_loc_' + CURRENT_USER.id, JSON.stringify(newLoc));
+  } catch(e) {}
+
+  if (CURRENT_USER.role === 'farmer') {
+    S.fAdd.loc = newLoc.label;
+    S.fAdd.detectedLoc = newLoc.isGps ? { lat: newLoc.lat, lng: newLoc.lng, nearestTown: newLoc.label, isGps: true } : null;
+  }
+
+  closeModal();
+  toast(`${CURRENT_USER.role === 'farmer' ? 'Farm location' : 'Delivery address'} updated to ${newLoc.label}!`, 'ok');
+  render();
+}
+
 let starVal = 0;
 function setStar(n) {
   starVal = n;
@@ -6391,11 +6713,77 @@ function stepQty(d) {
   i.value = Math.max(1, Math.min(+i.max, (+i.value || 0) + d));
   i.oninput();
 }
+
+function getBuyDestLoc() {
+  const selVal = $('#b_dest') ? $('#b_dest').value : (CURRENT_USER ? CURRENT_USER.loc.label : 'Bhimavaram');
+  if (S.buyDetectedLoc && S.buyDetectedLoc.nearestTown === selVal) {
+    return {
+      label: selVal,
+      lat: S.buyDetectedLoc.lat,
+      lng: S.buyDetectedLoc.lng,
+      isGps: true
+    };
+  }
+  if (CURRENT_USER && CURRENT_USER.loc && CURRENT_USER.loc.isGps && CURRENT_USER.loc.label === selVal) {
+    return { ...CURRENT_USER.loc };
+  }
+  return town(selVal);
+}
+
+function detectBuyGpsLocation(listingId) {
+  if (!navigator.geolocation) {
+    toast('Geolocation is not supported by your browser', 'err');
+    return;
+  }
+  const btn = $('#b_gps_btn');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner" style="width:12px;height:12px;border-width:2px;display:inline-block"></span> Locating...`;
+  }
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      const closest = findClosestTown(lat, lng);
+      S.buyDetectedLoc = { lat, lng, nearestTown: closest.n, isGps: true };
+      const sel = $('#b_dest');
+      if (sel) sel.value = closest.n;
+      updateBuyLocBadge();
+      updBuy(listingId);
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = `${ic('map-pin', 13)} GPS Set`;
+      }
+      toast(`Delivery pin set: ${closest.n} (${lat.toFixed(4)}, ${lng.toFixed(4)})`, 'ok');
+    },
+    err => {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = `${ic('map-pin', 13)} Use GPS`;
+      }
+      toast('Could not detect GPS: ' + (err.message || 'Permission denied'), 'err');
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+  );
+}
+
+function updateBuyLocBadge() {
+  const badge = $('#b_dest_badge');
+  if (!badge) return;
+  if (S.buyDetectedLoc) {
+    badge.innerHTML = `<span style="color:var(--burgundy);font-weight:600">📍 Exact Order GPS: ${S.buyDetectedLoc.lat.toFixed(4)}, ${S.buyDetectedLoc.lng.toFixed(4)}</span>`;
+  } else if (CURRENT_USER && CURRENT_USER.loc && CURRENT_USER.loc.isGps && $('#b_dest') && $('#b_dest').value === CURRENT_USER.loc.label) {
+    badge.innerHTML = `<span style="color:var(--burgundy);font-weight:600">📍 Using Buyer GPS Profile (${CURRENT_USER.loc.lat.toFixed(4)}, ${CURRENT_USER.loc.lng.toFixed(4)})</span>`;
+  } else {
+    badge.innerHTML = `<span style="color:var(--ink2)">Selected from regional hub list.</span>`;
+  }
+}
+
 function updBuy(id) {
   const l = ACTIVE_LISTINGS.find(x => x.id === id);
   if (!l || !$('#b_qty')) return;
   const q = Math.max(0, Math.min(l.qty, parseFloat($('#b_qty').value) || 0));
-  const dest = town($('#b_dest').value);
+  const dest = getBuyDestLoc();
   const fee = deliveryFee(l.loc, dest);
   $('#b_sum').innerHTML = `<div class="row"><span>${q} kg × ${inr(l.price)}</span><span>${inr(q * l.price)}</span></div><div class="row"><span>Delivery (${Math.round(km(l.loc, dest))} km)</span><span>${inr(fee)}</span></div><div class="row t"><span>Total payable</span><span>${inr(q * l.price + fee)}</span></div>`;
 }
@@ -6421,7 +6809,7 @@ async function placeOrder(id) {
   if (btn) { btn.disabled = true; btn.innerHTML = `<span class="spinner"></span> Processing order...`; }
 
   try {
-    const dest = town($('#b_dest').value);
+    const dest = getBuyDestLoc();
     const ordId = await window.DFApi.placeOrder({
       token,
       listingId: l.id,
@@ -6672,7 +7060,7 @@ window.addEventListener('hashchange', () => {
   try {
     const user = await window.DFApi.me();
     if (seq !== authSeq) return;
-    CURRENT_USER = user;
+    CURRENT_USER = applyUserLocOverride(user);
     currentAuthState = user ? AUTH_STATE.AUTHENTICATED : AUTH_STATE.UNAUTHENTICATED;
   } catch(e) {
     if (seq !== authSeq) return;
