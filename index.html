@@ -232,6 +232,20 @@ img,svg{max-width:100%;height:auto}
   text-decoration:none;
 }
 .nav-menu-dropdown a:hover{background:var(--soft);color:var(--burgundy)}
+.nav-menu-dropdown a.on{
+  background:color-mix(in srgb, var(--burgundy) 10%, transparent);
+  color:var(--burgundy);
+  font-weight:700;
+}
+.nav-menu-dropdown a .cnt{
+  margin-left:auto;
+  background:var(--burgundy);
+  color:var(--onolive);
+  font-size:11px;
+  font-weight:700;
+  padding:2px 7px;
+  border-radius:999px;
+}
 .profile-btn{
   display:flex;
   align-items:center;
@@ -1287,44 +1301,8 @@ input:focus,select:focus,textarea:focus{
 .dash-head h1{font-size:clamp(28px,3.4vw,38px);color:var(--burgundy)}
 .dash-head p{color:var(--ink2);margin-top:6px;font-size:15px}
 .tabs{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  width:fit-content;
-  max-width:100%;
-  margin:0 auto 28px auto;
-  overflow-x:auto;
-  padding:6px 20px;
-  border:1px solid var(--latte);
-  border-radius:18px;
-  background:var(--card);
-  scrollbar-width:none;
+  display:none !important;
 }
-.tabs::-webkit-scrollbar{display:none}
-.tabs a{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  padding:10px 16px;
-  border-radius:12px;
-  text-decoration:none;
-  color:var(--ink2);
-  font-weight:600;
-  white-space:nowrap;
-  font-size:14.5px;
-  transition:background .15s,color .15s,box-shadow .15s;
-  border:1px solid transparent;
-}
-.tabs a:hover{background:var(--soft);color:var(--burgundy);border-color:var(--latte)}
-.tabs a.on{
-  background:var(--burgundy);
-  color:var(--onolive);
-  font-weight:700;
-  border:1px solid var(--burgundy-hover);
-  box-shadow:0 2px 8px rgba(114,47,55,0.3);
-}
-.tabs a.on svg{color:var(--onolive)}
 .cnt{
   background:var(--burgundy);
   color:#fff;
@@ -2544,27 +2522,7 @@ input:focus,select:focus,textarea:focus{
     margin-top:2px;
   }
   .tabs{
-    padding:4px 14px;
-    gap:6px;
-    border-radius:16px;
-    margin:0 auto 16px auto;
-    width:fit-content;
-    max-width:100%;
-    overflow-x:auto;
-    flex-wrap:nowrap;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:none;
-  }
-  .tabs::-webkit-scrollbar{
-    display:none;
-  }
-  .tabs a{
-    padding:8px 14px;
-    font-size:13px;
-    border-radius:10px;
-    white-space:nowrap;
-    flex:none;
-    min-height:42px;
+    display:none !important;
   }
   
   /* KPI & Panels */
@@ -3475,23 +3433,32 @@ function mobileNavPanel(u) {
 }
 
 function navbar(u) {
+  const curHash = location.hash.replace(/^#\/?/, '') || '';
+  const curParts = curHash.split('/').filter(Boolean);
+  const curRole = curParts[0] || '';
+  const curPage = curParts[1] || (curRole === 'farmer' ? 'overview' : curRole === 'buyer' ? 'market' : '');
+
   let navItems = '';
   if (u && u.role === 'farmer') {
+    const pendOrders = (MY_ORDERS || []).filter(o => o.status === 'placed').length;
+    const curTab = curPage || 'overview';
     navItems = `
-      <a onclick="closeNavMenu()" href="#/farmer/overview">${ic('home', 16)} Overview</a>
-      <a onclick="closeNavMenu()" href="#/farmer/add">${ic('plus', 16)} Add produce</a>
-      <a onclick="closeNavMenu()" href="#/farmer/listings">${ic('list', 16)} My listings</a>
-      <a onclick="closeNavMenu()" href="#/farmer/orders">${ic('box', 16)} Orders</a>
-      <a onclick="closeNavMenu()" href="#/farmer/buyers">${ic('spark', 16)} Buyer matches</a>
-      <a onclick="closeNavMenu()" href="#/farmer/prices">${ic('chart', 16)} Market Prices</a>
-      <a onclick="closeNavMenu()" href="#/farmer/route">${ic('truck', 16)} Delivery route</a>`;
+      <a class="${curTab === 'overview' ? 'on' : ''}" onclick="closeNavMenu()" href="#/farmer/overview">${ic('home', 16)} Overview</a>
+      <a class="${curTab === 'add' ? 'on' : ''}" onclick="closeNavMenu()" href="#/farmer/add">${ic('plus', 16)} Add produce</a>
+      <a class="${curTab === 'listings' ? 'on' : ''}" onclick="closeNavMenu()" href="#/farmer/listings">${ic('list', 16)} My listings</a>
+      <a class="${curTab === 'orders' ? 'on' : ''}" onclick="closeNavMenu()" href="#/farmer/orders">${ic('box', 16)} Orders ${pendOrders ? `<span class="cnt">${pendOrders}</span>` : ''}</a>
+      <a class="${curTab === 'buyers' ? 'on' : ''}" onclick="closeNavMenu()" href="#/farmer/buyers">${ic('spark', 16)} Buyer matches</a>
+      <a class="${curTab === 'prices' ? 'on' : ''}" onclick="closeNavMenu()" href="#/farmer/prices">${ic('chart', 16)} Market Prices</a>
+      <a class="${curTab === 'route' ? 'on' : ''}" onclick="closeNavMenu()" href="#/farmer/route">${ic('truck', 16)} Delivery route</a>`;
   } else if (u && u.role === 'buyer') {
+    const pendBuyer = (MY_ORDERS || []).filter(o => o.status === 'placed').length;
+    const curTab = curPage || 'market';
     navItems = `
-      <a onclick="closeNavMenu()" href="#/buyer/market">${ic('store', 16)} Marketplace</a>
-      <a onclick="closeNavMenu()" href="#/buyer/reqs">${ic('spark', 16)} Requirements</a>
-      <a onclick="closeNavMenu()" href="#/buyer/orders">${ic('box', 16)} My orders</a>
-      <a onclick="closeNavMenu()" href="#/buyer/track">${ic('truck', 16)} Track Order</a>
-      <a onclick="closeNavMenu()" href="#/buyer/prices">${ic('chart', 16)} Market Prices</a>`;
+      <a class="${curTab === 'market' ? 'on' : ''}" onclick="closeNavMenu()" href="#/buyer/market">${ic('store', 16)} Marketplace</a>
+      <a class="${curTab === 'reqs' ? 'on' : ''}" onclick="closeNavMenu()" href="#/buyer/reqs">${ic('spark', 16)} Requirements</a>
+      <a class="${curTab === 'orders' ? 'on' : ''}" onclick="closeNavMenu()" href="#/buyer/orders">${ic('box', 16)} My orders ${pendBuyer ? `<span class="cnt">${pendBuyer}</span>` : ''}</a>
+      <a class="${curTab === 'track' ? 'on' : ''}" onclick="closeNavMenu()" href="#/buyer/track">${ic('truck', 16)} Track Order</a>
+      <a class="${curTab === 'prices' ? 'on' : ''}" onclick="closeNavMenu()" href="#/buyer/prices">${ic('chart', 16)} Market Prices</a>`;
   } else {
     navItems = `
       <a onclick="closeNavMenu();goSec('categories')">${ic('store', 16)} Produce</a>
@@ -3952,10 +3919,6 @@ function shell(u, base, tabs, cur, badges, title, sub, content) {
   return `${isOverview ? banner : ''}
 <main class="dash">
   ${!isOverview ? banner : ''}
-  ${!isOverview ? `
-  <nav class="tabs" aria-label="Dashboard sections">
-    ${tabs.map(t => `<a class="${t[0] === cur ? 'on' : ''}" href="#/${base}/${t[0]}">${ic(t[2], 17)}<span>${t[1]}</span>${badges[t[0]] ? `<span class="cnt">${badges[t[0]]}</span>` : ''}</a>`).join('')}
-  </nav>` : ''}
   ${content}
 </main>`;
 }
