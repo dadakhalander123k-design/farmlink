@@ -204,7 +204,9 @@ img,svg{max-width:100%;height:auto}
   position:absolute;
   left:0;
   top:calc(100% + 10px);
-  min-width:200px;
+  min-width:210px;
+  max-height:calc(100vh - 80px);
+  overflow-y:auto;
   background:var(--card-elevated);
   border:1px solid var(--latte);
   border-radius:18px;
@@ -3494,7 +3496,39 @@ function mobileNavPanel(u) {
 }
 
 function navbar(u) {
-  const navLeft = !u ? `<div style="position:relative;display:inline-block">
+  let navItems = '';
+  if (u && u.role === 'farmer') {
+    navItems = `
+      <a onclick="closeNavMenu()" href="#/farmer/overview">${ic('home', 16)} Overview</a>
+      <a onclick="closeNavMenu()" href="#/farmer/add">${ic('plus', 16)} Add produce</a>
+      <a onclick="closeNavMenu()" href="#/farmer/listings">${ic('list', 16)} My listings</a>
+      <a onclick="closeNavMenu()" href="#/farmer/orders">${ic('box', 16)} Orders</a>
+      <a onclick="closeNavMenu()" href="#/farmer/buyers">${ic('spark', 16)} Buyer matches</a>
+      <a onclick="closeNavMenu()" href="#/farmer/prices">${ic('chart', 16)} Market Prices</a>
+      <a onclick="closeNavMenu()" href="#/farmer/route">${ic('truck', 16)} Delivery route</a>
+      <div style="height:1px;background:var(--soft);margin:4px 0"></div>
+      <a onclick="closeNavMenu();goSec('categories')">${ic('store', 16)} Produce</a>
+      <a onclick="closeNavMenu();goSec('how')">${ic('check', 16)} How it works</a>
+      <a onclick="closeNavMenu();goSec('smart')">${ic('spark', 16)} Smart tools</a>`;
+  } else if (u && u.role === 'buyer') {
+    navItems = `
+      <a onclick="closeNavMenu()" href="#/buyer/market">${ic('store', 16)} Marketplace</a>
+      <a onclick="closeNavMenu()" href="#/buyer/reqs">${ic('spark', 16)} Requirements</a>
+      <a onclick="closeNavMenu()" href="#/buyer/orders">${ic('box', 16)} My orders</a>
+      <a onclick="closeNavMenu()" href="#/buyer/track">${ic('truck', 16)} Track Order</a>
+      <a onclick="closeNavMenu()" href="#/buyer/prices">${ic('chart', 16)} Market Prices</a>
+      <div style="height:1px;background:var(--soft);margin:4px 0"></div>
+      <a onclick="closeNavMenu();goSec('categories')">${ic('store', 16)} Produce</a>
+      <a onclick="closeNavMenu();goSec('how')">${ic('check', 16)} How it works</a>
+      <a onclick="closeNavMenu();goSec('smart')">${ic('spark', 16)} Smart tools</a>`;
+  } else {
+    navItems = `
+      <a onclick="closeNavMenu();goSec('categories')">${ic('store', 16)} Produce</a>
+      <a onclick="closeNavMenu();goSec('how')">${ic('check', 16)} How it works</a>
+      <a onclick="closeNavMenu();goSec('smart')">${ic('spark', 16)} Smart tools</a>`;
+  }
+
+  const navLeft = `<div style="position:relative;display:inline-block">
     <button type="button" class="nav-menu2-btn" id="navMenuBtn" onclick="toggleNavMenu(event)" aria-label="Toggle navigation menu" title="Navigation menu">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
         <line x1="4" y1="8" x2="20" y2="8"></line>
@@ -3502,11 +3536,9 @@ function navbar(u) {
       </svg>
     </button>
     <div class="nav-menu-dropdown" id="navMenuDropdown">
-      <a onclick="closeNavMenu();goSec('categories')">${ic('store', 16)} Produce</a>
-      <a onclick="closeNavMenu();goSec('how')">${ic('check', 16)} How it works</a>
-      <a onclick="closeNavMenu();goSec('smart')">${ic('spark', 16)} Smart tools</a>
+      ${navItems}
     </div>
-  </div>` : '';
+  </div>`;
 
   const profileButton = u ? `<button type="button" class="profile-btn" onclick="toggleMenu(event)" aria-haspopup="true" aria-label="Account menu for ${esc(u.name)}" title="Profile: ${esc(u.name)} (${u.role === 'farmer' ? 'Farmer' : 'Buyer'})">
     <span class="avatar">${esc((u.name||'U')[0].toUpperCase())}</span>
@@ -3937,11 +3969,6 @@ function shell(u, base, tabs, cur, badges, title, sub, content) {
         <h1>${title}</h1>
         <p class="dash-banner-sub">${sub}</p>
         <div class="dash-banner-tagline">${bannerTagline}</div>
-        <div class="dash-banner-actions">
-          ${base === 'farmer' 
-            ? `<a class="btn-hero-primary" href="#/farmer/add">${ic('plus', 16)} List produce</a><a class="btn-hero-secondary" href="#/farmer/buyers">${ic('spark', 16)} Buyer matches</a>` 
-            : `<a class="btn-hero-primary" href="#/buyer/post">${ic('plus', 16)} Post requirement</a><a class="btn-hero-secondary" href="#/buyer/orders">${ic('box', 16)} My orders</a>`}
-        </div>
       </div>
     </div>
   </div>` : `
@@ -3955,9 +3982,10 @@ function shell(u, base, tabs, cur, badges, title, sub, content) {
   return `${isOverview ? banner : ''}
 <main class="dash">
   ${!isOverview ? banner : ''}
+  ${!isOverview ? `
   <nav class="tabs" aria-label="Dashboard sections">
     ${tabs.map(t => `<a class="${t[0] === cur ? 'on' : ''}" href="#/${base}/${t[0]}">${ic(t[2], 17)}<span>${t[1]}</span>${badges[t[0]] ? `<span class="cnt">${badges[t[0]]}</span>` : ''}</a>`).join('')}
-  </nav>
+  </nav>` : ''}
   ${content}
   <nav class="mobile-dock" aria-label="Quick mobile navigation">
     ${tabs.slice(0, 5).map(t => `<a class="${t[0] === cur ? 'on' : ''}" href="#/${base}/${t[0]}">${ic(t[2], 20)}<span>${t[1].split(' ')[0]}</span>${badges[t[0]] ? `<span class="dock-badge">${badges[t[0]]}</span>` : ''}</a>`).join('')}
