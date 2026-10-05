@@ -3494,10 +3494,7 @@ function mobileNavPanel(u) {
 }
 
 function navbar(u) {
-  const p = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
-  const isLoginPage = !u && (p[0] === 'login' || p[1] === 'login');
-
-  const navLeft = isLoginPage ? `<div style="position:relative;display:inline-block">
+  const navLeft = !u ? `<div style="position:relative;display:inline-block">
     <button type="button" class="nav-menu2-btn" id="navMenuBtn" onclick="toggleNavMenu(event)" aria-label="Toggle navigation menu" title="Navigation menu">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
         <line x1="4" y1="8" x2="20" y2="8"></line>
@@ -3528,15 +3525,10 @@ function navbar(u) {
   </div>`
   : `<a class="btn btn-primary btn-sm" href="#/login">Sign in</a>`;
 
-  const links = (u || isLoginPage)
-    ? ''
-    : `<a onclick="goSec('categories')">Produce</a><a onclick="goSec('how')">How it works</a><a onclick="goSec('smart')">Smart tools</a>`;
-
   return `<header class="nav"><div style="display:flex;align-items:center;gap:12px">
     ${navLeft}
     <a class="brand" href="#/">${logoSVG}DirectFarm</a>
   </div>
-  ${links ? `<nav class="nav-links" aria-label="Primary">${links}</nav>` : ''}
   <div class="nav-right">
     <button type="button" class="theme-btn" onclick="toggleTheme()" aria-label="Toggle light and dark theme">${ic('moon', 17)}</button>
     ${profileButton}
