@@ -3505,22 +3505,14 @@ function navbar(u) {
       <a onclick="closeNavMenu()" href="#/farmer/orders">${ic('box', 16)} Orders</a>
       <a onclick="closeNavMenu()" href="#/farmer/buyers">${ic('spark', 16)} Buyer matches</a>
       <a onclick="closeNavMenu()" href="#/farmer/prices">${ic('chart', 16)} Market Prices</a>
-      <a onclick="closeNavMenu()" href="#/farmer/route">${ic('truck', 16)} Delivery route</a>
-      <div style="height:1px;background:var(--soft);margin:4px 0"></div>
-      <a onclick="closeNavMenu();goSec('categories')">${ic('store', 16)} Produce</a>
-      <a onclick="closeNavMenu();goSec('how')">${ic('check', 16)} How it works</a>
-      <a onclick="closeNavMenu();goSec('smart')">${ic('spark', 16)} Smart tools</a>`;
+      <a onclick="closeNavMenu()" href="#/farmer/route">${ic('truck', 16)} Delivery route</a>`;
   } else if (u && u.role === 'buyer') {
     navItems = `
       <a onclick="closeNavMenu()" href="#/buyer/market">${ic('store', 16)} Marketplace</a>
       <a onclick="closeNavMenu()" href="#/buyer/reqs">${ic('spark', 16)} Requirements</a>
       <a onclick="closeNavMenu()" href="#/buyer/orders">${ic('box', 16)} My orders</a>
       <a onclick="closeNavMenu()" href="#/buyer/track">${ic('truck', 16)} Track Order</a>
-      <a onclick="closeNavMenu()" href="#/buyer/prices">${ic('chart', 16)} Market Prices</a>
-      <div style="height:1px;background:var(--soft);margin:4px 0"></div>
-      <a onclick="closeNavMenu();goSec('categories')">${ic('store', 16)} Produce</a>
-      <a onclick="closeNavMenu();goSec('how')">${ic('check', 16)} How it works</a>
-      <a onclick="closeNavMenu();goSec('smart')">${ic('spark', 16)} Smart tools</a>`;
+      <a onclick="closeNavMenu()" href="#/buyer/prices">${ic('chart', 16)} Market Prices</a>`;
   } else {
     navItems = `
       <a onclick="closeNavMenu();goSec('categories')">${ic('store', 16)} Produce</a>
