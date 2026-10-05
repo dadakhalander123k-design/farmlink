@@ -3424,12 +3424,9 @@ function mobileNavPanel(u) {
       <a onclick="closeMobileNav();goSec('categories')">${ic('store', 18)} Products</a>
       <a onclick="closeMobileNav();goSec('how')">${ic('check', 18)} How it works</a>
       <a onclick="closeMobileNav();goSec('smart')">${ic('spark', 18)} Smart tools</a>
-      <a href="#/farmer/login" onclick="closeMobileNav()">${ic('leaf', 18)} For farmers</a>
-      <a href="#/buyer/login" onclick="closeMobileNav()">${ic('store', 18)} For buyers</a>
       <div class="mobile-nav-divider"></div>
       <div class="mobile-nav-auth-grid">
-        <a class="btn btn-primary" href="#/farmer/login" onclick="closeMobileNav()">${ic('leaf', 16)} Farmer Login</a>
-        <a class="btn btn-secondary" href="#/buyer/login" onclick="closeMobileNav()">${ic('store', 16)} Buyer Login</a>
+        <a class="btn btn-primary" href="#/login" onclick="closeMobileNav()">${ic('user', 16)} Sign in</a>
       </div>
     </div>
   </div>`;
@@ -3451,11 +3448,11 @@ function navbar(u) {
     <a href="#/${u.role}">${ic('home')} My dashboard</a>
     <button type="button" onclick="logout()">${ic('logout')} Log out</button>
   </div>`
-  : `<a class="btn btn-ghost btn-sm" href="#/farmer/login">Farmer login</a><a class="btn btn-primary btn-sm" href="#/buyer/login">Buyer login</a>`;
+  : `<a class="btn btn-primary btn-sm" href="#/login">Sign in</a>`;
 
   const links = u
     ? ''
-    : `<a onclick="goSec('categories')">Produce</a><a onclick="goSec('how')">How it works</a><a onclick="goSec('smart')">Smart tools</a><a href="#/farmer/login">For farmers</a><a href="#/buyer/login">For buyers</a>`;
+    : `<a onclick="goSec('categories')">Produce</a><a onclick="goSec('how')">How it works</a><a onclick="goSec('smart')">Smart tools</a>`;
 
   return `<header class="nav"><a class="brand" href="#/">${logoSVG}DirectFarm</a>
   ${links ? `<nav class="nav-links" aria-label="Primary">${links}</nav>` : ''}
@@ -3721,6 +3718,10 @@ function authPage(role) {
     </div>
   </section>
   <section class="auth-form"><div class="auth-card">
+    <div class="seg" style="margin-bottom:12px">
+      <button type="button" class="${f ? 'on' : ''}" onclick="setRole('farmer')">${ic('leaf', 16)} Farmer</button>
+      <button type="button" class="${!f ? 'on' : ''}" onclick="setRole('buyer')">${ic('store', 16)} Buyer</button>
+    </div>
     <div class="seg">
       <button type="button" class="${!su ? 'on' : ''}" onclick="setMode('login')">Log in</button>
       <button type="button" class="${su ? 'on' : ''}" onclick="setMode('signup')">Create account</button>
@@ -3740,8 +3741,12 @@ function authPage(role) {
       <div class="field"><label for="a_pw">Password</label><input id="a_pw" type="password" autocomplete="${su ? 'new-password' : 'current-password'}" placeholder="${su ? 'At least 8 characters' : 'Your password'}"></div>
       <button type="submit" id="authBtn" class="btn btn-primary btn-lg" style="width:100%">${su ? 'Create account' : 'Log in'}</button>
     </form>
-    <p class="swap">${f ? 'Looking to buy produce? <a href="#/buyer/login">Buyer login</a>' : 'Want to sell your harvest? <a href="#/farmer/login">Farmer login</a>'}</p>
   </div></section></main>`;
+}
+
+function setRole(r) {
+  S.authRole = r;
+  go(location.hash.startsWith('#/farmer') || location.hash.startsWith('#/buyer') ? '#/' + r + '/login' : '#/login/' + r);
 }
 
 function setMode(m) {
@@ -6010,7 +6015,13 @@ function render() {
   const a = p[0], b = p[1];
   let body = '', hideFooter = false;
 
-  if (a === 'farmer' || a === 'buyer') {
+  if (a === 'login') {
+    if (u) return go('#/' + u.role);
+    const role = (b === 'buyer' || S.authRole === 'buyer') ? 'buyer' : 'farmer';
+    S.authRole = role;
+    body = authPage(role);
+    hideFooter = true;
+  } else if (a === 'farmer' || a === 'buyer') {
     if (b === 'login') {
       if (u && u.role === a) return go('#/' + a);
       if (u && u.role !== a) {
@@ -6019,6 +6030,7 @@ function render() {
         CURRENT_USER = null;
         currentAuthState = AUTH_STATE.UNAUTHENTICATED;
       }
+      S.authRole = a;
       body = authPage(a);
       hideFooter = true;
     } else if (currentAuthState === AUTH_STATE.INITIALIZING) {
