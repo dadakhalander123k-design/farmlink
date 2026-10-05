@@ -3012,6 +3012,8 @@ let trackingPollTimer = null;
 let _currentLeafletMap = null;
 let _currentLeafletMarkers = { orderId: null, truck: null, farm: null, buyer: null, polyline: null };
 const _osrmRouteCache = {};
+let _lastCalculatedRouteDist = null;
+let _trackingListeners = null;
 
 const S = {
   authMode: 'login',
@@ -5218,7 +5220,7 @@ async function fetchOsrmRoute(origin, destination) {
   try {
     const url = `https://router.project-osrm.org/route/v1/driving/${oLng},${oLat};${dLng},${dLat}?overview=full&geometries=geojson`;
     const ctrl = new AbortController();
-    const timeoutId = setTimeout(() => ctrl.abort(), 4000);
+    const timeoutId = setTimeout(() => ctrl.abort(), 3500);
     const res = await fetch(url, { signal: ctrl.signal });
     clearTimeout(timeoutId);
 
@@ -5243,7 +5245,7 @@ async function fetchOsrmRoute(origin, destination) {
       }
     }
   } catch(e) {
-    console.warn('OSRM routing fetch unavailable, falling back to direct calculation:', e);
+    console.warn('OSRM routing fetch unavailable, using safe fallback road calculation:', e);
   }
 
   // Safe fallback calculation: haversine with road multiplier
@@ -5258,6 +5260,60 @@ async function fetchOsrmRoute(origin, destination) {
   };
   _osrmRouteCache[cacheKey] = fallbackResult;
   return fallbackResult;
+}
+
+function updateTrackingMetricsUI(order, tracking, farmLoc, buyerLoc, curLoc, totalDist, maybeDurationMins) {
+  const totalKm = Number(totalDist ? Number(totalDist).toFixed(1) : km(farmLoc, buyerLoc).toFixed(1));
+  let remainingDist = totalKm;
+  let coveredDist = 0;
+  const durMins = maybeDurationMins || Math.max(10, Math.round(totalKm / 35 * 60));
+  let etaText = `~${durMins} mins`;
+
+  if (order.status === 'delivered') {
+    remainingDist = 0;
+    coveredDist = totalKm;
+    etaText = 'Delivered';
+  } else if (order.status === 'out') {
+    if (curLoc && typeof curLoc.lat === 'number') {
+      const directToBuyer = km(curLoc, buyerLoc);
+      remainingDist = Number(Math.min(totalKm, Math.max(0, directToBuyer)).toFixed(1));
+      coveredDist = Number(Math.max(0, totalKm - remainingDist).toFixed(1));
+      const effectiveSpeed = curLoc.speed && curLoc.speed > 5 ? curLoc.speed : 35;
+      const estMins = Math.max(1, Math.round(remainingDist / effectiveSpeed * 60));
+      etaText = `~${estMins} mins away`;
+    }
+  }
+
+  const totalDistEl = document.getElementById('trackTotalDistText');
+  const coveredEl = document.getElementById('trackDistCoveredText');
+  const remainingEl = document.getElementById('trackDistRemainingText');
+  const etaEl = document.getElementById('trackEtaText');
+  const speedEl = document.getElementById('trackSpeedText');
+  const coveredSubEl = document.getElementById('trackCoveredSub');
+  const locEl = document.getElementById('trackLocText');
+  const statusEl = document.getElementById('trackStatusText');
+  const liveBadgeEl = document.getElementById('trackLiveBadge');
+
+  if (totalDistEl) totalDistEl.textContent = `${totalKm} km`;
+  if (coveredEl) coveredEl.textContent = `${coveredDist} km`;
+  if (remainingEl) remainingEl.textContent = `${remainingDist} km`;
+  if (etaEl) etaEl.textContent = etaText;
+  if (coveredSubEl) {
+    const pct = Math.min(100, Math.max(0, Math.round((coveredDist / (totalKm || 1)) * 100)));
+    coveredSubEl.textContent = order.status === 'delivered' ? '100% Completed' : `${pct}% of journey completed`;
+  }
+  if (speedEl) {
+    speedEl.textContent = (tracking && tracking.isLive && curLoc && curLoc.speed)
+      ? `${curLoc.speed} km/h live speed`
+      : 'Real-time road estimate';
+  }
+  if (locEl) locEl.textContent = (curLoc && curLoc.label) || (order.status === 'out' ? 'In transit' : farmLoc.label);
+  if (statusEl && order.status) statusEl.textContent = SL[order.status] || order.status;
+  if (liveBadgeEl) {
+    liveBadgeEl.innerHTML = (tracking && tracking.isLive)
+      ? `<span class="live-pulse">Live Driver GPS Active</span>`
+      : `<span class="badge b-neutral">${order.status === 'out' ? 'In Transit' : 'Awaiting Dispatch'}</span>`;
+  }
 }
 
 function buyerTrackView(u) {
@@ -5309,7 +5365,7 @@ function buyerTrackView(u) {
 
   setTimeout(() => {
     initOrderMap(order, tr);
-  }, 60);
+  }, 20);
 
   return `
     <div class="panel" style="max-width:960px;margin:0 auto">
@@ -5384,7 +5440,7 @@ function buyerTrackView(u) {
           <div style="background:var(--card);padding:14px 16px;border-radius:14px;border:1px solid var(--latte)">
             <span class="small" style="color:var(--ink2);font-weight:700;text-transform:uppercase">${ic('clock', 14)} Estimated Arrival (ETA)</span>
             <b style="font-size:20px;color:var(--burgundy);margin-top:2px;display:block" id="trackEtaText">${order.status === 'delivered' ? 'Delivered' : `~${initialEstMins} mins`}</b>
-            <span class="small" style="color:var(--ink3)" id="trackSpeedText">${isLiveGps && tr.currentLoc && tr.currentLoc.speed ? `${tr.currentLoc.speed} km/h live speed` : 'OSRM road calculation'}</span>
+            <span class="small" style="color:var(--ink3)" id="trackSpeedText">${isLiveGps && tr && tr.currentLoc && tr.currentLoc.speed ? `${tr.currentLoc.speed} km/h live speed` : 'OSRM road calculation'}</span>
           </div>
         </div>
       </div>
@@ -5401,7 +5457,7 @@ function buyerTrackView(u) {
           </div>
         </div>
 
-        <div id="order-map" class="track-map"></div>
+        <div id="order-map" class="track-map" style="min-height:360px"></div>
         <div id="map-fallback" class="map-fallback" style="display:none">
           <p style="font-weight:700;color:var(--burgundy)">Map preview unavailable</p>
           <p class="small">Live delivery progress and coordinates continue to update reliably in text below.</p>
@@ -5437,7 +5493,7 @@ function buyerTrackView(u) {
               ${esc(lastUpdatedText)}
             </div>
             <div class="small" style="color:var(--ink2);margin-top:2px">
-              Auto-polled every ${order.status === 'out' ? '5' : '10'} seconds
+              Auto-polled every ${order.status === 'out' ? '2.5' : '5'} seconds
             </div>
           </div>
         </div>
@@ -5450,7 +5506,7 @@ function buyerTrackView(u) {
     </div>`;
 }
 
-async function initOrderMap(order, tracking) {
+function initOrderMap(order, tracking) {
   const mapEl = document.getElementById('order-map');
   const fallbackEl = document.getElementById('map-fallback');
   if (!mapEl) return;
@@ -5483,106 +5539,65 @@ async function initOrderMap(order, tracking) {
       curLoc = { lat: farmLoc.lat, lng: farmLoc.lng, label: farmLoc.label };
     }
 
-    // Fetch curved real road route from OSRM
-    const route = await fetchOsrmRoute(farmLoc, buyerLoc);
-    const totalDist = route.distanceKm;
+    // 1. Check if the Leaflet map is ALREADY correctly mounted on this exact DOM element in the document
+    const existingContainer = _currentLeafletMap ? _currentLeafletMap.getContainer() : null;
+    const isMapMounted = existingContainer && existingContainer === mapEl && document.body.contains(mapEl);
 
-    // Calculate dynamic distance covered & remaining
-    let remainingDist = totalDist;
-    let coveredDist = 0;
-    let etaText = `~${route.durationMins} mins`;
-
-    if (order.status === 'delivered') {
-      remainingDist = 0;
-      coveredDist = totalDist;
-      etaText = 'Delivered';
-    } else if (order.status === 'out') {
-      if (tracking && tracking.currentLoc && typeof tracking.currentLoc.lat === 'number') {
-        const directToBuyer = km(curLoc, buyerLoc);
-        remainingDist = Number(Math.min(totalDist, Math.max(0, directToBuyer)).toFixed(1));
-        coveredDist = Number(Math.max(0, totalDist - remainingDist).toFixed(1));
-        const effectiveSpeed = curLoc.speed && curLoc.speed > 5 ? curLoc.speed : 35;
-        const estMins = Math.max(1, Math.round(remainingDist / effectiveSpeed * 60));
-        etaText = `~${estMins} mins away`;
-      } else {
-        remainingDist = totalDist;
-        coveredDist = 0;
-        etaText = `~${route.durationMins} mins`;
-      }
-    } else {
-      remainingDist = totalDist;
-      coveredDist = 0;
-      etaText = `~${route.durationMins} mins (when dispatched)`;
-    }
-
-    // Update real-time metrics in the DOM cleanly
-    const totalDistEl = document.getElementById('trackTotalDistText');
-    const coveredEl = document.getElementById('trackDistCoveredText');
-    const remainingEl = document.getElementById('trackDistRemainingText');
-    const etaEl = document.getElementById('trackEtaText');
-    const speedEl = document.getElementById('trackSpeedText');
-    const coveredSubEl = document.getElementById('trackCoveredSub');
-    const locEl = document.getElementById('trackLocText');
-    const statusEl = document.getElementById('trackStatusText');
-    const liveBadgeEl = document.getElementById('trackLiveBadge');
-
-    if (totalDistEl) totalDistEl.textContent = `${totalDist} km`;
-    if (coveredEl) coveredEl.textContent = `${coveredDist} km`;
-    if (remainingEl) remainingEl.textContent = `${remainingDist} km`;
-    if (etaEl) etaEl.textContent = etaText;
-    if (coveredSubEl) {
-      const pct = Math.min(100, Math.max(0, Math.round((coveredDist / (totalDist || 1)) * 100)));
-      coveredSubEl.textContent = order.status === 'delivered' ? '100% Completed' : `${pct}% of journey completed`;
-    }
-    if (speedEl) {
-      speedEl.textContent = (tracking && tracking.isLive && curLoc.speed)
-        ? `${curLoc.speed} km/h live speed`
-        : (route.isRoadNetwork ? 'OSRM road network route' : 'Real-time road estimate');
-    }
-    if (locEl) locEl.textContent = curLoc.label || (order.status === 'out' ? 'In transit' : farmLoc.label);
-    if (statusEl && order.status) statusEl.textContent = SL[order.status] || order.status;
-    if (liveBadgeEl) {
-      liveBadgeEl.innerHTML = (tracking && tracking.isLive)
-        ? `<span class="live-pulse">Live Driver GPS Active</span>`
-        : `<span class="badge b-neutral">${order.status === 'out' ? 'In Transit' : 'Awaiting Dispatch'}</span>`;
-    }
-
-    // If map already initialized for this order, smoothly update marker position
-    if (_currentLeafletMap && _currentLeafletMarkers.orderId === order.id && _currentLeafletMarkers.truck) {
+    if (isMapMounted && _currentLeafletMarkers.orderId === order.id && _currentLeafletMarkers.truck) {
+      // Smoothly update vehicle marker location without any flicker or lag
       _currentLeafletMarkers.truck.setLatLng([curLoc.lat, curLoc.lng]);
       const popupText = curLoc.speed
-        ? `<b>Delivery Vehicle: In Transit (${curLoc.speed} km/h)</b><br><span style="font-size:12px">${remainingDist} km remaining · ETA ${etaText}</span>`
-        : `<b>Delivery Vehicle: ${esc(curLoc.label || 'In Transit')}</b><br><span style="font-size:12px">${remainingDist} km remaining</span>`;
+        ? `<b>Delivery Vehicle: In Transit (${curLoc.speed} km/h)</b>`
+        : `<b>Delivery Vehicle: ${esc(curLoc.label || 'In Transit')}</b>`;
       _currentLeafletMarkers.truck.setPopupContent(popupText);
+
+      // Pan to keep truck visible if it travels near map edge
+      if (_currentLeafletMap && !_currentLeafletMap.getBounds().contains([curLoc.lat, curLoc.lng])) {
+        _currentLeafletMap.panTo([curLoc.lat, curLoc.lng], { animate: true, duration: 0.5 });
+      }
+
+      // Update metrics directly
+      updateTrackingMetricsUI(order, tracking, farmLoc, buyerLoc, curLoc, _lastCalculatedRouteDist || km(farmLoc, buyerLoc));
       return;
     }
 
-    // Otherwise initialize Leaflet map
+    // 2. Otherwise initialize fresh Leaflet map on this DOM element
     if (_currentLeafletMap) {
-      _currentLeafletMap.remove();
+      try { _currentLeafletMap.remove(); } catch(e) {}
       _currentLeafletMap = null;
     }
+    if (mapEl._leaflet_id) {
+      delete mapEl._leaflet_id;
+    }
 
-    const map = L.map('order-map', { zoomControl: true }).setView([curLoc.lat, curLoc.lng], 10);
+    if (fallbackEl) fallbackEl.style.display = 'none';
+    mapEl.style.display = 'block';
+
+    const map = L.map(mapEl, {
+      zoomControl: true,
+      fadeAnimation: true,
+      zoomAnimation: true
+    }).setView([curLoc.lat, curLoc.lng], 11);
+
     _currentLeafletMap = map;
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 18,
-      attribution: '&copy; OpenStreetMap'
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
     const farmIcon = L.divIcon({
-      html: '<div style="background:#35632F;color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 6px rgba(0,0,0,0.3)">🌱</div>',
+      html: '<div style="background:#35632F;color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 6px rgba(0,0,0,0.3);border:2px solid #fff">🌱</div>',
       iconSize: [32, 32],
       className: 'df-map-marker'
     });
     const buyerIcon = L.divIcon({
-      html: '<div style="background:#722F37;color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 6px rgba(0,0,0,0.3)">📍</div>',
+      html: '<div style="background:#722F37;color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 6px rgba(0,0,0,0.3);border:2px solid #fff">📍</div>',
       iconSize: [32, 32],
       className: 'df-map-marker'
     });
     const truckIcon = L.divIcon({
-      html: '<div style="background:#0F52BA;color:#fff;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:19px;box-shadow:0 3px 8px rgba(0,0,0,0.4);border:2px solid #fff">🚚</div>',
+      html: '<div style="background:#0F52BA;color:#fff;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:19px;box-shadow:0 3px 8px rgba(0,0,0,0.4);border:2px solid #fff;transition:transform 0.3s ease">🚚</div>',
       iconSize: [38, 38],
       className: 'df-map-marker'
     });
@@ -5596,15 +5611,20 @@ async function initOrderMap(order, tracking) {
       .bindPopup(`<b>Delivery Destination: ${esc(buyerLoc.label)}</b>${order.address ? `<br><span style="font-size:12px">${esc(order.address)}</span>` : ''}`);
 
     const truckPopup = curLoc.speed
-      ? `<b>Delivery Vehicle: In Transit (${curLoc.speed} km/h)</b><br><span style="font-size:12px">${remainingDist} km remaining · ETA ${etaText}</span>`
-      : `<b>Delivery Vehicle: ${esc(curLoc.label || 'In Transit')}</b><br><span style="font-size:12px">${remainingDist} km remaining</span>`;
+      ? `<b>Delivery Vehicle: In Transit (${curLoc.speed} km/h)</b>`
+      : `<b>Delivery Vehicle: ${esc(curLoc.label || 'In Transit')}</b>`;
 
     const truckMarker = L.marker([curLoc.lat, curLoc.lng], { icon: truckIcon })
       .addTo(map)
       .bindPopup(truckPopup);
 
-    // Draw real OSRM road polyline
-    const polyline = L.polyline(route.coordinates, {
+    // Draw initial polyline immediately for zero-lag display
+    let initialCoords = [[farmLoc.lat, farmLoc.lng], [buyerLoc.lat, buyerLoc.lng]];
+    if (curLoc && (curLoc.lat !== farmLoc.lat || curLoc.lng !== farmLoc.lng)) {
+      initialCoords = [[farmLoc.lat, farmLoc.lng], [curLoc.lat, curLoc.lng], [buyerLoc.lat, buyerLoc.lng]];
+    }
+
+    const polyline = L.polyline(initialCoords, {
       color: '#0F52BA',
       weight: 5,
       opacity: 0.85,
@@ -5619,11 +5639,36 @@ async function initOrderMap(order, tracking) {
       polyline: polyline
     };
 
-    const bounds = L.latLngBounds(route.coordinates);
-    bounds.extend([curLoc.lat, curLoc.lng]);
-    bounds.extend([farmLoc.lat, farmLoc.lng]);
-    bounds.extend([buyerLoc.lat, buyerLoc.lng]);
-    map.fitBounds(bounds, { padding: [40, 40] });
+    const initialBounds = L.latLngBounds(initialCoords);
+    map.fitBounds(initialBounds, { padding: [40, 40] });
+
+    // Invalidate size after mount to prevent grey/missing tiles
+    setTimeout(() => {
+      if (_currentLeafletMap) _currentLeafletMap.invalidateSize();
+    }, 60);
+    setTimeout(() => {
+      if (_currentLeafletMap) _currentLeafletMap.invalidateSize();
+    }, 250);
+
+    // Initial metrics update
+    const estTotalKm = Number(km(farmLoc, buyerLoc).toFixed(1));
+    updateTrackingMetricsUI(order, tracking, farmLoc, buyerLoc, curLoc, estTotalKm);
+
+    // 3. Asynchronously fetch full road geometry from OSRM without blocking UI!
+    fetchOsrmRoute(farmLoc, buyerLoc).then(route => {
+      if (!route || !route.coordinates || !route.coordinates.length) return;
+      if (_currentLeafletMap && _currentLeafletMarkers.orderId === order.id && _currentLeafletMarkers.polyline) {
+        _currentLeafletMarkers.polyline.setLatLngs(route.coordinates);
+        _lastCalculatedRouteDist = route.distanceKm;
+        updateTrackingMetricsUI(order, tracking, farmLoc, buyerLoc, curLoc, route.distanceKm, route.durationMins);
+        const b = L.latLngBounds(route.coordinates);
+        b.extend([curLoc.lat, curLoc.lng]);
+        _currentLeafletMap.fitBounds(b, { padding: [40, 40] });
+      }
+    }).catch(err => {
+      console.warn('Background OSRM route fetch error:', err);
+    });
+
   } catch(e) {
     console.warn('Map initialization failed:', e);
     if (fallbackEl) fallbackEl.style.display = 'block';
@@ -5634,6 +5679,42 @@ async function initOrderMap(order, tracking) {
 function startTrackingPoll(orderId, orderStatus) {
   stopTrackingPoll();
   trackingOrderId = orderId;
+
+  const handleInstantUpdate = (loc) => {
+    if (!loc || loc.orderId !== orderId) return;
+    const cached = trackingDataCache[orderId] || {};
+    cached.currentLoc = {
+      lat: loc.lat,
+      lng: loc.lng,
+      speed: loc.speed,
+      label: loc.label || 'Driver Vehicle (GPS Active)',
+      updatedAt: loc.updatedAt || Date.now()
+    };
+    cached.isLive = true;
+    cached.lastUpdated = loc.updatedAt || Date.now();
+    trackingDataCache[orderId] = cached;
+
+    const ord = MY_ORDERS.find(o => o.id === orderId) || { id: orderId, status: 'out' };
+    initOrderMap(ord, cached);
+  };
+
+  // Instant local listener for same-device farmer/buyer updates
+  const onCustomUpdate = (e) => {
+    if (e.detail) handleInstantUpdate(e.detail);
+  };
+  const onStorageUpdate = (e) => {
+    if (e.key === 'df_live_tracking_' + orderId && e.newValue) {
+      try {
+        const parsed = JSON.parse(e.newValue);
+        handleInstantUpdate(parsed);
+      } catch(err) {}
+    }
+  };
+
+  window.addEventListener('df-location-updated', onCustomUpdate);
+  window.addEventListener('storage', onStorageUpdate);
+
+  _trackingListeners = { custom: onCustomUpdate, storage: onStorageUpdate };
 
   const pollAction = async () => {
     if (document.visibilityState !== 'visible') return;
@@ -5654,8 +5735,8 @@ function startTrackingPoll(orderId, orderStatus) {
           const updEl = document.getElementById('trackUpdatedText');
           if (updEl && data.lastUpdated) updEl.textContent = ago(data.lastUpdated);
 
-          const ord = MY_ORDERS.find(o => o.id === orderId);
-          if (ord) initOrderMap(ord, data);
+          const ord = Object.assign({}, MY_ORDERS.find(o => o.id === orderId) || {}, data);
+          initOrderMap(ord, data);
 
           if (data.status === 'delivered') {
             stopTrackingPoll();
@@ -5667,7 +5748,11 @@ function startTrackingPoll(orderId, orderStatus) {
     }
   };
 
-  const interval = orderStatus === 'out' ? 5000 : 10000;
+  // Poll immediately on startup
+  pollAction();
+
+  // Fast polling interval (2.5s for out for delivery, 5s otherwise)
+  const interval = orderStatus === 'out' ? 2500 : 5000;
   trackingPollTimer = setInterval(pollAction, interval);
 }
 
@@ -5675,6 +5760,11 @@ function stopTrackingPoll() {
   if (trackingPollTimer) {
     clearInterval(trackingPollTimer);
     trackingPollTimer = null;
+  }
+  if (_trackingListeners) {
+    if (_trackingListeners.custom) window.removeEventListener('df-location-updated', _trackingListeners.custom);
+    if (_trackingListeners.storage) window.removeEventListener('storage', _trackingListeners.storage);
+    _trackingListeners = null;
   }
   trackingOrderId = null;
 }
@@ -5686,39 +5776,49 @@ function startLiveLocationSharing(orderId) {
 
   stopLiveLocationSharing();
   activeGpsOrderId = orderId;
-  toast('Requesting device GPS permission...');
+  toast('Live GPS broadcast active. Watching delivery location...');
+
+  const broadcastCoords = async (latitude, longitude, speed, heading) => {
+    const speedKmH = (speed != null && speed > 0) ? Math.round(speed * 3.6) : null;
+    const payload = {
+      orderId,
+      lat: latitude,
+      lng: longitude,
+      speed: speedKmH,
+      heading: heading || null,
+      label: 'Driver Vehicle (GPS Active)',
+      updatedAt: Date.now()
+    };
+
+    // 1. Update localStorage so same-browser buyer tab updates in 0ms
+    try {
+      localStorage.setItem('df_live_tracking_' + orderId, JSON.stringify(payload));
+    } catch(e) {}
+
+    // 2. Dispatch custom event for same-window updates
+    window.dispatchEvent(new CustomEvent('df-location-updated', { detail: payload }));
+
+    // 3. Send to backend server API
+    try {
+      if (window.DFApi && window.DFApi.updateTrackingLocation) {
+        await window.DFApi.updateTrackingLocation(orderId, payload);
+      } else {
+        const token = window.DFApi.getToken();
+        await fetch('/api/tracking/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(Object.assign({ token }, payload))
+        });
+      }
+    } catch(e) {
+      console.warn('GPS Error', e);
+    }
+  };
 
   liveGpsWatchId = navigator.geolocation.watchPosition(
-    async (pos) => {
+    (pos) => {
       const { latitude, longitude, speed, heading } = pos.coords;
-      const speedKmH = (speed != null && speed > 0) ? Math.round(speed * 3.6) : null;
-      try {
-        if (window.DFApi && window.DFApi.updateTrackingLocation) {
-          await window.DFApi.updateTrackingLocation(orderId, {
-            lat: latitude,
-            lng: longitude,
-            speed: speedKmH,
-            heading: heading || null,
-            label: 'Driver Vehicle (GPS Active)'
-          });
-        } else {
-          const token = window.DFApi.getToken();
-          await fetch('/api/tracking/update', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              token,
-              orderId,
-              lat: latitude,
-              lng: longitude,
-              speed: speedKmH,
-              label: 'Driver Vehicle (GPS Active)'
-            })
-          });
-        }
-      } catch(e) {
-        console.warn('GPS Error', e);
-      }
+      broadcastCoords(latitude, longitude, speed, heading);
       render();
     },
     (err) => {
@@ -5727,10 +5827,9 @@ function startLiveLocationSharing(orderId) {
       stopLiveLocationSharing();
       render();
     },
-    { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 }
+    { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
   );
 
-  toast('Live GPS broadcast active for Order #' + orderId.slice(0, 8).toUpperCase());
   render();
 }
 
