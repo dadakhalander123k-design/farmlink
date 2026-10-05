@@ -19,6 +19,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <style>
 :root{
   /* Global Theme Tokens: Cosmic Latte (#B7A89A), Deep Burgundy (#722F37) & Mocha Cream (#E8DCC6) */
@@ -1819,6 +1821,140 @@ input:focus,select:focus,textarea:focus{
 .mobile-nav-panel{
   display:none;
 }
+/* Order Live Map & GPS Tracking */
+.track-map{
+  width:100%;
+  height:360px;
+  border-radius:18px;
+  border:1px solid var(--latte);
+  margin:18px 0;
+  box-shadow:var(--shadow-sm);
+  background:var(--bg-subtle);
+  z-index:1;
+}
+.map-fallback{
+  padding:32px 24px;
+  text-align:center;
+  background:var(--card);
+  border-radius:18px;
+  border:1px dashed var(--latte);
+  margin:18px 0;
+}
+.live-pulse{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  font-weight:700;
+  font-size:12.5px;
+  color:var(--green);
+}
+.live-pulse::before{
+  content:'';
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:var(--green);
+  animation:pulseNode 1.5s infinite;
+}
+
+/* AGMARKNET Mandi Price Intelligence */
+.mandi-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:16px;
+  margin:20px 0;
+}
+.mandi-kpi{
+  background:var(--card);
+  border:1px solid var(--latte);
+  border-radius:18px;
+  padding:20px;
+  box-shadow:var(--shadow-sm);
+  position:relative;
+  overflow:hidden;
+}
+.mandi-kpi .label{
+  font-size:12.5px;
+  font-weight:700;
+  text-transform:uppercase;
+  color:var(--ink2);
+  letter-spacing:.04em;
+  margin-bottom:8px;
+}
+.mandi-kpi .val{
+  font-size:26px;
+  font-weight:700;
+  color:var(--burgundy);
+  font-family:var(--serif);
+  line-height:1.2;
+}
+.mandi-kpi .subval{
+  font-size:13px;
+  color:var(--ink2);
+  margin-top:6px;
+}
+.mandi-table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  border:1px solid var(--latte);
+  border-radius:16px;
+  overflow:hidden;
+  background:var(--card);
+  font-size:14px;
+}
+.mandi-table th{
+  background:var(--bg-subtle);
+  color:var(--burgundy);
+  padding:12px 14px;
+  font-weight:700;
+  text-align:left;
+  border-bottom:1px solid var(--latte);
+}
+.mandi-table td{
+  padding:12px 14px;
+  border-bottom:1px solid var(--soft);
+  color:var(--ink);
+}
+.mandi-table tr:last-child td{border-bottom:none}
+
+/* Smart Matching Recommendations */
+.rec-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
+  gap:16px;
+  margin:16px 0 24px;
+}
+.rec-card{
+  background:var(--card);
+  border:1.5px solid var(--latte);
+  border-radius:20px;
+  padding:18px;
+  position:relative;
+  box-shadow:var(--shadow-sm);
+  transition:border-color .18s,transform .18s,box-shadow .18s;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+.rec-card:hover{
+  border-color:var(--burgundy);
+  transform:translateY(-2px);
+  box-shadow:var(--shadow);
+}
+.match-chip{
+  position:absolute;
+  top:14px;
+  right:14px;
+  background:var(--burgundy);
+  color:var(--onolive);
+  font-weight:700;
+  font-size:12px;
+  padding:3px 10px;
+  border-radius:12px;
+  letter-spacing:.02em;
+}
+
 .grid-buyers{display:grid;grid-template-columns:1.6fr 1fr;gap:24px}
 .grid-route{display:grid;grid-template-columns:1.5fr 1fr;gap:24px}
 .cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:26px}
@@ -2870,6 +3006,21 @@ let HAS_MORE_LISTINGS = false;
 let LISTINGS_PAGE = 0;
 const PAGE_SIZE = 24;
 
+let MARKET_PRICES_DATA = null;
+let MARKET_PRICES_LOADING = false;
+let MARKET_PRICES_ERROR = null;
+let SELECTED_PRICE_COMMODITY = 'Tomato';
+let SELECTED_PRICE_STATE = 2; // Andhra Pradesh
+let AVAILABLE_COMMODITIES = [];
+let AVAILABLE_STATES = [];
+
+let activeGpsOrderId = null;
+let liveGpsWatchId = null;
+let trackingOrderId = null;
+let trackingDataCache = {};
+let trackingPollTimer = null;
+let _currentLeafletMap = null;
+
 const S = {
   authMode: 'login',
   q: '',
@@ -3754,7 +3905,7 @@ const FT = [
   ['listings', 'My listings', 'list'],
   ['orders', 'Orders', 'box'],
   ['buyers', 'Buyer matches', 'spark'],
-  ['insights', 'Price & demand', 'chart'],
+  ['prices', 'Market Prices', 'chart'],
   ['route', 'Delivery route', 'truck']
 ];
 
@@ -3787,6 +3938,7 @@ function farmerApp(u, tab) {
   else if (tab === 'listings') c = fListings(u, mine);
   else if (tab === 'orders') c = fOrders(u, orders);
   else if (tab === 'buyers') c = fBuyers(u, fm);
+  else if (tab === 'prices') c = marketPricesView(u, 'farmer');
   else if (tab === 'insights') c = fInsights(u, mine);
   else if (tab === 'route') c = fRoute(u, orders);
   else c = fOverview(u, mine, orders, fm);
@@ -4277,6 +4429,19 @@ function fOrders(u, orders) {
           ${hist ? `<span class="tl-time">${ftime(hist.at)}</span>` : ''}
         </div>`;
       }).join('')}</div>` : ''}
+      ${['confirmed', 'preparing', 'out'].includes(o.status) ? `
+        <div style="margin-top:14px;padding:12px 14px;background:var(--bg-subtle);border-radius:12px;border:1px solid var(--latte);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+          <div>
+            <span style="font-weight:700;color:var(--burgundy);font-size:13.5px">${ic('truck', 15)} Delivery Vehicle GPS Broadcast</span>
+            <div class="small">${activeGpsOrderId === o.id ? '<span class="live-pulse">Actively broadcasting device GPS to buyer</span>' : 'Share vehicle live GPS location so the buyer can track delivery in real time.'}</div>
+          </div>
+          ${activeGpsOrderId === o.id ? `
+            <button type="button" class="btn btn-sm btn-ghost" style="color:var(--terra);border:1px solid var(--terra)" onclick="stopLiveLocationSharing()">Stop GPS Sharing</button>
+          ` : `
+            <button type="button" class="btn btn-sm btn-primary" onclick="startLiveLocationSharing('${o.id}')">${ic('pin', 14)} Share Live Location</button>
+          `}
+        </div>
+      ` : ''}
       <div class="actions" style="margin-top:18px">
         ${nextLabel[o.status] ? `<button type="button" class="btn btn-primary btn-sm" onclick="advance('${o.id}')">${nextLabel[o.status]}</button>` : ''}
         ${o.status === 'placed' ? `<button type="button" class="btn btn-danger btn-sm" onclick="cancelOrder('${o.id}')">Decline</button>` : ''}
@@ -4507,12 +4672,21 @@ const BT = [
   ['market', 'Marketplace', 'store'],
   ['post', 'Post requirement', 'plus'],
   ['reqs', 'My requirements', 'spark'],
-  ['orders', 'My orders', 'box']
+  ['orders', 'My orders', 'box'],
+  ['track', 'Track Order', 'truck'],
+  ['prices', 'Market Prices', 'chart']
 ];
 
 function buyerApp(u, tab) {
   const pendingOffers = MY_OFFERS.filter(o => o.status === 'pending').length;
-  const c = tab === 'post' ? bPost(u) : tab === 'reqs' ? bReqs(u) : tab === 'orders' ? bOrders(u) : bMarket(u);
+  let c = '';
+  if (tab === 'post') c = bPost(u);
+  else if (tab === 'reqs') c = bReqs(u);
+  else if (tab === 'orders') c = bOrders(u);
+  else if (tab === 'track') c = buyerTrackView(u);
+  else if (tab === 'prices') c = marketPricesView(u, 'buyer');
+  else c = bMarket(u);
+
   return shell(u, 'buyer', BT, tab, { reqs: pendingOffers }, `${greet()}, ${esc(u.name.split(' ')[0])}`, `${esc(u.org)} · ${esc(u.buyerType || 'Procurement Buyer')} · ${esc(u.loc.label)}`, c);
 }
 
@@ -4581,13 +4755,69 @@ function bMarket(u) {
   const cnt = c => act.filter(l => l.crop === c).length;
   const tickerItems = CROP_NAMES.slice(0, 7).map(c => {
     const m = marketRef(c);
-    return `<span class="mandi-ticker-item">${c}: <b>₹${m.ref}/kg</b><small>(${m.src.split(' ')[0]})</small></span>`;
+    return `<span class="mandi-ticker-item">${c}: <b>₹${m.ref}/kg</b><small>(${m.isOfficial ? 'AGMARKNET' : m.src.split(' ')[0]})</small></span>`;
   }).join('<span class="mandi-ticker-sep">•</span>');
 
+  // Smart Matching Recommendations for Buyer (Spec 37-43)
+  const targetCrop = S.crop !== 'All' ? S.crop : (S.q || '');
+  const offMandi = (window.DFPricing && window.DFPricing.getOfficialPrice) ? window.DFPricing.getOfficialPrice(targetCrop || 'Tomato') : null;
+  const offRef = offMandi ? offMandi.averageMandiReferencePriceKg : null;
+  const recs = (window.DFMatching && window.DFMatching.recommendListingsForBuyer)
+    ? window.DFMatching.recommendListingsForBuyer(act, targetCrop, u.loc, offRef)
+    : [];
+
   return `<div class="mandi-ticker" role="region" aria-label="Live Mandi Benchmark Rates">
-    <div class="mandi-ticker-label">${ic('trend', 14)} Live Mandi Rates</div>
+    <div class="mandi-ticker-label">${ic('trend', 14)} Official Mandi Rates</div>
     <div class="mandi-ticker-track">${tickerItems}</div>
   </div>
+
+  ${recs.length ? `
+    <div style="background:var(--card);border:1px solid var(--latte);border-radius:22px;padding:22px;margin-bottom:24px;box-shadow:var(--shadow-sm)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <h3 style="font-size:20px;color:var(--burgundy);margin:0">${ic('spark', 18)} Recommended for you</h3>
+            <span class="badge b-good">Smart Matching System</span>
+          </div>
+          <p class="small" style="margin-top:4px">
+            Ranked by transparent scoring: 35% Produce match · 30% Price suitability vs AGMARKNET Mandi reference · 20% Distance · 10% Stock · 5% Rating
+          </p>
+        </div>
+        <a class="small" href="#/buyer/prices" style="color:var(--burgundy);font-weight:700">View official market rates →</a>
+      </div>
+
+      <div class="rec-grid">
+        ${recs.slice(0, 3).map((r, idx) => {
+          const l = r.listing;
+          const fName = l.farmerOrg || (l.farmer && l.farmer.org) || l.farmerName || 'Farmer';
+          return `<div class="rec-card">
+            <span class="match-chip">${r.pct}% Match</span>
+            <div>
+              <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">
+                <div style="width:48px;height:48px;border-radius:12px;overflow:hidden;flex:none;background:var(--bg-subtle)">
+                  ${pic(l)}
+                </div>
+                <div>
+                  <b style="font-size:17px;color:var(--burgundy)">Fresh ${esc(l.crop)}</b>
+                  <div class="small">${esc(fName)} · ${esc(l.loc.label)} (${Math.round(r.dist)} km)</div>
+                </div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+                <span style="font-size:22px;font-weight:700;color:var(--burgundy)">${inr(l.price)}<small style="font-size:14px">/kg</small></span>
+                <span class="small"><b>${l.qty} kg</b> available</span>
+              </div>
+              <div class="small" style="color:var(--ink2);margin-bottom:14px">
+                Price suitability: <b>${r.breakdown.priceSuitability}%</b> · Distance: <b>${r.breakdown.distance}%</b> · Rating: <b>★ ${Number(l.ratingAvg || 4.5).toFixed(1)}</b>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm" onclick="openModal('buy','${l.id}')" style="width:100%">
+              View produce →
+            </button>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  ` : ''}
 
   <div class="toolbar">
     <div class="search">
@@ -4873,12 +5103,566 @@ function bOrders(u) {
           ${hist ? `<span class="tl-time">${ftime(hist.at)}</span>` : ''}
         </div>`;
       }).join('')}</div>` : '<p class="small" style="margin-top:12px">The farmer declined this order. Any reservation was released.</p>'}
-      <div class="actions" style="margin-top:18px">
+      <div class="actions" style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
+        <a class="btn btn-primary btn-sm" href="#/buyer/track/${o.id}">${ic('truck', 15)} Live Track Order</a>
         ${phone ? `<a class="btn btn-light btn-sm" href="tel:${esc(phone)}">${ic('phone', 15)} Call farmer (${esc(phone)})</a>` : ''}
         ${o.status === 'delivered' ? (o.rating ? `<span class="small">You rated this seller ${'★'.repeat(o.rating)}${'☆'.repeat(5 - o.rating)}</span>` : `<button type="button" class="btn btn-light btn-sm" onclick="openModal('rate','${o.id}')">${ic('star', 15)} Rate this seller</button>`) : ''}
       </div>
     </div>`;
   }).join('');
+}
+
+/* ============ Live Order Tracking & Map Component ============ */
+function buyerTrackView(u) {
+  const hashParts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+  const routeOrderId = hashParts[2];
+
+  const orders = MY_ORDERS.slice().sort((a, b) => b.createdAt - a.createdAt);
+  if (!orders.length) {
+    return `<div class="empty">
+      <div class="empty-icon">${ic('truck', 32)}</div>
+      <h3>No orders to track</h3>
+      <p>Place an order on the marketplace to view live vehicle tracking, delivery milestones, and farmer updates.</p>
+      <a class="btn btn-primary" href="#/buyer/market">Browse marketplace</a>
+    </div>`;
+  }
+
+  let order = null;
+  if (routeOrderId) {
+    order = orders.find(o => o.id === routeOrderId);
+  }
+  if (!order) {
+    order = orders.find(o => o.status !== 'delivered' && o.status !== 'cancelled') || orders[0];
+  }
+
+  activeTrackingOrderId = order.id;
+  startTrackingPoll(order.id);
+
+  const ci = FLOW.indexOf(order.status);
+  const phone = order.farmerPhone || COUNTERPARTY_PHONES[order.farmerId];
+  const tr = trackingDataCache[order.id];
+  const isLiveGps = tr && tr.isLive;
+
+  const currentLocText = (tr && tr.currentLoc && tr.currentLoc.label)
+    ? tr.currentLoc.label
+    : (order.status === 'out' ? ('In transit towards ' + esc(order.dest.label)) : (esc(order.dest.label) + ' route (Farmer pickup ready)'));
+
+  const lastUpdatedText = (tr && tr.lastUpdated) ? ago(tr.lastUpdated) : 'Just now';
+
+  setTimeout(() => {
+    initOrderMap(order, tr);
+  }, 60);
+
+  return `
+    <div class="panel" style="max-width:960px;margin:0 auto">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;border-bottom:1px solid var(--latte);padding-bottom:16px;margin-bottom:20px">
+        <div>
+          <span class="small" style="font-weight:700;text-transform:uppercase;color:var(--latte-dark);letter-spacing:.04em">Live Delivery Tracking</span>
+          <h2 style="font-size:26px;color:var(--burgundy);margin:2px 0 0">Order #${esc(order.id.slice(0, 8).toUpperCase())}</h2>
+          <div class="small" style="margin-top:4px">
+            <b>${esc(order.crop)} · ${order.qty} kg</b> · Total: <b>${inr(order.qty * order.price + order.deliveryFee)}</b> · From <b>${esc(order.farmerOrg || order.farmerName || 'Farmer')}</b>
+          </div>
+        </div>
+        <div style="text-align:right">
+          ${stChip(order.status)}
+          ${orders.length > 1 ? `
+            <div style="margin-top:8px">
+              <select onchange="go('#/buyer/track/' + this.value)" style="width:auto;font-size:13px;padding:4px 10px" aria-label="Select order to track">
+                ${orders.map(o => `<option value="${o.id}" ${o.id === order.id ? 'selected' : ''}>Order #${o.id.slice(0, 6).toUpperCase()} (${o.crop} ${o.qty}kg)</option>`).join('')}
+              </select>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+
+      <!-- Status Milestones Timeline with Server Timestamps -->
+      <div style="margin-bottom:28px">
+        <h4 style="font-size:15px;color:var(--burgundy);margin-bottom:8px">Milestone Progress</h4>
+        <div class="timeline">${FLOW.map((s, i) => {
+          const isDone = i < ci || order.status === 'delivered';
+          const isNow = i === ci && order.status !== 'delivered';
+          const hist = (order.statusHistory || []).find(h => h.status === s);
+          return `<div class="tl ${isDone ? 'done' : isNow ? 'now' : ''}">
+            ${SL[s]}
+            ${hist ? `<span class="tl-time">${ftime(hist.at)}</span>` : ''}
+          </div>`;
+        }).join('')}</div>
+      </div>
+
+      <!-- Live Location Map Component -->
+      <div style="margin-top:24px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <h4 style="font-size:16px;color:var(--burgundy);margin:0">${ic('pin', 16)} Delivery Route &amp; Current Location</h4>
+          <div>
+            ${isLiveGps
+              ? `<span class="live-pulse">Live Driver GPS Active</span>`
+              : `<span class="small" style="color:var(--ink2)">Awaiting vehicle departure broadcast</span>`
+            }
+          </div>
+        </div>
+
+        <div id="order-map" class="track-map"></div>
+        <div id="map-fallback" class="map-fallback" style="display:none">
+          <p style="font-weight:700;color:var(--burgundy)">Map preview unavailable</p>
+          <p class="small">Live delivery progress and coordinates continue to update reliably in text below.</p>
+        </div>
+      </div>
+
+      <!-- Live Location Text Block (Mandatory spec 22) -->
+      <div style="background:var(--bg-subtle);border:1px solid var(--latte);border-radius:18px;padding:20px;margin-top:18px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">
+          <div>
+            <div class="small" style="font-weight:700;color:var(--ink2);text-transform:uppercase">Current Location</div>
+            <div style="font-size:18px;font-weight:700;color:var(--burgundy);margin-top:4px" id="trackLocText">
+              ${esc(currentLocText)}
+            </div>
+            <div class="small" style="color:var(--ink2);margin-top:2px">
+              Destination: ${esc(order.dest.label)}
+            </div>
+          </div>
+
+          <div>
+            <div class="small" style="font-weight:700;color:var(--ink2);text-transform:uppercase">Delivery Status</div>
+            <div style="font-size:18px;font-weight:700;color:var(--burgundy);margin-top:4px" id="trackStatusText">
+              ${SL[order.status] || order.status}
+            </div>
+            <div class="small" style="color:var(--ink2);margin-top:2px">
+              Next: ${order.status === 'placed' ? 'Farmer Acceptance' : order.status === 'confirmed' ? 'Preparing Produce' : order.status === 'preparing' ? 'Vehicle Pickup & Transit' : order.status === 'out' ? 'Final Handover & Delivery' : 'Completed'}
+            </div>
+          </div>
+
+          <div>
+            <div class="small" style="font-weight:700;color:var(--ink2);text-transform:uppercase">Last Updated</div>
+            <div style="font-size:18px;font-weight:700;color:var(--burgundy);margin-top:4px" id="trackUpdatedText">
+              ${esc(lastUpdatedText)}
+            </div>
+            <div class="small" style="color:var(--ink2);margin-top:2px">
+              Auto-polled every 10 seconds
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions" style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap">
+        ${phone ? `<a class="btn btn-light btn-sm" href="tel:${esc(phone)}">${ic('phone', 15)} Call farmer (${esc(phone)})</a>` : ''}
+        <a class="btn btn-light btn-sm" href="#/buyer/orders">Back to all orders</a>
+      </div>
+    </div>`;
+}
+
+function initOrderMap(order, tracking) {
+  const mapEl = document.getElementById('order-map');
+  const fallbackEl = document.getElementById('map-fallback');
+  if (!mapEl) return;
+
+  if (typeof L === 'undefined') {
+    if (fallbackEl) fallbackEl.style.display = 'block';
+    mapEl.style.display = 'none';
+    return;
+  }
+
+  try {
+    if (_currentLeafletMap) {
+      _currentLeafletMap.remove();
+      _currentLeafletMap = null;
+    }
+
+    const farmLoc = { lat: 16.5449, lng: 81.5212, label: 'Farmer Farm (Bhimavaram)' };
+    const buyerLoc = { lat: Number(order.dest.lat) || 16.5062, lng: Number(order.dest.lng) || 80.6480, label: order.dest.label || 'Buyer Destination' };
+    const curLoc = (tracking && tracking.currentLoc) ? tracking.currentLoc : farmLoc;
+
+    const map = L.map('order-map', { zoomControl: true }).setView([curLoc.lat, curLoc.lng], 10);
+    _currentLeafletMap = map;
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    const farmIcon = L.divIcon({
+      html: '<div style="background:#35632F;color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 6px rgba(0,0,0,0.3)">🌱</div>',
+      iconSize: [32, 32],
+      className: 'df-map-marker'
+    });
+    const buyerIcon = L.divIcon({
+      html: '<div style="background:#722F37;color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 6px rgba(0,0,0,0.3)">📍</div>',
+      iconSize: [32, 32],
+      className: 'df-map-marker'
+    });
+    const truckIcon = L.divIcon({
+      html: '<div style="background:#0F52BA;color:#fff;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 3px 8px rgba(0,0,0,0.4);border:2px solid #fff">🚚</div>',
+      iconSize: [36, 36],
+      className: 'df-map-marker'
+    });
+
+    L.marker([farmLoc.lat, farmLoc.lng], { icon: farmIcon })
+      .addTo(map)
+      .bindPopup(`<b>Pickup: ${esc(farmLoc.label)}</b>`);
+
+    L.marker([buyerLoc.lat, buyerLoc.lng], { icon: buyerIcon })
+      .addTo(map)
+      .bindPopup(`<b>Delivery: ${esc(buyerLoc.label)}</b>`);
+
+    L.marker([curLoc.lat, curLoc.lng], { icon: truckIcon })
+      .addTo(map)
+      .bindPopup(`<b>Current Location: ${esc(curLoc.label || 'In Transit')}</b>`);
+
+    const polyline = L.polyline([
+      [farmLoc.lat, farmLoc.lng],
+      [curLoc.lat, curLoc.lng],
+      [buyerLoc.lat, buyerLoc.lng]
+    ], { color: '#722F37', weight: 4, opacity: 0.7, dashArray: '6, 8' }).addTo(map);
+
+    const bounds = L.latLngBounds([
+      [farmLoc.lat, farmLoc.lng],
+      [curLoc.lat, curLoc.lng],
+      [buyerLoc.lat, buyerLoc.lng]
+    ]);
+    map.fitBounds(bounds, { padding: [50, 50] });
+  } catch(e) {
+    console.warn('Map initialization failed:', e);
+    if (fallbackEl) fallbackEl.style.display = 'block';
+    mapEl.style.display = 'none';
+  }
+}
+
+function startTrackingPoll(orderId) {
+  stopTrackingPoll();
+  trackingOrderId = orderId;
+
+  const pollAction = async () => {
+    if (document.visibilityState !== 'visible') return;
+    const p = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+    if (!CURRENT_USER || p[1] !== 'track') {
+      stopTrackingPoll();
+      return;
+    }
+
+    try {
+      const token = window.DFApi.getToken();
+      const res = await fetch(`/api/tracking/${orderId}?token=${encodeURIComponent(token)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.success) {
+          trackingDataCache[orderId] = data;
+
+          const locEl = document.getElementById('trackLocText');
+          const statusEl = document.getElementById('trackStatusText');
+          const updEl = document.getElementById('trackUpdatedText');
+
+          if (locEl && data.currentLoc) locEl.textContent = data.currentLoc.label || 'In Transit';
+          if (statusEl && data.status) statusEl.textContent = SL[data.status] || data.status;
+          if (updEl && data.lastUpdated) updEl.textContent = ago(data.lastUpdated);
+
+          const ord = MY_ORDERS.find(o => o.id === orderId);
+          if (ord) initOrderMap(ord, data);
+
+          if (data.status === 'delivered') {
+            stopTrackingPoll();
+          }
+        }
+      }
+    } catch(err) {
+      console.warn('Tracking poll error:', err);
+    }
+  };
+
+  trackingPollTimer = setInterval(pollAction, 10000);
+}
+
+function stopTrackingPoll() {
+  if (trackingPollTimer) {
+    clearInterval(trackingPollTimer);
+    trackingPollTimer = null;
+  }
+  trackingOrderId = null;
+}
+
+function startLiveLocationSharing(orderId) {
+  if (!navigator.geolocation) {
+    return toast('Geolocation is not supported by your browser.', 'err');
+  }
+
+  stopLiveLocationSharing();
+  activeGpsOrderId = orderId;
+  toast('Requesting device GPS permission...');
+
+  liveGpsWatchId = navigator.geolocation.watchPosition(
+    async (pos) => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      const speed = pos.coords.speed;
+      try {
+        const token = window.DFApi.getToken();
+        await fetch('/api/tracking/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            token,
+            orderId,
+            lat,
+            lng,
+            speed,
+            label: 'Driver Vehicle (GPS Active)'
+          })
+        });
+      } catch(e) {
+        console.warn('Error pushing live location:', e);
+      }
+      render();
+    },
+    (err) => {
+      console.warn('GPS watch error:', err);
+      toast('Could not access device GPS: ' + (err.message || 'Permission denied'), 'err');
+      stopLiveLocationSharing();
+      render();
+    },
+    { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
+  );
+
+  toast('Live GPS broadcast active for Order #' + orderId.slice(0, 8).toUpperCase());
+  render();
+}
+
+function stopLiveLocationSharing() {
+  if (liveGpsWatchId !== null) {
+    navigator.geolocation.clearWatch(liveGpsWatchId);
+    liveGpsWatchId = null;
+  }
+  activeGpsOrderId = null;
+  render();
+}
+
+/* ============ AGMARKNET Live Market Prices ============ */
+async function loadMarketPrices(commodity, stateId, force) {
+  if (MARKET_PRICES_LOADING && !force) return;
+  MARKET_PRICES_LOADING = true;
+  MARKET_PRICES_ERROR = null;
+
+  const p = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+  if (p[1] === 'prices') render();
+
+  try {
+    if (!AVAILABLE_COMMODITIES.length) {
+      const fRes = await fetch('/api/market-prices/filters');
+      if (fRes.ok) {
+        const fJson = await fRes.json();
+        if (fJson.success) {
+          AVAILABLE_COMMODITIES = fJson.commodities || [];
+          AVAILABLE_STATES = fJson.states || [];
+        }
+      }
+    }
+
+    const c = commodity || SELECTED_PRICE_COMMODITY || 'Tomato';
+    const s = stateId || SELECTED_PRICE_STATE || 2;
+    SELECTED_PRICE_COMMODITY = c;
+    SELECTED_PRICE_STATE = s;
+
+    const res = await fetch(`/api/market-prices?commodity=${encodeURIComponent(c)}&state=${s}`);
+    if (!res.ok) {
+      throw new Error(`Server returned status ${res.status}`);
+    }
+    const data = await res.json();
+    if (!data || data.success === false) {
+      throw new Error(data && data.error ? data.error : 'Failed to fetch market rates');
+    }
+
+    MARKET_PRICES_DATA = data;
+
+    if (window.DFPricing && window.DFPricing.setOfficialPrice && data.found) {
+      window.DFPricing.setOfficialPrice(data.commodity, data);
+    }
+  } catch(err) {
+    console.warn('Error loading market prices:', err);
+    MARKET_PRICES_ERROR = 'Market prices are temporarily unavailable. ' + (err.message || '');
+  } finally {
+    MARKET_PRICES_LOADING = false;
+    const curP = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+    if (curP[1] === 'prices') render();
+  }
+}
+
+function changePriceCommodity(val) {
+  SELECTED_PRICE_COMMODITY = val;
+  loadMarketPrices(val, SELECTED_PRICE_STATE, true);
+}
+
+function changePriceState(val) {
+  SELECTED_PRICE_STATE = parseInt(val, 10);
+  loadMarketPrices(SELECTED_PRICE_COMMODITY, SELECTED_PRICE_STATE, true);
+}
+
+function marketPricesView(u, role) {
+  if (!MARKET_PRICES_DATA && !MARKET_PRICES_LOADING && !MARKET_PRICES_ERROR) {
+    loadMarketPrices(SELECTED_PRICE_COMMODITY, SELECTED_PRICE_STATE);
+  }
+
+  const d = MARKET_PRICES_DATA;
+  const defaultCommodities = [
+    'Tomato', 'Onion', 'Green Chilli', 'Chilli', 'Rice', 'Paddy', 'Potato',
+    'Banana', 'Mango', 'Brinjal', 'Bhindi(Ladies Finger)', 'Coconut', 'Turmeric', 'Cotton', 'Maize'
+  ];
+  const commodities = AVAILABLE_COMMODITIES.length
+    ? AVAILABLE_COMMODITIES.map(c => c.name)
+    : defaultCommodities;
+
+  const defaultStates = [
+    { id: 2, name: 'Andhra Pradesh' },
+    { id: 32, name: 'Telangana' },
+    { id: 15, name: 'Karnataka' },
+    { id: 29, name: 'Tamil Nadu' },
+    { id: 19, name: 'Maharashtra' }
+  ];
+  const states = AVAILABLE_STATES.length ? AVAILABLE_STATES : defaultStates;
+
+  let body = '';
+
+  if (MARKET_PRICES_LOADING) {
+    body = `
+      <div style="text-align:center;padding:48px 20px">
+        <span class="spinner" style="width:36px;height:36px;border-width:3px"></span>
+        <h3 style="margin-top:14px;color:var(--burgundy)">Fetching official mandi observations...</h3>
+        <p class="sub">Connecting to Government of India AGMARKNET public service.</p>
+      </div>`;
+  } else if (MARKET_PRICES_ERROR) {
+    body = `
+      <div class="empty">
+        <div class="empty-icon">${ic('chart', 32)}</div>
+        <h3 style="color:var(--terra)">Market prices temporarily unavailable</h3>
+        <p class="sub">${esc(MARKET_PRICES_ERROR)}</p>
+        <button type="button" class="btn btn-primary" onclick="loadMarketPrices(SELECTED_PRICE_COMMODITY, SELECTED_PRICE_STATE, true)" style="margin-top:16px">
+          ${ic('refresh', 16)} Retry Connection
+        </button>
+      </div>`;
+  } else if (!d || !d.found) {
+    body = `
+      <div class="empty">
+        <div class="empty-icon">${ic('store', 32)}</div>
+        <h3>No market data available for ${esc(SELECTED_PRICE_COMMODITY)}</h3>
+        <p class="sub">${d && d.message ? esc(d.message) : 'No APMC mandis in the selected region reported transactions today for this crop.'}</p>
+        <button type="button" class="btn btn-light" onclick="loadMarketPrices('Tomato', SELECTED_PRICE_STATE, true)" style="margin-top:16px">
+          View Tomato Mandi Rates
+        </button>
+      </div>`;
+  } else {
+    body = `
+      <div style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <div class="small" style="font-weight:600;color:var(--ink2)">
+          📅 <b>${esc(d.updatedLabel)}</b> · Observation Date: <b>${esc(d.date)}</b> · Region: Selected State
+        </div>
+        <div class="small" style="color:var(--burgundy);font-weight:700">
+          ✓ Official Wholesale Mandi Reference
+        </div>
+      </div>
+
+      <div class="mandi-grid">
+        <div class="mandi-kpi">
+          <div class="label">Average Mandi Reference</div>
+          <div class="val">₹${d.averageMandiReferencePriceKg}<small style="font-size:16px">/kg</small></div>
+          <div class="subval">₹${d.averageMandiReferencePriceQuintal.toLocaleString('en-IN')}/quintal</div>
+          <div class="small" style="margin-top:8px;color:var(--ink2)">Calculated arithmetic mean of reporting markets</div>
+        </div>
+
+        <div class="mandi-kpi">
+          <div class="label">Official Modal Price</div>
+          <div class="val">₹${d.modalPriceKg}<small style="font-size:16px">/kg</small></div>
+          <div class="subval">₹${d.modalPriceQuintal.toLocaleString('en-IN')}/quintal</div>
+          <div class="small" style="margin-top:8px;color:var(--ink2)">Most frequent market trading rate</div>
+        </div>
+
+        <div class="mandi-kpi">
+          <div class="label">Observed Market Range</div>
+          <div class="val">₹${d.minPriceKg} – ₹${d.maxPriceKg}<small style="font-size:16px">/kg</small></div>
+          <div class="subval">₹${d.minPriceQuintal.toLocaleString('en-IN')} – ₹${d.maxPriceQuintal.toLocaleString('en-IN')}/q</div>
+          <div class="small" style="margin-top:8px;color:var(--ink2)">Minimum to maximum APMC trade range</div>
+        </div>
+
+        <div class="mandi-kpi">
+          <div class="label">Mandis Reporting</div>
+          <div class="val">${d.marketsReportingCount}<small style="font-size:16px"> APMCs</small></div>
+          <div class="subval">Government of India — AGMARKNET</div>
+          <div class="small" style="margin-top:8px;color:var(--green)">● Verified Official Observations</div>
+        </div>
+      </div>
+
+      <div style="margin-top:28px">
+        <h3 style="font-size:20px;color:var(--burgundy);margin-bottom:12px">Reporting APMC Markets (${d.marketDetails.length})</h3>
+        <div class="scroll-x">
+          <table class="mandi-table">
+            <thead>
+              <tr>
+                <th>Market Center (APMC)</th>
+                <th>Variety</th>
+                <th>Arrivals (MT)</th>
+                <th>Min (₹/q)</th>
+                <th>Max (₹/q)</th>
+                <th>Modal Price (₹/q)</th>
+                <th>Ref (₹/kg)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${d.marketDetails.map(m => `
+                <tr>
+                  <td><b>${esc(m.market)}</b></td>
+                  <td>${esc(m.variety)}</td>
+                  <td>${m.arrivals ? m.arrivals + ' MT' : '—'}</td>
+                  <td>₹${m.minPrice.toLocaleString('en-IN')}</td>
+                  <td>₹${m.maxPrice.toLocaleString('en-IN')}</td>
+                  <td><b style="color:var(--burgundy)">₹${m.modalPrice.toLocaleString('en-IN')}</b></td>
+                  <td><b style="color:var(--green)">₹${m.pricePerKg}/kg</b></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+  }
+
+  return `
+    <div class="panel" style="max-width:1120px;margin:0 auto">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;border-bottom:1px solid var(--latte);padding-bottom:18px;margin-bottom:20px">
+        <div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <h2 style="font-size:26px;color:var(--burgundy);margin:0">Official Live Market Prices</h2>
+            <span class="badge b-good">AGMARKNET Verified</span>
+          </div>
+          <p class="sub" style="margin-top:4px">
+            Real daily agricultural market observations sourced from the Directorate of Marketing &amp; Inspection (DMI), Government of India.
+          </p>
+        </div>
+        <div style="text-align:right">
+          <a class="btn btn-light btn-sm" href="https://agmarknet.gov.in/home" target="_blank" rel="noopener">
+            ${ic('link', 14)} View AGMARKNET Portal
+          </a>
+          <div class="small" style="margin-top:4px;color:var(--ink2)">
+            Source: Government of India — AGMARKNET
+          </div>
+        </div>
+      </div>
+
+      <div class="toolbar" style="margin-bottom:20px;display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end">
+        <div style="flex:1;min-width:220px">
+          <label class="small" style="font-weight:700;display:block;margin-bottom:6px">Select Commodity / Crop</label>
+          <select id="priceCmdtSelect" onchange="changePriceCommodity(this.value)" style="width:100%">
+            ${commodities.slice(0, 40).map(c => `<option value="${esc(c)}" ${c.toLowerCase() === SELECTED_PRICE_COMMODITY.toLowerCase() ? 'selected' : ''}>${esc(c)}</option>`).join('')}
+          </select>
+        </div>
+        <div style="flex:1;min-width:220px">
+          <label class="small" style="font-weight:700;display:block;margin-bottom:6px">Select State</label>
+          <select id="priceStateSelect" onchange="changePriceState(this.value)" style="width:100%">
+            ${states.map(s => `<option value="${s.id}" ${s.id === SELECTED_PRICE_STATE ? 'selected' : ''}>${esc(s.name)}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <button type="button" class="btn btn-light" onclick="loadMarketPrices(SELECTED_PRICE_COMMODITY, SELECTED_PRICE_STATE, true)" style="height:44px">
+            ${ic('refresh', 16)} Refresh Mandi Rates
+          </button>
+        </div>
+      </div>
+
+      ${body}
+    </div>`;
 }
 
 /* ============ Modals ============ */
