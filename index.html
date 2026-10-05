@@ -4444,6 +4444,11 @@ function fOrders(u, orders) {
   const nextLabel = { placed: 'Confirm order', confirmed: 'Start preparing', preparing: 'Mark out for delivery', out: 'Mark delivered' };
 
   return orders.slice().sort((a, b) => b.createdAt - a.createdAt).map(o => {
+    if (CURRENT_USER && CURRENT_USER.role === 'farmer' && CURRENT_USER.loc && typeof CURRENT_USER.loc.lat === 'number') {
+      try {
+        localStorage.setItem('df_farmer_loc_' + o.id, JSON.stringify(CURRENT_USER.loc));
+      } catch(e) {}
+    }
     const phone = o.buyerPhone || COUNTERPARTY_PHONES[o.buyerId];
     const ci = FLOW.indexOf(o.status);
 
@@ -5173,7 +5178,7 @@ function getFarmerLocation(order) {
   if (!order) return { lat: 16.5449, lng: 81.5212, label: 'Farmer Farm (Bhimavaram)' };
 
   // 1. From tracking data or order farmerLoc
-  if (order.farmerLoc && typeof order.farmerLoc.lat === 'number') {
+  if (order.farmerLoc && typeof order.farmerLoc.lat === 'number' && typeof order.farmerLoc.lng === 'number') {
     return {
       lat: Number(order.farmerLoc.lat),
       lng: Number(order.farmerLoc.lng),
@@ -5181,9 +5186,40 @@ function getFarmerLocation(order) {
     };
   }
 
-  // 2. From associated listing
-  const allListings = (window.ACTIVE_LISTINGS || []).concat(window.MY_LISTINGS || []);
-  const listing = allListings.find(l => l && l.id === order.listingId);
+  // 2. Check local order caches for this order's farm origin
+  try {
+    const saved = localStorage.getItem('df_order_farmer_loc_' + order.id) || localStorage.getItem('df_farmer_loc_' + order.id);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed && typeof parsed.lat === 'number' && typeof parsed.lng === 'number') {
+        return {
+          lat: Number(parsed.lat),
+          lng: Number(parsed.lng),
+          label: parsed.label || (order.farmerOrg ? `${order.farmerOrg} Farm` : 'Farmer Farm')
+        };
+      }
+    }
+  } catch(e) {}
+
+  // 3. If currently logged in as the farmer for this order
+  if (CURRENT_USER && CURRENT_USER.role === 'farmer' && CURRENT_USER.loc && typeof CURRENT_USER.loc.lat === 'number') {
+    if (!order.farmerId || order.farmerId === CURRENT_USER.id) {
+      return {
+        lat: Number(CURRENT_USER.loc.lat),
+        lng: Number(CURRENT_USER.loc.lng),
+        label: CURRENT_USER.loc.label || (order.farmerOrg ? `${order.farmerOrg} Farm` : 'Farmer Farm')
+      };
+    }
+  }
+
+  // 4. From associated active or my listings
+  const allListings = (typeof ACTIVE_LISTINGS !== 'undefined' && Array.isArray(ACTIVE_LISTINGS) ? ACTIVE_LISTINGS : [])
+    .concat(typeof MY_LISTINGS !== 'undefined' && Array.isArray(MY_LISTINGS) ? MY_LISTINGS : []);
+  
+  let listing = allListings.find(l => l && l.id === order.listingId);
+  if (!listing && order.farmerId) {
+    listing = allListings.find(l => l && l.farmerId === order.farmerId && l.loc && typeof l.loc.lat === 'number');
+  }
   if (listing && listing.loc && typeof listing.loc.lat === 'number') {
     return {
       lat: Number(listing.loc.lat),
@@ -5192,8 +5228,8 @@ function getFarmerLocation(order) {
     };
   }
 
-  // 3. Match farmerOrg or farmerName against TOWNS
-  const nameText = `${order.farmerOrg || ''} ${order.farmerName || ''}`.toLowerCase();
+  // 5. Match farmerOrg or farmerName against TOWNS
+  const nameText = `${order.farmerOrg || ''} ${order.farmerName || ''} ${order.farmerLocLabel || ''}`.toLowerCase();
   const matchedTown = TOWNS.find(t => nameText.includes(t.n.toLowerCase()));
   if (matchedTown) {
     return {
@@ -5203,11 +5239,11 @@ function getFarmerLocation(order) {
     };
   }
 
-  // 4. Default fallback coordinate (Bhimavaram)
+  // 6. Default fallback coordinate (Bhimavaram)
   return {
     lat: 16.5449,
     lng: 81.5212,
-    label: order.farmerOrg ? `${order.farmerOrg} (Bhimavaram)` : 'Farmer Farm (Bhimavaram)'
+    label: order.farmerOrg ? `${order.farmerOrg} Farm (Bhimavaram)` : 'Farmer Farm (Bhimavaram)'
   };
 }
 
@@ -5453,11 +5489,13 @@ function buyerTrackView(u) {
   const tr = trackingDataCache[order.id];
   const isLiveGps = tr && tr.isLive;
 
-  const farmLoc = (tr && tr.farmerLoc) ? tr.farmerLoc : getFarmerLocation(order);
+  const farmLoc = (tr && tr.farmerLoc && typeof tr.farmerLoc.lat === 'number')
+    ? tr.farmerLoc
+    : getFarmerLocation(order);
   const buyerLoc = {
-    lat: Number(order.dest.lat) || 16.5062,
-    lng: Number(order.dest.lng) || 80.6480,
-    label: order.dest.label || 'Buyer Destination'
+    lat: Number(order.dest && order.dest.lat) || Number(tr && tr.destLoc && tr.destLoc.lat) || 16.5062,
+    lng: Number(order.dest && order.dest.lng) || Number(tr && tr.destLoc && tr.destLoc.lng) || 80.6480,
+    label: (order.dest && order.dest.label) || (tr && tr.destLoc && tr.destLoc.label) || 'Buyer Destination'
   };
 
   const currentLocText = (tr && tr.currentLoc && tr.currentLoc.label)
@@ -5823,10 +5861,14 @@ function startTrackingPoll(orderId, orderStatus) {
       updatedAt: loc.updatedAt || Date.now()
     };
     cached.isLive = true;
+    if (loc.farmerLoc && typeof loc.farmerLoc.lat === 'number') {
+      cached.farmerLoc = loc.farmerLoc;
+    }
     cached.lastUpdated = loc.updatedAt || Date.now();
     trackingDataCache[orderId] = cached;
 
     const ord = MY_ORDERS.find(o => o.id === orderId) || { id: orderId, status: 'out' };
+    if (cached.farmerLoc) ord.farmerLoc = cached.farmerLoc;
     initOrderMap(ord, cached);
   };
 
@@ -5867,6 +5909,8 @@ function startTrackingPoll(orderId, orderStatus) {
           if (updEl && data.lastUpdated) updEl.textContent = ago(data.lastUpdated);
 
           const ord = Object.assign({}, MY_ORDERS.find(o => o.id === orderId) || {}, data);
+          if (data.farmerLoc) ord.farmerLoc = data.farmerLoc;
+          if (data.destLoc) ord.dest = data.destLoc;
           initOrderMap(ord, data);
 
           if (data.status === 'delivered') {
@@ -5909,6 +5953,10 @@ function startLiveLocationSharing(orderId) {
 
   const broadcastCoords = async (latitude, longitude, speed, heading) => {
     const speedKmH = (speed != null && speed > 0) ? Math.round(speed * 3.6) : null;
+    const farmLoc = (CURRENT_USER && CURRENT_USER.loc && typeof CURRENT_USER.loc.lat === 'number')
+      ? CURRENT_USER.loc
+      : null;
+
     const payload = {
       orderId,
       lat: latitude,
@@ -5916,12 +5964,16 @@ function startLiveLocationSharing(orderId) {
       speed: speedKmH,
       heading: heading || null,
       label: 'Driver Vehicle (GPS Active)',
+      farmerLoc: farmLoc,
       updatedAt: Date.now()
     };
 
     // 1. Update localStorage so same-browser buyer tab updates in 0ms
     try {
       localStorage.setItem('df_live_tracking_' + orderId, JSON.stringify(payload));
+      if (farmLoc) {
+        localStorage.setItem('df_farmer_loc_' + orderId, JSON.stringify(farmLoc));
+      }
     } catch(e) {}
 
     // 2. Dispatch custom event for same-window updates
@@ -6370,7 +6422,7 @@ async function placeOrder(id) {
 
   try {
     const dest = town($('#b_dest').value);
-    await window.DFApi.placeOrder({
+    const ordId = await window.DFApi.placeOrder({
       token,
       listingId: l.id,
       qty: q,
@@ -6378,6 +6430,16 @@ async function placeOrder(id) {
       address: $('#b_addr').value.trim(),
       pay: $('#b_pay').value
     });
+
+    if (ordId && l && l.loc) {
+      try {
+        localStorage.setItem('df_order_farmer_loc_' + ordId, JSON.stringify({
+          label: l.loc.label ? `${l.loc.label} Farm (${(l.farmer && l.farmer.org) || 'Farmer'})` : 'Farmer Farm',
+          lat: Number(l.loc.lat),
+          lng: Number(l.loc.lng)
+        }));
+      } catch(e) {}
+    }
 
     S.modal = null;
     toast('Order placed successfully! Decremented in database.');

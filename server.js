@@ -134,7 +134,7 @@ const server = http.createServer(async (req, res) => {
   if (pathname === '/api/tracking/update' && req.method === 'POST') {
     try {
       const body = await parseBody(req);
-      const { token, orderId, lat, lng, label, speed } = body;
+      const { token, orderId, lat, lng, label, speed, farmerLoc } = body;
 
       if (!orderId || typeof lat !== 'number' || typeof lng !== 'number') {
         return sendJson(res, 400, { success: false, error: 'Invalid tracking payload' });
@@ -158,25 +158,43 @@ const server = http.createServer(async (req, res) => {
       const point = {
         lat: lat,
         lng: lng,
-        label: label || 'In Transit',
+        label: label || 'Driver Vehicle (GPS Active)',
         speed: speed || 0,
         updatedAt: Date.now(),
         isLive: true,
         farmerId: user.id
       };
 
-      trackingStore.set(orderId, point);
+      const existing = trackingStore.get(orderId) || {};
+      const resolvedFarmLoc = farmerLoc || existing.farmerLoc || (user.loc_label && user.lat ? { label: user.loc_label, lat: Number(user.lat), lng: Number(user.lng) } : null);
+
+      trackingStore.set(orderId, {
+        ...existing,
+        ...point,
+        farmerLoc: resolvedFarmLoc
+      });
 
       return sendJson(res, 200, {
         success: true,
         message: 'Location updated',
-        currentLoc: point
+        currentLoc: point,
+        farmerLoc: resolvedFarmLoc
       });
     } catch (err) {
       console.error('Error updating tracking:', err);
       return sendJson(res, 500, { success: false, error: err.message });
     }
   }
+
+  // Reference agricultural towns in Andhra Pradesh
+  const TOWNS_MAP = [
+    {n:'Bhimavaram',lat:16.5449,lng:81.5212},{n:'Vijayawada',lat:16.5062,lng:80.6480},{n:'Eluru',lat:16.7107,lng:81.0952},
+    {n:'Tadepalligudem',lat:16.8140,lng:81.5270},{n:'Narsapuram',lat:16.4350,lng:81.6970},{n:'Tanuku',lat:16.7540,lng:81.6810},
+    {n:'Rajahmundry',lat:17.0005,lng:81.8040},{n:'Kakinada',lat:16.9891,lng:82.2475},{n:'Machilipatnam',lat:16.1875,lng:81.1389},
+    {n:'Guntur',lat:16.3067,lng:80.4365},{n:'Ongole',lat:15.5057,lng:80.0499},{n:'Nellore',lat:14.4426,lng:79.9865},
+    {n:'Visakhapatnam',lat:17.6868,lng:83.2185},{n:'Tirupati',lat:13.6288,lng:79.4192},{n:'Kurnool',lat:15.8281,lng:78.0373},
+    {n:'Hyderabad',lat:17.3850,lng:78.4867},{n:'Tenali',lat:16.2430,lng:80.6400}
+  ];
 
   // --- API: Live Tracking Location Query (For Buyer & Farmer) ---
   if (pathname.startsWith('/api/tracking/') && req.method === 'GET') {
@@ -204,29 +222,73 @@ const server = http.createServer(async (req, res) => {
     }
 
     const livePoint = trackingStore.get(orderId);
-    const hasLive = livePoint && (Date.now() - livePoint.updatedAt < 15 * 60 * 1000); // Live if updated within 15 mins
+    const hasLive = livePoint && (Date.now() - livePoint.updatedAt < 60 * 60 * 1000);
 
-    // Fallback coordinates if no live driver GPS yet
-    // Origin is farmer's location, Dest is buyer's destination
     const destLoc = {
       label: order.dest_label,
       lat: Number(order.dest_lat),
       lng: Number(order.dest_lng)
     };
 
-    let farmerLoc = null;
-    if (order.listing_id) {
+    let farmerLoc = (livePoint && livePoint.farmerLoc) ? livePoint.farmerLoc : null;
+
+    if (!farmerLoc) {
       try {
-        const lRes = await sb.from('df_listings').select('loc_label, lat, lng').eq('id', order.listing_id).maybeSingle();
-        if (lRes && lRes.data && lRes.data.lat != null) {
-          farmerLoc = {
-            label: lRes.data.loc_label || order.farmer_org || 'Farmer Farm',
-            lat: Number(lRes.data.lat),
-            lng: Number(lRes.data.lng)
-          };
+        const lRes = await sb.rpc('df_list_listings', { p_token: token, p_limit: 300, p_offset: 0 });
+        if (lRes && lRes.data && Array.isArray(lRes.data)) {
+          let matched = null;
+          if (order.listing_id) {
+            matched = lRes.data.find(l => l.id === order.listing_id);
+          }
+          if (!matched && order.farmer_id) {
+            matched = lRes.data.find(l => l.farmer_id === order.farmer_id);
+          }
+          if (matched && matched.lat != null && matched.lng != null) {
+            farmerLoc = {
+              label: matched.loc_label || order.farmer_org || `${order.farmer_name || 'Farmer'} Farm`,
+              lat: Number(matched.lat),
+              lng: Number(matched.lng)
+            };
+          }
         }
-      } catch (e) {}
+      } catch (e) {
+        console.warn('Listing RPC lookup error:', e);
+      }
     }
+
+    if (!farmerLoc) {
+      const searchStr = `${order.farmer_org || ''} ${order.farmer_name || ''} ${order.crop || ''}`.toLowerCase();
+      const matchTown = TOWNS_MAP.find(t => searchStr.includes(t.n.toLowerCase()));
+      if (matchTown) {
+        farmerLoc = {
+          label: `${matchTown.n} Farm (${order.farmer_org || order.farmer_name || 'Farmer'})`,
+          lat: matchTown.lat,
+          lng: matchTown.lng
+        };
+      }
+    }
+
+    if (!farmerLoc) {
+      farmerLoc = {
+        label: order.farmer_org ? `${order.farmer_org} Farm (Bhimavaram)` : 'Farmer Farm (Bhimavaram)',
+        lat: 16.5449,
+        lng: 81.5212
+      };
+    }
+
+    const currentLoc = hasLive ? {
+      lat: livePoint.lat,
+      lng: livePoint.lng,
+      label: livePoint.label || 'Driver Vehicle (GPS Active)',
+      speed: livePoint.speed,
+      updatedAt: livePoint.updatedAt
+    } : {
+      lat: farmerLoc.lat,
+      lng: farmerLoc.lng,
+      label: order.status === 'out' ? `In transit from ${farmerLoc.label}` : `${farmerLoc.label} (Farm Origin)`,
+      speed: 0,
+      updatedAt: livePoint ? livePoint.updatedAt : Date.now()
+    };
 
     return sendJson(res, 200, {
       success: true,
@@ -240,14 +302,8 @@ const server = http.createServer(async (req, res) => {
       destLoc: destLoc,
       farmerLoc: farmerLoc,
       isLive: Boolean(hasLive),
-      currentLoc: hasLive ? {
-        lat: livePoint.lat,
-        lng: livePoint.lng,
-        label: livePoint.label,
-        speed: livePoint.speed,
-        updatedAt: livePoint.updatedAt
-      } : null,
-      lastUpdated: livePoint ? livePoint.updatedAt : null
+      currentLoc: currentLoc,
+      lastUpdated: livePoint ? livePoint.updatedAt : Date.now()
     });
   }
 
