@@ -214,6 +214,20 @@ const server = http.createServer(async (req, res) => {
       lng: Number(order.dest_lng)
     };
 
+    let farmerLoc = null;
+    if (order.listing_id) {
+      try {
+        const lRes = await sb.from('df_listings').select('loc_label, lat, lng').eq('id', order.listing_id).maybeSingle();
+        if (lRes && lRes.data && lRes.data.lat != null) {
+          farmerLoc = {
+            label: lRes.data.loc_label || order.farmer_org || 'Farmer Farm',
+            lat: Number(lRes.data.lat),
+            lng: Number(lRes.data.lng)
+          };
+        }
+      } catch (e) {}
+    }
+
     return sendJson(res, 200, {
       success: true,
       orderId: orderId,
@@ -224,6 +238,7 @@ const server = http.createServer(async (req, res) => {
       price: order.price,
       deliveryFee: order.delivery_fee,
       destLoc: destLoc,
+      farmerLoc: farmerLoc,
       isLive: Boolean(hasLive),
       currentLoc: hasLive ? {
         lat: livePoint.lat,
