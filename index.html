@@ -3812,6 +3812,7 @@ const S = {
   authDetectedLoc: null,
   editDetectedLoc: null,
   buyDetectedLoc: null,
+  fExpandedOrders: new Set(),
   q: '',
   crop: 'All',
   sort: 'new',
@@ -5546,14 +5547,21 @@ async function saveEdit(id) {
 
 function toggleFarmerOrderAccordion(id, e) {
   if (e) e.stopPropagation();
+  if (!S.fExpandedOrders) S.fExpandedOrders = new Set();
+  const isOpen = S.fExpandedOrders.has(id);
+  if (isOpen) {
+    S.fExpandedOrders.delete(id);
+  } else {
+    S.fExpandedOrders.add(id);
+  }
+  const nextOpen = !isOpen;
   const drawer = document.getElementById('order-drawer-' + id);
   const btn = document.getElementById('order-btn-' + id);
-  if (!drawer) return;
-  const isOpen = drawer.classList.toggle('open');
+  if (drawer) drawer.classList.toggle('open', nextOpen);
   if (btn) {
     const defaultLabel = btn.getAttribute('data-label') || 'View &amp; Dispatch ↓';
-    btn.innerHTML = isOpen ? 'Close Details ↑' : defaultLabel;
-    btn.classList.toggle('active', isOpen);
+    btn.innerHTML = nextOpen ? 'Close Details ↑' : defaultLabel;
+    btn.classList.toggle('active', nextOpen);
   }
 }
 window.toggleFarmerOrderAccordion = toggleFarmerOrderAccordion;
@@ -5616,6 +5624,7 @@ function fOrders(u, orders) {
         const buyerName = o.buyerName || o.buyerOrg || 'Buyer';
         const totalAmount = o.qty * o.price + o.deliveryFee;
         const isLiveGps = activeGpsOrderId === o.id;
+        const isExpanded = (S.fExpandedOrders && S.fExpandedOrders.has(o.id)) || isLiveGps;
 
         // Stage Action Button for Accordion Drawer
         let drawerAction = '';
@@ -5641,16 +5650,16 @@ function fOrders(u, orders) {
         if (o.status === 'placed') {
           summaryAction = `
             <button type="button" class="btn btn-primary btn-sm btn-pill" onclick="advance('${o.id}')">Accept Order</button>
-            <button type="button" class="btn-toggle-dispatch" id="order-btn-${o.id}" data-label="View Details ↓" onclick="toggleFarmerOrderAccordion('${o.id}', event)">View Details ↓</button>
+            <button type="button" class="btn-toggle-dispatch ${isExpanded ? 'active' : ''}" id="order-btn-${o.id}" data-label="View Details ↓" onclick="toggleFarmerOrderAccordion('${o.id}', event)">${isExpanded ? 'Close Details ↑' : 'View Details ↓'}</button>
           `;
         } else if (['confirmed', 'preparing', 'out'].includes(o.status)) {
           summaryAction = `
-            <button type="button" class="btn-toggle-dispatch ${isLiveGps ? 'active' : ''}" id="order-btn-${o.id}" data-label="View &amp; Dispatch ↓" onclick="toggleFarmerOrderAccordion('${o.id}', event)">${isLiveGps ? 'Close Details ↑' : 'View &amp; Dispatch ↓'}</button>
+            <button type="button" class="btn-toggle-dispatch ${isExpanded ? 'active' : ''}" id="order-btn-${o.id}" data-label="View &amp; Dispatch ↓" onclick="toggleFarmerOrderAccordion('${o.id}', event)">${isExpanded ? 'Close Details ↑' : 'View &amp; Dispatch ↓'}</button>
           `;
         } else {
           summaryAction = `
             <span style="font-size:12px;font-weight:700;color:#15803d;background:#f0fdf4;padding:4px 12px;border-radius:999px;border:1px solid #bbf7d0">✓ Delivered</span>
-            <button type="button" class="btn-toggle-dispatch" id="order-btn-${o.id}" data-label="Receipt ↓" onclick="toggleFarmerOrderAccordion('${o.id}', event)">Receipt ↓</button>
+            <button type="button" class="btn-toggle-dispatch ${isExpanded ? 'active' : ''}" id="order-btn-${o.id}" data-label="Receipt ↓" onclick="toggleFarmerOrderAccordion('${o.id}', event)">${isExpanded ? 'Close Details ↑' : 'Receipt ↓'}</button>
           `;
         }
 
@@ -5700,7 +5709,7 @@ function fOrders(u, orders) {
             </div>
 
             <!-- Option B: Expandable Accordion Drawer -->
-            <div id="order-drawer-${o.id}" class="farmer-order-accordion ${isLiveGps ? 'open' : ''}" onclick="event.stopPropagation()">
+            <div id="order-drawer-${o.id}" class="farmer-order-accordion ${isExpanded ? 'open' : ''}" onclick="event.stopPropagation()">
               <div class="farmer-order-accordion-body">
                 
                 <!-- 1. Buyer & Destination -->
@@ -8122,9 +8131,19 @@ async function reloadAppData() {
 let pollTimer = null;
 let isPolling = false;
 
+function getAppDataSnapshot() {
+  const oStr = (MY_ORDERS || []).map(o => o.id + ':' + o.status).join(',');
+  const lCount = (ACTIVE_LISTINGS || []).length;
+  const myLStr = (MY_LISTINGS || []).map(l => l.id + ':' + l.qty).join(',');
+  const reqStr = (OPEN_REQS || []).map(r => r.id + ':' + (r.filled || 0)).join(',');
+  const offStr = (MY_OFFERS || []).map(o => o.id + ':' + o.status).join(',');
+  return `${oStr}|${lCount}|${myLStr}|${reqStr}|${offStr}`;
+}
+
 function startPolling() {
   stopPolling();
   if (!CURRENT_USER) return;
+  // Step 4: Relaxed 30-second interval (down from frantic 10s) to keep app buttery smooth
   pollTimer = setInterval(async () => {
     if (document.visibilityState !== 'visible' || S.isSubmitting || S.modal || isPolling || !CURRENT_USER) {
       return;
@@ -8133,11 +8152,19 @@ function startPolling() {
     const isFormRoute = (p[0] === 'farmer' && p[1] === 'add') || (p[0] === 'buyer' && p[1] === 'post') || p[1] === 'login' || p[1] === 'track';
     const activeTag = document.activeElement ? document.activeElement.tagName : '';
     const isTyping = ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeTag);
+    // Step 3: Pause auto-refresh while user is actively viewing/interacting with an expanded order card
+    const hasOpenAccordion = S.fExpandedOrders && S.fExpandedOrders.size > 0;
 
     isPolling = true;
     try {
+      // Step 1: Smart Data Diffing - compare snapshot before and after reload
+      const prevSnapshot = getAppDataSnapshot();
       await reloadAppData();
-      if (!isFormRoute && !isTyping && !S.isSubmitting && !S.modal && CURRENT_USER) {
+      const newSnapshot = getAppDataSnapshot();
+      const dataChanged = prevSnapshot !== newSnapshot;
+
+      // Only re-render if data actually changed AND no accordion is currently open
+      if (dataChanged && !hasOpenAccordion && !isFormRoute && !isTyping && !S.isSubmitting && !S.modal && CURRENT_USER) {
         render();
       }
     } catch(e) {
@@ -8147,7 +8174,7 @@ function startPolling() {
     } finally {
       isPolling = false;
     }
-  }, 10000);
+  }, 30000);
 }
 
 function stopPolling() {
@@ -8179,9 +8206,12 @@ window.addEventListener('visibilitychange', () => {
     const isFormRoute = (p[0] === 'farmer' && p[1] === 'add') || (p[0] === 'buyer' && p[1] === 'post') || p[1] === 'login';
     const activeTag = document.activeElement ? document.activeElement.tagName : '';
     const isTyping = ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeTag);
+    const hasOpenAccordion = S.fExpandedOrders && S.fExpandedOrders.size > 0;
 
+    const prevSnapshot = getAppDataSnapshot();
     reloadAppData().then(() => {
-      if (!isFormRoute && !isTyping && !S.isSubmitting && !S.modal && CURRENT_USER) {
+      const dataChanged = prevSnapshot !== getAppDataSnapshot();
+      if (dataChanged && !hasOpenAccordion && !isFormRoute && !isTyping && !S.isSubmitting && !S.modal && CURRENT_USER) {
         render();
       }
     }).catch(e => {
