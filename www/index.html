@@ -882,74 +882,112 @@ section.s{padding:76px 0}
     width:100%;
     height:100%;
     object-fit:cover;
-    object-position:center 30%;
+    object-position:center 25%;
     display:block;
-    image-rendering:-webkit-optimize-contrast;
   }
   .dash-banner-overlay{
     position:absolute;
     inset:0;
-    background:linear-gradient(180deg, rgba(14, 11, 9, 0.35) 0%, rgba(14, 11, 9, 0.7) 100%), linear-gradient(90deg, rgba(14, 11, 9, 0.82) 0%, rgba(14, 11, 9, 0.45) 55%, transparent 100%);
+    background:linear-gradient(90deg, rgba(14, 11, 9, 0.78) 0%, rgba(14, 11, 9, 0.46) 45%, rgba(14, 11, 9, 0.12) 70%, transparent 88%);
     pointer-events:none;
+    display:block !important;
   }
   [data-theme="dark"] .dash-banner-overlay{
-    background:linear-gradient(180deg, rgba(14, 11, 9, 0.4) 0%, rgba(14, 11, 9, 0.78) 100%), linear-gradient(90deg, rgba(14, 11, 9, 0.88) 0%, rgba(14, 11, 9, 0.5) 55%, transparent 100%);
+    background:linear-gradient(90deg, rgba(14, 11, 9, 0.84) 0%, rgba(14, 11, 9, 0.52) 45%, rgba(14, 11, 9, 0.16) 70%, transparent 88%);
+    display:block !important;
   }
   .dash-banner-inner{
     position:relative;
     z-index:2;
     width:100%;
     max-width:100%;
-    padding:16px 18px;
+    padding:20px 18px;
     margin:0;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
   }
   .dash-banner-content{
-    max-width:100%;
-    gap:8px;
+    position:relative;
+    z-index:2;
+    max-width:320px;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    text-align:left;
+    gap:10px;
+    padding:0 !important;
+    background:transparent !important;
+    border:none !important;
+    outline:none !important;
+    box-shadow:none !important;
   }
   .dash-banner-badge{
-    font-size:11px;
-    padding:4px 10px;
-    background:rgba(255, 255, 255, 0.16);
-    backdrop-filter:blur(10px);
-    -webkit-backdrop-filter:blur(10px);
-    border:1px solid rgba(255, 255, 255, 0.28);
-    color:#FFFDFC;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:12px !important;
+    font-weight:600;
+    color:#FFFDFC !important;
+    letter-spacing:.02em;
+    background:rgba(255, 255, 255, 0.14) !important;
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    padding:5px 12px !important;
+    border-radius:999px !important;
+    border:1px solid rgba(255, 255, 255, 0.28) !important;
     width:fit-content;
+    box-shadow:0 2px 10px rgba(0, 0, 0, 0.25) !important;
   }
   .dash-banner h1{
-    font-size:clamp(18px, 5vw, 24px);
+    font-family:var(--sans);
+    font-weight:800 !important;
+    font-size:clamp(20px, 5.5vw, 25px) !important;
     color:#FFFDFC !important;
-    text-shadow:0 2px 8px rgba(0,0,0,0.7);
-    line-height:1.15;
-    margin:0;
+    margin:0 !important;
+    line-height:1.15 !important;
+    letter-spacing:-.02em;
+    text-shadow:0 2px 10px rgba(0, 0, 0, 0.55) !important;
   }
   .dash-banner-sub{
-    font-size:12.5px;
-    color:rgba(255, 253, 252, 0.92) !important;
-    text-shadow:0 1px 4px rgba(0,0,0,0.6);
-    line-height:1.4;
-    margin:0;
+    color:rgba(255, 253, 252, 0.94) !important;
+    font-size:13px !important;
+    margin:0 !important;
+    line-height:1.45 !important;
+    font-weight:450 !important;
+    text-shadow:0 1px 6px rgba(0, 0, 0, 0.45) !important;
   }
   .dash-banner-tagline{
-    font-size:12.5px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:13px !important;
+    font-weight:600;
     color:#F5EBE1 !important;
-    text-shadow:0 1px 4px rgba(0,0,0,0.8);
+    text-shadow:0 1px 4px rgba(0,0,0,0.8) !important;
   }
   .dash-banner-actions{
     display:flex;
-    flex-direction:row;
+    align-items:center;
     gap:10px;
-    margin-top:8px;
-    width:100%;
+    margin-top:4px;
+    width:auto;
   }
   .btn-hero-primary, .btn-hero-secondary{
-    flex:1;
-    min-width:0;
-    padding:11px 16px;
-    font-size:14px;
-    justify-content:center;
-    text-align:center;
+    background:linear-gradient(135deg, #8B3A44 0%, #722F37 100%) !important;
+    color:#FFFDFC !important;
+    border:1px solid rgba(255,255,255,0.35) !important;
+    padding:10px 20px !important;
+    border-radius:12px !important;
+    font-weight:700 !important;
+    font-size:13.5px !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    gap:8px !important;
+    box-shadow:0 6px 20px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.25) !important;
+    width:auto !important;
+    flex:none !important;
+    text-decoration:none !important;
   }
 }
 @media (max-width:480px){
@@ -959,7 +997,26 @@ section.s{padding:76px 0}
     height:auto;
   }
   .dash-banner-inner{
-    padding:18px 14px 20px;
+    padding:18px 16px;
+  }
+  .dash-banner-content{
+    max-width:280px;
+    gap:9px;
+    padding:0 !important;
+    background:transparent !important;
+    border:none !important;
+    outline:none !important;
+    box-shadow:none !important;
+  }
+  .dash-banner-badge{
+    font-size:11.5px !important;
+    padding:5px 11px !important;
+  }
+  .dash-banner h1{
+    font-size:clamp(19px, 5.2vw, 23px) !important;
+  }
+  .dash-banner-sub{
+    font-size:12.5px !important;
   }
   .dash-banner-actions{
     display:flex;
@@ -967,10 +1024,12 @@ section.s{padding:76px 0}
     flex-wrap:wrap;
     gap:8px;
     align-items:center;
+    margin-top:2px;
   }
   .btn-hero-primary, .btn-hero-secondary{
-    width:auto;
-    padding:10px 16px;
+    width:auto !important;
+    padding:9px 18px !important;
+    font-size:13px !important;
   }
 }
 
@@ -3213,25 +3272,28 @@ input:focus,select:focus,textarea:focus{
     aspect-ratio:4 / 3;
     min-height:280px;
     height:auto;
-    padding:24px 18px;
+    padding:16px 14px;
     justify-content:flex-start;
     background-size:cover;
     background-position:center 30%;
     background-repeat:no-repeat;
     background-color:#140F0C;
+    filter:none !important;
   }
   .auth-art h2{
-    font-size:19px;
+    font-size:16px !important;
     max-width:100%;
+    text-shadow:none !important;
   }
   .auth-art ul{
     display:grid;
-    gap:8px;
-    margin-top:12px;
+    gap:6px;
+    margin-top:8px;
   }
   .auth-art li{
-    font-size:13px;
-    gap:8px;
+    font-size:11.5px !important;
+    gap:6px;
+    text-shadow:none !important;
   }
   .auth-form{
     padding:16px 12px;
@@ -3270,20 +3332,38 @@ input:focus,select:focus,textarea:focus{
     border-radius:0;
   }
   .dash-banner-content{
-    padding:0;
-    max-width:100%;
-    gap:8px;
+    padding:0 !important;
+    max-width:320px;
+    gap:10px;
     display:flex;
     flex-direction:column;
+    align-items:flex-start;
+    text-align:left;
+    background:transparent !important;
+    border:none !important;
+    outline:none !important;
+    box-shadow:none !important;
+  }
+  .dash-banner-badge{
+    font-size:12px !important;
+    padding:5px 12px !important;
   }
   .dash-banner h1{
-    font-size:clamp(22px, 6vw, 30px);
+    font-size:clamp(20px, 5.5vw, 25px) !important;
+    font-weight:800 !important;
+    line-height:1.15 !important;
+    letter-spacing:-.02em;
+    text-shadow:0 2px 10px rgba(0, 0, 0, 0.55) !important;
   }
   .dash-banner-sub{
-    font-size:13.5px;
+    font-size:13px !important;
+    line-height:1.45 !important;
+    font-weight:450 !important;
+    text-shadow:0 1px 6px rgba(0, 0, 0, 0.45) !important;
   }
   .dash-banner-tagline{
-    font-size:12px;
+    font-size:13px !important;
+    text-shadow:0 1px 4px rgba(0,0,0,0.8) !important;
     flex-wrap:wrap;
   }
   .dash-banner-actions{
@@ -3293,10 +3373,15 @@ input:focus,select:focus,textarea:focus{
     gap:8px;
     align-items:center;
     width:auto;
+    margin-top:4px;
   }
   .dash-banner-actions .btn{
-    width:auto;
+    width:auto !important;
+    padding:10px 20px !important;
+    font-size:13.5px !important;
     justify-content:center;
+    border-radius:12px !important;
+    box-shadow:0 6px 20px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.25) !important;
   }
   .dash-head{
     flex-direction:column;
