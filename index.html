@@ -16,7 +16,7 @@
     }
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>DirectFarm – From farm to buyer, direct and fair</title>
+  <title>FarmLink – From farm to buyer, direct and fair</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -127,12 +127,13 @@
 
     :root {
       box-sizing: border-box;
-      padding-top: env(safe-area-inset-top, 0px);
-      padding-bottom: env(safe-area-inset-bottom, 0px)
     }
 
     html {
-      scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 84px)
+      scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 68px);
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
     }
 
     *,
@@ -143,6 +144,9 @@
 
     body {
       margin: 0;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
       background: var(--bg);
       color: var(--ink);
       font-family: var(--sans);
@@ -204,12 +208,17 @@
     /* ==================== Navigation ==================== */
     .nav {
       position: sticky;
-      top: env(safe-area-inset-top, 0px);
+      top: 0;
       z-index: 100;
+      width: 100%;
+      box-sizing: border-box;
       display: flex;
       align-items: center;
-      gap: 20px;
-      padding: 14px max(24px, calc((100% - 1200px)/2));
+      justify-content: space-between;
+      min-height: calc(64px + env(safe-area-inset-top, 0px));
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: 0px;
+      padding-inline: clamp(12px, 3.5vw, max(24px, calc((100% - 1200px)/2)));
       background: color-mix(in srgb, var(--bg) 92%, transparent);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
@@ -218,28 +227,44 @@
       transition: border-color .2s, background .2s;
     }
 
-    .brand {
+    .nav-left {
       display: flex;
       align-items: center;
-      gap: 11px;
-      font-family: var(--serif);
-      font-weight: 700;
-      font-size: 22px;
-      color: var(--burgundy);
-      letter-spacing: -.01em;
+      gap: clamp(8px, 1.8vw, 12px);
+      min-width: 0;
+      flex-shrink: 1;
     }
 
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: clamp(6px, 1.5vw, 10px);
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: clamp(17px, 3.5vw, 22px);
+      color: var(--burgundy);
+      letter-spacing: -.01em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .brand-logo,
+    .brand img,
     .brand svg {
-      width: 36px;
-      height: 36px;
-      flex: none
+      width: clamp(26px, 5.5vw, 34px);
+      height: clamp(26px, 5.5vw, 34px);
+      border-radius: 8px;
+      object-fit: cover;
+      display: block;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
     }
 
     .nav-links {
       display: flex;
       align-items: center;
       gap: 4px;
-      margin-left: 14px
+      margin-left: 14px;
     }
 
     .nav-links a {
@@ -256,62 +281,85 @@
     .nav-links a:hover {
       background: var(--soft);
       color: var(--burgundy);
-      border-color: var(--latte)
+      border-color: var(--latte);
     }
 
     .nav-right {
       margin-left: auto;
       display: flex;
       align-items: center;
-      gap: 10px;
-      position: relative
+      gap: clamp(6px, 2vw, 10px);
+      position: relative;
+      flex-shrink: 0;
+      min-width: 0;
     }
 
     .theme-btn {
       border: 1px solid var(--latte);
       background: var(--card);
       color: var(--burgundy);
-      width: 40px;
-      height: 40px;
+      width: clamp(36px, 8vw, 40px);
+      height: clamp(36px, 8vw, 40px);
       border-radius: 12px;
-      display: grid;
-      place-items: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      padding: 0;
       transition: background .18s, border-color .18s, transform .18s;
+      cursor: pointer;
     }
 
     .theme-btn:hover {
       background: var(--soft);
       transform: scale(1.04);
-      border-color: var(--burgundy)
+      border-color: var(--burgundy);
+    }
+
+    .theme-btn svg {
+      display: block;
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
     }
 
     .nav-menu2-btn {
       border: 1px solid var(--latte);
       background: var(--card);
       color: var(--burgundy);
-      width: 40px;
-      height: 40px;
+      width: clamp(36px, 8vw, 40px);
+      height: clamp(36px, 8vw, 40px);
       border-radius: 12px;
-      display: grid;
-      place-items: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
       transition: background .18s, border-color .18s, transform .18s;
       box-shadow: var(--shadow-sm);
-      flex: none;
+      flex-shrink: 0;
+      padding: 0;
     }
 
     .nav-menu2-btn:hover {
       background: var(--soft);
       transform: scale(1.04);
-      border-color: var(--burgundy)
+      border-color: var(--burgundy);
+    }
+
+    .nav-menu2-btn svg {
+      display: block;
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
     }
 
     .nav-menu-dropdown {
       position: absolute;
       left: 0;
-      top: calc(100% + 10px);
+      top: calc(100% + 8px);
       min-width: 210px;
-      max-height: calc(100vh - 80px);
+      max-width: min(280px, calc(100vw - 24px));
+      max-height: calc(100vh - 80px - env(safe-area-inset-top, 0px));
       overflow-y: auto;
       background: var(--card-elevated);
       border: 1px solid var(--latte);
@@ -326,7 +374,7 @@
 
     .nav-menu-dropdown.open {
       display: flex;
-      animation: pop .18s cubic-bezier(.16, 1, .3, 1)
+      animation: pop .18s cubic-bezier(.16, 1, .3, 1);
     }
 
     .nav-menu-dropdown a {
@@ -345,7 +393,7 @@
 
     .nav-menu-dropdown a:hover {
       background: var(--soft);
-      color: var(--burgundy)
+      color: var(--burgundy);
     }
 
     .nav-menu-dropdown a.on {
@@ -365,38 +413,53 @@
     }
 
     .profile-btn {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 10px;
+      gap: clamp(4px, 1.2vw, 8px);
       border: 1px solid var(--latte);
       background: var(--card);
       color: var(--burgundy);
-      padding: 5px 14px 5px 6px;
+      padding: 4px clamp(8px, 1.8vw, 14px) 4px 4px;
+      height: clamp(36px, 8vw, 40px);
       border-radius: 14px;
       box-shadow: var(--shadow-sm);
       transition: border-color .18s, box-shadow .18s;
+      flex-shrink: 1;
+      min-width: 0;
+      white-space: nowrap;
+      cursor: pointer;
     }
 
     .profile-btn:hover {
       border-color: var(--burgundy);
-      box-shadow: var(--shadow)
+      box-shadow: var(--shadow);
     }
 
-    .avatar {
-      width: 32px;
-      height: 32px;
+    .profile-btn .avatar {
+      width: clamp(26px, 6.5vw, 32px);
+      height: clamp(26px, 6.5vw, 32px);
       border-radius: 10px;
       background: var(--burgundy);
       color: var(--onolive);
       display: grid;
       place-items: center;
       font-weight: 700;
-      font-size: 14px;
+      font-size: clamp(12px, 3vw, 14px);
       font-family: var(--sans);
       border: 1px solid var(--burgundy-hover);
+      flex-shrink: 0;
     }
 
-    .role-tag {
+    .profile-btn b {
+      max-width: clamp(48px, 14vw, 120px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: clamp(12.5px, 3.2vw, 14.5px);
+      line-height: 1.2;
+    }
+
+    .profile-btn .role-tag {
       font-size: 11.5px;
       font-weight: 700;
       text-transform: uppercase;
@@ -406,16 +469,24 @@
       background: var(--bg-subtle);
       color: var(--burgundy);
       border: 1px solid var(--latte);
+      flex-shrink: 0;
+    }
+
+    .profile-btn svg {
+      display: block;
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
     }
 
     .menu {
       position: absolute;
       right: 0;
-      top: calc(100% + 12px);
-      width: min(320px, 88vw);
+      top: calc(100% + 8px);
+      width: min(300px, calc(100vw - 24px));
       background: var(--card-elevated);
       border: 1px solid var(--latte);
-      border-radius: 20px;
+      border-radius: 18px;
       box-shadow: var(--shadow-lg);
       padding: 10px;
       display: none;
@@ -590,30 +661,36 @@
     /* ==================== Hero Section ==================== */
     .hero {
       position: relative;
-      padding: 48px 0 64px;
+      padding: clamp(20px, 4vw, 48px) 0 clamp(28px, 5vw, 64px);
       overflow: hidden;
       background: var(--bg);
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .hero-grid {
       display: grid;
       grid-template-columns: 1.15fr 0.95fr;
-      gap: 40px;
+      gap: clamp(24px, 4vw, 40px);
       align-items: center;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     @media (max-width:960px) {
       .hero-grid {
         grid-template-columns: 1fr;
-        gap: 36px
+        gap: clamp(20px, 4vw, 32px);
       }
     }
 
     .hero-content {
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: clamp(14px, 2.5vw, 20px);
       max-width: 620px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .hero-chip {
@@ -626,20 +703,22 @@
       padding: 6px 14px;
       border-radius: 999px;
       font-weight: 700;
-      font-size: 13px;
+      font-size: clamp(12px, 2.8vw, 13px);
       width: fit-content;
       box-shadow: var(--shadow-sm);
     }
 
     .hero h1 {
-      font-size: clamp(36px, 5.2vw, 62px);
-      line-height: 1.08;
+      font-size: clamp(28px, 6vw, 62px);
+      line-height: 1.12;
       letter-spacing: -.02em;
       color: var(--burgundy);
+      word-break: normal;
+      overflow-wrap: break-word;
     }
 
     .hero p.lead {
-      font-size: clamp(16px, 1.9vw, 19px);
+      font-size: clamp(14.5px, 2.2vw, 19px);
       line-height: 1.55;
       color: var(--ink2);
     }
@@ -647,73 +726,84 @@
     .hero .cta {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 8px;
+      gap: 10px;
+      margin-top: 6px;
+      width: 100%;
     }
 
     .hero-trust {
       display: flex;
       flex-wrap: wrap;
-      gap: 18px;
-      margin-top: 12px;
+      gap: clamp(10px, 2.5vw, 18px);
+      margin-top: 8px;
       color: var(--ink2);
-      font-size: 13.5px;
+      font-size: clamp(12px, 2.8vw, 13.5px);
       font-weight: 600;
     }
 
     .hero-trust span {
       display: flex;
       align-items: center;
-      gap: 6px
+      gap: 6px;
+      white-space: nowrap;
     }
 
     .hero-trust svg {
-      color: var(--latte-dark)
+      color: var(--latte-dark);
+      flex-shrink: 0;
     }
 
     .hero-visual {
       position: relative;
-      border-radius: 24px;
-      overflow: visible;
+      border-radius: clamp(16px, 3vw, 24px);
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     .hero-img-wrap {
       position: relative;
-      border-radius: 24px;
+      border-radius: clamp(16px, 3vw, 24px);
       overflow: hidden;
       border: 1px solid var(--latte);
       box-shadow: var(--shadow-lg);
-      aspect-ratio: 4/3;
+      aspect-ratio: 16/10;
+      min-height: clamp(240px, 48vw, 380px);
       background: var(--card);
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .hero-img-wrap img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      object-position: center 25%;
       display: block;
       transition: transform .4s cubic-bezier(.16, 1, .3, 1);
     }
 
     .hero-img-wrap:hover img {
-      transform: scale(1.02)
+      transform: scale(1.02);
     }
 
     .float-chip {
       position: absolute;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: clamp(6px, 1.5vw, 12px);
       background: var(--card-elevated);
       color: var(--ink);
-      padding: 12px 18px;
-      border-radius: 18px;
+      padding: clamp(6px, 1.5vw, 12px) clamp(10px, 2vw, 18px);
+      border-radius: clamp(12px, 2vw, 18px);
       border: 1px solid var(--latte);
       font-weight: 700;
-      font-size: 14px;
+      font-size: clamp(11.5px, 2.5vw, 14px);
       box-shadow: var(--shadow-lg);
       animation: bob 6s ease-in-out infinite;
       z-index: 2;
+      max-width: calc(100% - 20px);
+      box-sizing: border-box;
     }
 
     .float-chip small {
@@ -721,12 +811,12 @@
       font-weight: 500;
       color: var(--ink2);
       font-size: 12px;
-      margin-top: 2px
+      margin-top: 2px;
     }
 
     .float-chip .dot {
-      width: 36px;
-      height: 36px;
+      width: clamp(26px, 5vw, 36px);
+      height: clamp(26px, 5vw, 36px);
       border-radius: 10px;
       background: var(--burgundy);
       color: var(--onolive);
@@ -734,60 +824,60 @@
       place-items: center;
       flex: none;
       border: 1px solid var(--burgundy-hover);
+      font-size: clamp(12px, 2.5vw, 16px);
     }
 
     .fc1 {
-      left: -16px;
-      top: 14%;
-      animation-delay: 0s
+      left: clamp(8px, 1.8vw, 14px);
+      top: clamp(8px, 2vw, 14%);
+      animation-delay: 0s;
     }
 
     .fc2 {
-      right: -16px;
-      bottom: 18%;
-      animation-delay: -2.2s
+      right: clamp(8px, 1.8vw, 14px);
+      bottom: clamp(8px, 2vw, 14%);
+      animation-delay: -2.2s;
     }
 
     @keyframes bob {
-
       0%,
       100% {
-        transform: translateY(0)
+        transform: translateY(0);
       }
 
       50% {
-        transform: translateY(-8px)
+        transform: translateY(-8px);
       }
     }
 
     @media (max-width:960px) {
       .float-chip {
         display: flex;
-        padding: 8px 12px;
-        font-size: 12px;
-        border-radius: 14px;
-        gap: 8px;
-        max-width: calc(100% - 20px);
+        padding: 6px 10px;
+        font-size: 11px;
+        border-radius: 12px;
+        gap: 6px;
+        max-width: calc(100% - 16px);
         animation: none;
       }
 
       .float-chip .dot {
-        width: 28px;
-        height: 28px
+        width: 24px;
+        height: 24px;
       }
 
       .float-chip small {
-        display: none
+        display: none;
       }
 
       .fc1 {
-        left: 10px;
-        top: 10px
+        left: 8px;
+        top: 8px;
       }
 
       .fc2 {
-        right: 10px;
-        bottom: 10px
+        right: 8px;
+        bottom: 8px;
       }
     }
 
@@ -1065,13 +1155,11 @@
     .dash-banner {
       position: relative;
       width: 100%;
+      box-sizing: border-box;
       overflow: hidden;
-      aspect-ratio: 1376 / 768;
-      height: auto;
-      min-height: unset;
-      max-height: none;
+      min-height: clamp(280px, 45vw, 380px);
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       background: #140F0C;
       border-radius: 0;
       border: none;
@@ -1083,7 +1171,7 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: contain;
+      object-fit: cover;
       object-position: center;
       display: block;
       pointer-events: none;
@@ -1242,11 +1330,11 @@
       .dash-banner {
         position: relative;
         width: 100%;
-        aspect-ratio: 1376 / 768;
-        min-height: unset;
+        box-sizing: border-box;
+        min-height: clamp(260px, 50vw, 340px);
         height: auto;
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         overflow: hidden;
         margin: 0;
         padding: 0;
@@ -1259,7 +1347,7 @@
         inset: 0;
         width: 100%;
         height: 100%;
-        object-fit: contain;
+        object-fit: cover;
         object-position: center;
         display: block;
         image-rendering: -webkit-optimize-contrast;
@@ -1281,7 +1369,7 @@
         z-index: 2;
         width: 100%;
         max-width: 100%;
-        padding: 16px 18px;
+        padding: clamp(14px, 3.5vw, 18px);
         margin: 0;
       }
 
@@ -1326,17 +1414,18 @@
       .dash-banner-actions {
         display: flex;
         flex-direction: row;
-        gap: 10px;
+        flex-wrap: wrap;
+        gap: 8px;
         margin-top: 8px;
         width: 100%;
       }
 
       .btn-hero-primary,
       .btn-hero-secondary {
-        flex: 1;
+        flex: 1 1 auto;
         min-width: 0;
-        padding: 11px 16px;
-        font-size: 14px;
+        padding: 10px 16px;
+        font-size: 13.5px;
         justify-content: center;
         text-align: center;
       }
@@ -1344,13 +1433,11 @@
 
     @media (max-width:480px) {
       .dash-banner {
-        aspect-ratio: 1376 / 768;
-        min-height: unset;
-        height: auto;
+        min-height: clamp(240px, 55vw, 300px);
       }
 
       .dash-banner-inner {
-        padding: 18px 14px 20px;
+        padding: 14px 12px 16px;
       }
 
       .dash-banner-actions {
@@ -1364,7 +1451,8 @@
       .btn-hero-primary,
       .btn-hero-secondary {
         width: auto;
-        padding: 10px 16px;
+        padding: 9px 14px;
+        font-size: 13px;
       }
     }
 
@@ -2624,22 +2712,24 @@
     /* Floating Action Pill for Farmer */
     .fab-pill {
       position: fixed;
-      bottom: 28px;
-      right: 28px;
+      bottom: calc(clamp(16px, 3vh, 28px) + env(safe-area-inset-bottom, 0px));
+      right: clamp(14px, 3vw, 28px);
       background: var(--burgundy);
       color: #fff !important;
       border-radius: 999px;
-      padding: 12px 20px 12px 16px;
+      padding: clamp(9px, 1.8vh, 12px) clamp(14px, 3vw, 20px);
       display: inline-flex;
       align-items: center;
       gap: 8px;
       font-weight: 700;
-      font-size: 14.5px;
+      font-size: clamp(13px, 3.2vw, 14.5px);
       box-shadow: 0 8px 24px rgba(114, 47, 55, 0.38);
       border: 1px solid rgba(255, 255, 255, 0.22);
       z-index: 99;
       text-decoration: none;
       transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+      max-width: calc(100% - 28px);
+      box-sizing: border-box;
     }
 
     .fab-pill:hover {
@@ -2652,15 +2742,6 @@
     .fab-pill-icon {
       display: grid;
       place-items: center;
-    }
-
-    @media (max-width:680px) {
-      .fab-pill {
-        bottom: calc(76px + env(safe-area-inset-bottom, 0px));
-        right: 18px;
-        padding: 10px 16px;
-        font-size: 13.5px;
-      }
     }
 
     /* Skeleton Shimmer Placeholders */
@@ -3771,17 +3852,13 @@
 
     /* ==================== Phone & Small Screen Perfect Fit ==================== */
     @media (max-width: 768px) {
-      :root {
-        padding-top: env(safe-area-inset-top, 0px);
-        padding-bottom: env(safe-area-inset-bottom, 0px);
-      }
-
       html,
       body {
-        max-width: 100vw;
         width: 100%;
+        max-width: 100%;
         overflow-x: hidden;
         position: relative;
+        box-sizing: border-box;
       }
 
       body.mobile-nav-open {
@@ -3806,7 +3883,7 @@
       a,
       button {
         overflow-wrap: break-word;
-        word-break: break-word;
+        word-break: normal;
       }
 
       input,
@@ -3832,15 +3909,21 @@
       }
 
       .wrap {
-        padding: 0 16px;
+        padding: 0 clamp(10px, 3.5vw, 16px);
       }
 
       /* Unified Desktop-Matched Navigation */
       .nav {
-        padding: 8px 12px;
-        gap: 6px;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: 0px;
+        padding-inline: clamp(10px, 3vw, 16px);
+        height: calc(64px + env(safe-area-inset-top, 0px));
+        min-height: calc(64px + env(safe-area-inset-top, 0px));
+        max-height: calc(72px + env(safe-area-inset-top, 0px));
+        gap: clamp(6px, 2vw, 10px);
         justify-content: space-between;
         align-items: center;
+        box-sizing: border-box;
       }
 
       .nav-links {
@@ -3850,64 +3933,88 @@
       .nav-left {
         display: flex;
         align-items: center;
-        gap: 8px;
-        flex-shrink: 0;
+        gap: clamp(6px, 1.8vw, 10px);
+        min-width: 0;
+        flex-shrink: 1;
       }
 
       .brand {
-        font-size: 17px;
-        gap: 6px;
+        font-size: clamp(16px, 4.2vw, 18px);
+        gap: clamp(5px, 1.5vw, 8px);
         flex-shrink: 0;
         white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
       }
 
+      .brand-logo,
+      .brand img,
       .brand svg {
-        width: 24px;
-        height: 24px;
+        width: clamp(24px, 6vw, 28px);
+        height: clamp(24px, 6vw, 28px);
         flex-shrink: 0;
+        display: block;
       }
 
       .nav-right {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: clamp(6px, 1.8vw, 10px);
         margin-left: auto;
         flex-shrink: 0;
+        min-width: 0;
+      }
+
+      .nav-menu2-btn {
+        width: clamp(34px, 8.5vw, 38px);
+        height: clamp(34px, 8.5vw, 38px);
+        border-radius: 11px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        padding: 0;
       }
 
       .theme-btn {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        flex: none;
+        width: clamp(34px, 8.5vw, 38px);
+        height: clamp(34px, 8.5vw, 38px);
+        border-radius: 11px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        padding: 0;
       }
 
       .profile-btn {
-        display: flex;
+        display: inline-flex;
         align-items: center;
-        gap: 5px;
-        padding: 4px 8px 4px 4px;
+        gap: clamp(4px, 1.2vw, 6px);
+        padding: 3px clamp(6px, 1.5vw, 10px) 3px 3px;
         border-radius: 12px;
-        font-size: 13px;
-        min-height: 36px;
-        flex-shrink: 0;
+        font-size: clamp(12px, 3vw, 13.5px);
+        height: clamp(34px, 8.5vw, 38px);
+        flex-shrink: 1;
+        min-width: 0;
         white-space: nowrap;
       }
 
       .profile-btn .avatar {
-        width: 26px;
-        height: 26px;
-        font-size: 12px;
+        width: clamp(24px, 6vw, 28px);
+        height: clamp(24px, 6vw, 28px);
+        font-size: clamp(11px, 2.8vw, 12.5px);
         border-radius: 8px;
         flex-shrink: 0;
       }
 
       .profile-btn b {
-        max-width: 62px;
+        max-width: clamp(44px, 15vw, 90px);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        font-size: 13px;
+        font-size: clamp(12px, 3vw, 13px);
+        line-height: 1.2;
       }
 
       .profile-btn .role-tag {
@@ -3936,7 +4043,7 @@
       }
 
       .menu {
-        width: min(280px, calc(100vw - 20px));
+        width: min(280px, calc(100vw - 24px));
         right: 0;
         top: calc(100% + 8px);
         border-radius: 18px;
@@ -3944,8 +4051,8 @@
       }
 
       .nav-menu-dropdown {
-        width: min(280px, calc(100vw - 20px));
-        max-width: calc(100vw - 20px);
+        width: min(280px, calc(100vw - 24px));
+        max-width: calc(100vw - 24px);
         z-index: 120;
       }
 
@@ -4339,10 +4446,10 @@
       }
 
       .dash-banner {
-        aspect-ratio: 1376 / 768;
-        min-height: unset;
+        min-height: clamp(240px, 50vw, 320px);
         height: auto;
-        align-items: flex-start;
+        display: flex;
+        align-items: center;
         margin-bottom: 0;
         border-radius: 0;
       }
@@ -4830,72 +4937,10 @@
         padding: 12px 8px 24px;
       }
 
-      .nav {
-        padding: 6px 8px;
-        gap: 4px;
-      }
-
-      .nav-left {
-        gap: 5px;
-      }
-
-      .nav-menu2-btn {
-        width: 32px;
-        height: 32px;
-        border-radius: 9px;
-      }
-
-      .brand {
-        font-size: 15px;
-        gap: 4px;
-      }
-
-      .brand svg {
-        width: 20px;
-        height: 20px;
-      }
-
-      .nav-right {
-        gap: 4px;
-      }
-
-      .theme-btn {
-        width: 32px;
-        height: 32px;
-        border-radius: 9px;
-      }
-
-      .profile-btn {
-        padding: 3px 6px 3px 3px;
-        min-height: 32px;
-        gap: 4px;
-        border-radius: 10px;
-      }
-
-      .profile-btn .avatar {
-        width: 24px;
-        height: 24px;
-        font-size: 11px;
-        border-radius: 7px;
-      }
-
-      .profile-btn .role-tag {
-        display: none;
-      }
-
-      .profile-btn b {
-        max-width: 38px;
-        font-size: 12px;
-      }
-
       .cards4,
       .cards3 {
         grid-template-columns: 1fr;
         gap: 8px;
-      }
-
-      .hero h1 {
-        font-size: 24px;
       }
 
       .stat {
@@ -5030,6 +5075,7 @@
     }
 
     /* ============ Helpers ============ */
+    const apiBase = () => (typeof window !== 'undefined' && window.__ENV && window.__ENV.API_BASE_URL) ? window.__ENV.API_BASE_URL : '';
     const $ = s => document.querySelector(s);
     const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const inr = n => '₹' + Math.round(Number(n) || 0).toLocaleString('en-IN');
@@ -5265,7 +5311,7 @@
     window.artFor = art;
     window.getCropPhoto = getCropPhoto;
 
-    const logoSVG = `<svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="12" fill="#722F37"/><path d="M12 28c0-9 6-15 17-16-1 10-7 16-15 16" fill="#E8DCC6"/><path d="M12 29c5-8 9-11 14-13" stroke="#B7A89A" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>`;
+    const logoSVG = `<img class="brand-logo" src="assets/images/logo.png" alt="FarmLink" />`;
 
     /* ============ Pure Logic Bridges ============ */
     const km = window.DFPricing.km;
@@ -5557,7 +5603,7 @@
       <a onclick="closeNavMenu();goSec('smart')">${ic('spark', 16)} Smart tools</a>`;
       }
 
-      const navLeft = `<div style="position:relative;display:inline-block">
+      const navLeft = `<div style="position:relative;display:inline-flex;align-items:center">
     <button type="button" class="nav-menu2-btn" id="navMenuBtn" onclick="toggleNavMenu(event)" aria-label="Toggle navigation menu" title="Navigation menu">
       <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
         <line x1="4" y1="8" x2="20" y2="8"></line>
@@ -5587,9 +5633,9 @@
   </div>`
         : `<a class="btn btn-primary btn-sm" href="#/login">Sign in</a>`;
 
-      return `<header class="nav"><div class="nav-left" style="display:flex;align-items:center;gap:10px">
+      return `<header class="nav"><div class="nav-left">
     ${navLeft}
-    <a class="brand" href="#/">${logoSVG}DirectFarm</a>
+    <a class="brand" href="#/">${logoSVG}FarmLink</a>
   </div>
   <div class="nav-right">
     <button type="button" class="theme-btn" onclick="toggleTheme()" aria-label="Toggle light and dark theme">${ic('moon', 17)}</button>
@@ -5600,7 +5646,7 @@
     function footer() {
       return `<footer class="ft"><div class="wrap row">
     <div>
-      <a class="brand" href="#/">${logoSVG}DirectFarm</a>
+      <a class="brand" href="#/">${logoSVG}FarmLink</a>
       <p>A transparent farm-to-buyer digital marketplace connecting verified Indian growers with retail and wholesale buyers. Authentic produce, transparent reference prices, and AI-optimized routes.</p>
     </div>
     <div style="display:flex;gap:36px;flex-wrap:wrap">
@@ -6459,7 +6505,6 @@ ${fab}`;
         <div class="ptop"><h3>Fresh ${esc(c)}</h3><div class="price">${inr(p)}<small>/kg</small></div></div>
         <div class="meta"><span>${ic('box', 14)} <b>${q} kg</b> available</span><span>${ic('pin', 14)} ${esc(locLabel)}</span></div>
         <div class="meta"><span>${ic('user', 14)} ${esc(farmerName)}</span><span>★ 5.0 (New)</span></div>
-        <div><span class="badge ${b.c}">${ic('check', 13)} ${b.t}</span></div>
       </div>
     </div>`;
       }
@@ -6670,7 +6715,6 @@ ${fab}`;
           <div class="price">${inr(l.price)}<small>/kg</small></div>
         </div>
         <div class="sub-grower">${ic('pin', 13)} <span class="grower-name">${esc(l.loc.label)}</span></div>
-        <div class="pcard-badge-row">${pbadge(l.price, l.crop, l.id)}</div>
         <div class="stock-pill-row">
           <div class="stock-pill-labels">
             <span>Stock remaining</span>
@@ -7069,9 +7113,6 @@ ${fab}`;
         <span>·</span>
         <span class="seller-pill">${sellerTag(l)}</span>
       </div>
-      <div class="pcard-badge-row">
-        ${pbadge(l.price, l.crop, l.id)}
-      </div>
       <div class="buyer-card-footer">
         <div class="buyer-stock-pill">${ic('box', 13)} <span><b>${l.qty} kg</b> available</span></div>
         <button type="button" class="btn btn-primary btn-xs buyer-cta-btn" onclick="event.stopPropagation();openModal('buy','${l.id}')">
@@ -7140,12 +7181,6 @@ ${fab}`;
         <div>
           <div style="display:flex;align-items:center;gap:8px">
             <h3 style="font-size:20px;color:var(--burgundy);margin:0">${ic('spark', 18)} Recommended for you</h3>
-            <span class="badge b-good">Smart Matching System</span>
-          </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
-            <span class="badge b-good">✓ Mandi Fair Price</span>
-            <span class="badge b-neutral">📍 Nearest Farms First</span>
-            <span class="badge b-good">★ Verified Grower Ratings</span>
           </div>
         </div>
         <a class="small" href="#/buyer/prices" style="color:var(--burgundy);font-weight:700">View official rates →</a>
@@ -7172,7 +7207,6 @@ ${fab}`;
                 <span class="small"><b>${l.qty} kg</b> available</span>
               </div>
               <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;font-size:12.5px;color:var(--ink2)">
-                <span class="badge b-good" style="padding:2px 8px;font-size:11.5px">🎯 ${r.breakdown.priceSuitability}% Price Match</span>
                 <span>📍 ${Math.round(r.dist)} km</span>
                 <span style="color:#d9a21b;font-weight:700">★ ${Number(l.ratingAvg || 4.5).toFixed(1)}</span>
               </div>
@@ -8221,7 +8255,7 @@ ${fab}`;
 
         try {
           const token = window.DFApi.getToken();
-          const res = await fetch(`/api/tracking/${orderId}?token=${encodeURIComponent(token)}`);
+          const res = await fetch(`${apiBase()}/api/tracking/${orderId}?token=${encodeURIComponent(token)}`);
           if (res.ok) {
             const data = await res.json();
             if (data && data.success) {
@@ -8307,7 +8341,7 @@ ${fab}`;
             await window.DFApi.updateTrackingLocation(orderId, payload);
           } else {
             const token = window.DFApi.getToken();
-            await fetch('/api/tracking/update', {
+            await fetch(apiBase() + '/api/tracking/update', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(Object.assign({ token }, payload))
@@ -8356,7 +8390,7 @@ ${fab}`;
 
       try {
         if (!AVAILABLE_COMMODITIES.length) {
-          const fRes = await fetch('/api/market-prices/filters');
+          const fRes = await fetch(apiBase() + '/api/market-prices/filters');
           if (fRes.ok) {
             const fJson = await fRes.json();
             if (fJson.success) {
@@ -8371,7 +8405,7 @@ ${fab}`;
         SELECTED_PRICE_COMMODITY = c;
         SELECTED_PRICE_STATE = s;
 
-        const res = await fetch(`/api/market-prices?commodity=${encodeURIComponent(c)}&state=${s}`);
+        const res = await fetch(`${apiBase()}/api/market-prices?commodity=${encodeURIComponent(c)}&state=${s}`);
         if (!res.ok) {
           throw new Error(`Server returned status ${res.status}`);
         }
@@ -9181,7 +9215,7 @@ ${fab}`;
           body = `<main class="dash" style="display:flex;justify-content:center;align-items:center;min-height:50vh">
         <div style="text-align:center">
           <span class="spinner" style="width:36px;height:36px;border-width:3px"></span>
-          <p class="sub" style="margin-top:14px">Loading DirectFarm...</p>
+          <p class="sub" style="margin-top:14px">Loading FarmLink...</p>
         </div>
       </main>`;
         } else if (!u) {
@@ -9194,7 +9228,7 @@ ${fab}`;
       }
 
       $('#app').innerHTML = navbar(u) + body + (hideFooter ? '' : footer()) + modalHTML();
-      document.title = 'DirectFarm – From farm to buyer, direct and fair';
+      document.title = 'FarmLink – From farm to buyer, direct and fair';
       document.body.classList.toggle('has-dock', Boolean(u && (a === 'farmer' || a === 'buyer') && b !== 'login'));
 
       if (S.modal && S.modal.type === 'buy') updBuy(S.modal.id);
@@ -9260,12 +9294,35 @@ ${fab}`;
       }
 
       // Pre-load official AGMARKNET filters in background
-      fetch('/api/market-prices/filters').then(r => r.json()).then(f => {
+      fetch(apiBase() + '/api/market-prices/filters').then(r => r.json()).then(f => {
         if (f && f.success) {
           AVAILABLE_COMMODITIES = f.commodities || [];
           AVAILABLE_STATES = f.states || [];
         }
       }).catch(() => { });
+
+      // Hardware back button integration for Android Capacitor App
+      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+        window.Capacitor.Plugins.App.addListener('backButton', () => {
+          if (S.modal) {
+            closeModal();
+            render();
+            return;
+          }
+          const p = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+          if (p.length > 1) {
+            go('#/' + p[0]);
+          } else if (p.length === 1 && (p[0] === 'farmer' || p[0] === 'buyer' || p[0] === 'login')) {
+            if (CURRENT_USER) {
+              window.Capacitor.Plugins.App.minimizeApp();
+            } else {
+              go('#/');
+            }
+          } else {
+            window.Capacitor.Plugins.App.minimizeApp();
+          }
+        });
+      }
     })();
   </script>
 </body>
