@@ -5346,10 +5346,10 @@ async function saveEdit(id) {
 
 function fOrders(u, orders) {
   if (!orders.length) {
-    return `<div class="empty">
+    return `<div class="empty" style="padding-bottom:90px">
       <div class="empty-icon">${ic('box', 30)}</div>
-      <h3>No orders received yet</h3>
-      <p>Incoming buyer orders will appear here for 1-tap confirmation and delivery dispatch.</p>
+      <h3 style="font-family:var(--serif);font-size:20px;color:var(--burgundy)">No orders received yet</h3>
+      <p style="color:var(--ink2);font-size:14px">Incoming buyer orders will appear here for 1-tap confirmation and delivery dispatch.</p>
     </div>`;
   }
 
@@ -5364,96 +5364,123 @@ function fOrders(u, orders) {
   else if (tab === 'dispatch') visibleOrders = toDispatch.sort((a, b) => b.createdAt - a.createdAt);
   else if (tab === 'completed') visibleOrders = completed.sort((a, b) => b.createdAt - a.createdAt);
 
-  const nextLabel = { placed: '✓ Confirm & Pack', confirmed: 'Start preparing', preparing: '🚚 Mark Out for Delivery', out: '✓ Mark Delivered' };
-
   return `
-    <div class="orders-nav-tabs">
-      <button type="button" class="orders-tab-btn ${tab === 'confirm' ? 'active' : ''}" onclick="S.fOrderTab='confirm';render()">
-        <span>📥 To Confirm</span>
-        <span class="tab-count">${toConfirm.length}</span>
-      </button>
-      <button type="button" class="orders-tab-btn ${tab === 'dispatch' ? 'active' : ''}" onclick="S.fOrderTab='dispatch';render()">
-        <span>🚚 To Dispatch</span>
-        <span class="tab-count">${toDispatch.length}</span>
-      </button>
-      <button type="button" class="orders-tab-btn ${tab === 'completed' ? 'active' : ''}" onclick="S.fOrderTab='completed';render()">
-        <span>✓ Completed</span>
-        <span class="tab-count">${completed.length}</span>
-      </button>
-      <button type="button" class="orders-tab-btn ${tab === 'all' ? 'active' : ''}" onclick="S.fOrderTab='all';render()">
-        <span>All Orders</span>
-        <span class="tab-count">${orders.length}</span>
-      </button>
-    </div>
-
-    ${!visibleOrders.length ? `
-      <div class="empty" style="padding:36px 20px">
-        <div class="empty-icon">${ic(tab === 'confirm' ? 'check' : 'box', 28)}</div>
-        <h3>No orders in this stage</h3>
-        <p>${tab === 'confirm' ? 'All new orders have been confirmed and processed!' : tab === 'dispatch' ? 'No orders currently being packed or out for delivery.' : 'No completed deliveries yet.'}</p>
-        <button type="button" class="btn btn-light btn-sm" onclick="S.fOrderTab='all';render()">View All Orders (${orders.length})</button>
+    <div class="farmer-orders-container" style="padding-bottom:90px">
+      <div class="orders-nav-tabs">
+        <button type="button" class="orders-tab-btn ${tab === 'confirm' ? 'active' : ''}" onclick="S.fOrderTab='confirm';render()">
+          <span>📥 To Confirm</span>
+          <span class="tab-count">${toConfirm.length}</span>
+        </button>
+        <button type="button" class="orders-tab-btn ${tab === 'dispatch' ? 'active' : ''}" onclick="S.fOrderTab='dispatch';render()">
+          <span>🚚 To Dispatch</span>
+          <span class="tab-count">${toDispatch.length}</span>
+        </button>
+        <button type="button" class="orders-tab-btn ${tab === 'completed' ? 'active' : ''}" onclick="S.fOrderTab='completed';render()">
+          <span>✓ Completed</span>
+          <span class="tab-count">${completed.length}</span>
+        </button>
+        <button type="button" class="orders-tab-btn ${tab === 'all' ? 'active' : ''}" onclick="S.fOrderTab='all';render()">
+          <span>All Orders</span>
+          <span class="tab-count">${orders.length}</span>
+        </button>
       </div>
-    ` : visibleOrders.map(o => {
-      if (CURRENT_USER && CURRENT_USER.role === 'farmer' && CURRENT_USER.loc && typeof CURRENT_USER.loc.lat === 'number') {
-        try {
-          localStorage.setItem('df_farmer_loc_' + o.id, JSON.stringify(CURRENT_USER.loc));
-        } catch(e) {}
-      }
-      const phone = o.buyerPhone || COUNTERPARTY_PHONES[o.buyerId];
-      const buyerName = o.buyerName || o.buyerOrg || 'Buyer';
-      const totalAmount = o.qty * o.price + o.deliveryFee;
 
-      return `
-        <div class="order-card-modern">
-          <div class="order-main-row">
-            <!-- Col 1: Produce & Buyer -->
-            <div class="order-col-produce">
-              <div class="order-crop-thumb">
-                <img src="${esc(getCropPhoto(o.crop))}" alt="${esc(o.crop)}" loading="lazy" onerror="this.outerHTML='<span style=\\'font-size:22px\\'>${CROP_ICONS[o.crop] || '🌱'}</span>'">
+      ${!visibleOrders.length ? `
+        <div class="empty" style="padding:36px 20px">
+          <div class="empty-icon">${ic(tab === 'confirm' ? 'check' : 'box', 28)}</div>
+          <h3 style="font-family:var(--serif);font-size:20px;color:var(--burgundy)">No orders in this stage</h3>
+          <p style="color:var(--ink2);font-size:14px">${tab === 'confirm' ? 'All new orders have been confirmed and processed!' : tab === 'dispatch' ? 'No orders currently being packed or out for delivery.' : 'No completed deliveries yet.'}</p>
+          <button type="button" class="btn btn-light btn-sm btn-pill" onclick="S.fOrderTab='all';render()">View All Orders (${orders.length})</button>
+        </div>
+      ` : visibleOrders.map(o => {
+        if (CURRENT_USER && CURRENT_USER.role === 'farmer' && CURRENT_USER.loc && typeof CURRENT_USER.loc.lat === 'number') {
+          try {
+            localStorage.setItem('df_farmer_loc_' + o.id, JSON.stringify(CURRENT_USER.loc));
+          } catch(e) {}
+        }
+        const phone = o.buyerPhone || COUNTERPARTY_PHONES[o.buyerId];
+        const buyerName = o.buyerName || o.buyerOrg || 'Buyer';
+        const totalAmount = o.qty * o.price + o.deliveryFee;
+
+        // Single-Action Progression for Farmers
+        let actionBtn = '';
+        if (o.status === 'placed') {
+          actionBtn = `
+            <button type="button" class="btn btn-primary btn-sm btn-pill" onclick="advance('${o.id}')">Accept Order</button>
+            <button type="button" class="btn btn-ghost btn-sm btn-pill" style="color:var(--terra);font-size:11.5px;padding:5px 10px !important" onclick="cancelOrder('${o.id}')">Decline</button>
+          `;
+        } else if (o.status === 'confirmed') {
+          actionBtn = `<button type="button" class="btn btn-primary btn-sm btn-pill" onclick="advance('${o.id}')">Start Preparing →</button>`;
+        } else if (o.status === 'preparing') {
+          actionBtn = `<button type="button" class="btn btn-primary btn-sm btn-pill" onclick="advance('${o.id}')">Hand over to Delivery →</button>`;
+        } else if (o.status === 'out') {
+          actionBtn = `<button type="button" class="btn btn-primary btn-sm btn-pill" onclick="advance('${o.id}')">Mark Delivered ✓</button>`;
+        } else if (o.status === 'delivered') {
+          actionBtn = `<span style="font-size:12px;font-weight:700;color:#15803d;background:#f0fdf4;padding:5px 14px;border-radius:999px;border:1px solid #bbf7d0;display:inline-flex;align-items:center;gap:4px">✓ Delivered</span>`;
+        } else if (o.status === 'cancelled') {
+          actionBtn = `<span style="font-size:12px;font-weight:600;color:#b91c1c;background:#fef2f2;padding:5px 14px;border-radius:999px;border:1px solid #fecaca">✕ Cancelled</span>`;
+        }
+
+        // Subtle GPS Button: Only for active "Out for Delivery" orders or active location broadcast
+        let gpsBtn = '';
+        if (activeGpsOrderId === o.id) {
+          gpsBtn = `<button type="button" class="btn btn-xs btn-pill" style="background:#def7ec;color:#03543f;border:1px solid #31c48d;font-size:11.5px;font-weight:600;padding:5px 11px !important;display:inline-flex;align-items:center;gap:4px" onclick="stopLiveLocationSharing()" title="Live GPS broadcasting - tap to stop">
+            <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#0e9f6e"></span> 📡 GPS Live
+          </button>`;
+        } else if (o.status === 'out') {
+          gpsBtn = `<button type="button" class="btn btn-xs btn-light btn-pill" style="font-size:11.5px;font-weight:600;padding:5px 11px !important;border:1px solid var(--latte);display:inline-flex;align-items:center;gap:4px" onclick="startLiveLocationSharing('${o.id}')" title="Start live GPS broadcast to buyer">
+            📡 GPS
+          </button>`;
+        }
+
+        return `
+          <div class="order-card-modern">
+            <div class="order-main-row">
+              <!-- Col 1: Produce & Buyer -->
+              <div class="order-col-produce">
+                <div class="order-crop-thumb">
+                  <img src="${esc(getCropPhoto(o.crop))}" alt="${esc(o.crop)}" loading="lazy" onerror="this.outerHTML='<span style=\\'font-size:22px\\'>${CROP_ICONS[o.crop] || '🌱'}</span>'">
+                </div>
+                <div>
+                  <div class="order-crop-title" style="font-family:var(--serif);font-size:18.5px;font-weight:700;color:var(--burgundy);line-height:1.2;letter-spacing:-0.01em">
+                    Fresh ${esc(o.crop)} <span style="font-family:var(--sans);font-weight:600;font-size:14.5px;color:var(--ink2)">· ${o.qty} kg</span>
+                  </div>
+                  <div class="order-grower-sub" style="font-family:var(--sans);font-size:12.5px;font-weight:500;color:var(--ink2);margin-top:3px">
+                    ${ic('user', 12)} Buyer: <b style="color:var(--ink);font-weight:600">${esc(buyerName)}</b> · ${inr(o.price)}/kg
+                  </div>
+                  <div class="order-id-meta" style="font-family:var(--mono, 'SF Mono', Consolas, monospace);font-size:11px;font-weight:600;color:var(--ink3);margin-top:3px;letter-spacing:0.04em;text-transform:uppercase">
+                    Order #${esc(o.id.slice(0, 8).toUpperCase())} · ${ago(o.createdAt)}
+                  </div>
+                </div>
               </div>
-              <div>
-                <div class="order-crop-title">Fresh ${esc(o.crop)} <span>· ${o.qty} kg</span></div>
-                <div class="order-grower-sub">${ic('user', 12)} Buyer: <b>${esc(buyerName)}</b> · ${inr(o.price)}/kg</div>
-                <div class="order-id-meta">Order #${esc(o.id.slice(0, 8).toUpperCase())} · ${ago(o.createdAt)}</div>
+
+              <!-- Col 2: Status & Destination -->
+              <div class="order-col-status">
+                ${getOrderStatusPill(o.status)}
+                <div class="order-dest-text" style="font-family:var(--sans);font-size:12.5px;color:var(--ink2);margin-top:3px">
+                  ${ic('pin', 12)} Deliver to <b style="color:var(--ink);font-weight:600">${esc(o.dest.label)}</b>
+                </div>
+                <div class="order-time-text" style="font-family:var(--sans);font-size:11.5px;color:var(--ink3);margin-top:2px">
+                  ${ic('clock', 12)} Pay: <b style="color:var(--ink2);font-weight:600">${esc(o.pay || 'Cash on Delivery')}</b>
+                </div>
+              </div>
+
+              <!-- Col 3: Total & Actions -->
+              <div class="order-col-actions">
+                <div class="order-total-block">
+                  <div class="order-total-price" style="font-family:var(--serif);font-size:22px;font-weight:700;color:var(--burgundy);line-height:1;letter-spacing:-0.02em">${inr(totalAmount)}</div>
+                  <div class="order-fee-note" style="font-family:var(--sans);font-size:11.5px;color:var(--ink3);margin-top:3px">${o.deliveryFee > 0 ? `${inr(o.qty * o.price)} + ${inr(o.deliveryFee)} delivery` : 'Direct Farm Pickup'}</div>
+                </div>
+                <div class="order-btns-group" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+                  ${gpsBtn}
+                  ${actionBtn}
+                  ${phone ? `<a class="btn btn-light btn-sm btn-pill" href="tel:${esc(phone)}" title="Call buyer: ${esc(phone)}" style="padding:6px 11px !important;font-size:12px;color:var(--ink2)">${ic('phone', 12)} Call</a>` : ''}
+                </div>
               </div>
             </div>
-
-            <!-- Col 2: Status & Destination -->
-            <div class="order-col-status">
-              ${getOrderStatusPill(o.status)}
-              <div class="order-dest-text">${ic('pin', 12)} Deliver to <b>${esc(o.dest.label)}</b></div>
-              <div class="order-time-text">${ic('clock', 12)} Pay: <b>${esc(o.pay || 'Cash on Delivery')}</b></div>
-            </div>
-
-            <!-- Col 3: Total & Actions -->
-            <div class="order-col-actions">
-              <div class="order-total-block">
-                <div class="order-total-price">${inr(totalAmount)}</div>
-                <div class="order-fee-note">${inr(o.qty * o.price)} + ${inr(o.deliveryFee)} delivery</div>
-              </div>
-              <div class="order-btns-group">
-                ${nextLabel[o.status] ? `<button type="button" class="btn btn-primary btn-sm btn-pill" onclick="advance('${o.id}')">${nextLabel[o.status]}</button>` : ''}
-                ${o.status === 'placed' ? `<button type="button" class="btn btn-danger btn-sm btn-pill" onclick="cancelOrder('${o.id}')">Decline</button>` : ''}
-                ${phone ? `<a class="btn btn-light btn-sm btn-pill" href="tel:${esc(phone)}" title="Call: ${esc(phone)}">${ic('phone', 14)} Contact Buyer</a>` : ''}
-              </div>
-            </div>
-          </div>
-
-          ${['confirmed', 'preparing', 'out'].includes(o.status) ? `
-            <div class="farmer-gps-strip">
-              <div>
-                <span>${ic('truck', 14)} <b>Vehicle Live GPS Broadcast</b>: </span>
-                ${activeGpsOrderId === o.id ? '<span class="live-pulse" style="color:var(--green);font-weight:700">Broadcasting live to buyer</span>' : '<span style="color:var(--ink3)">Share location during run</span>'}
-              </div>
-              ${activeGpsOrderId === o.id ? `
-                <button type="button" class="btn btn-xs btn-ghost" style="color:var(--terra);border:1px solid var(--terra);border-radius:999px" onclick="stopLiveLocationSharing()">Stop GPS</button>
-              ` : `
-                <button type="button" class="btn btn-xs btn-light" style="border-radius:999px" onclick="startLiveLocationSharing('${o.id}')">${ic('pin', 12)} Start GPS Broadcast</button>
-              `}
-            </div>
-          ` : ''}
-        </div>`;
-    }).join('')}`;
+          </div>`;
+      }).join('')}
+    </div>`;
 }
 
 async function advance(id) {
@@ -5787,10 +5814,6 @@ async function loadMoreListings() {
 function bMarket(u) {
   const act = ACTIVE_LISTINGS;
   const cnt = c => act.filter(l => l.crop === c).length;
-  const tickerItems = CROP_NAMES.slice(0, 7).map(c => {
-    const m = marketRef(c);
-    return `<span class="mandi-ticker-item">${c}: <b>₹${m.ref}/kg</b><small>(${m.isOfficial ? 'AGMARKNET' : m.src.split(' ')[0]})</small></span>`;
-  }).join('<span class="mandi-ticker-sep">•</span>');
 
   // Smart Matching Recommendations for Buyer (Spec 37-43)
   const targetCrop = S.crop !== 'All' ? S.crop : (S.q || '');
@@ -5800,11 +5823,7 @@ function bMarket(u) {
     ? window.DFMatching.recommendListingsForBuyer(act, targetCrop, u.loc, offRef)
     : [];
 
-  return `<div class="mandi-ticker" role="region" aria-label="Live Mandi Benchmark Rates">
-    <div class="mandi-ticker-label">${ic('trend', 14)} Official Mandi Rates</div>
-    <div class="mandi-ticker-track">${tickerItems}</div>
-  </div>
-
+  return `
   ${recs.length ? `
     <div style="background:var(--card);border:1px solid color-mix(in srgb,var(--latte) 50%,transparent);border-radius:22px;padding:22px;margin-bottom:24px;box-shadow:0 4px 20px rgba(0,0,0,0.05)">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:14px">
