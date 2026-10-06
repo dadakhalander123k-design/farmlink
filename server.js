@@ -325,7 +325,7 @@ const server = http.createServer(async (req, res) => {
 
   // --- Static File Serving ---
   // Fast path: root or SPA page routes directly serve pre-cached index.html
-  const isHtmlRoute = pathname === '/' || pathname === '/index.html' || !path.extname(pathname);
+  const isHtmlRoute = !pathname.startsWith('/assets') && !pathname.startsWith('/api') && (pathname === '/' || pathname === '/index.html' || !path.extname(pathname));
   if (isHtmlRoute && INDEX_HTML_CONTENT) {
     res.writeHead(200, {
       'Content-Type': 'text/html; charset=utf-8',
@@ -366,7 +366,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   const ext = path.extname(resolvedFile).toLowerCase();
-  const contentType = MIME_TYPES[ext] || 'application/octet-stream';
+  const contentType = MIME_TYPES[ext] || (resolvedFile.includes('buyerfinalhero') ? 'image/jpeg' : 'application/octet-stream');
 
   fs.readFile(resolvedFile, (readErr, content) => {
     if (readErr) {
