@@ -1827,6 +1827,267 @@ input:focus,select:focus,textarea:focus{
 }
 
 /* ==================== Orders & Timeline ==================== */
+.orders-nav-tabs{
+  display:flex;
+  gap:8px;
+  margin-bottom:20px;
+  overflow-x:auto;
+  scrollbar-width:none;
+  padding-bottom:2px;
+}
+.orders-nav-tabs::-webkit-scrollbar{display:none}
+.orders-tab-btn{
+  background:var(--card);
+  border:1px solid var(--latte);
+  color:var(--ink2);
+  border-radius:999px;
+  padding:8px 16px;
+  font-size:13.5px;
+  font-weight:600;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  cursor:pointer;
+  transition:all .18s ease;
+  white-space:nowrap;
+}
+.orders-tab-btn:hover{
+  border-color:var(--latte-dark);
+  color:var(--ink);
+}
+.orders-tab-btn.active{
+  background:var(--burgundy);
+  border-color:var(--burgundy);
+  color:#fff;
+  box-shadow:0 3px 12px rgba(114,47,55,0.22);
+}
+.orders-tab-btn .tab-count{
+  background:color-mix(in srgb,var(--card) 85%,var(--latte));
+  color:var(--ink);
+  font-size:11.5px;
+  font-weight:700;
+  padding:1px 7px;
+  border-radius:999px;
+}
+.orders-tab-btn.active .tab-count{
+  background:rgba(255,255,255,0.25);
+  color:#fff;
+}
+
+/* Modern Order Card */
+.order-card-modern{
+  padding:18px 22px;
+  margin-bottom:16px;
+  border-radius:18px;
+  border:1px solid color-mix(in srgb,var(--latte) 60%,transparent);
+  background:var(--card);
+  box-shadow:0 2px 12px rgba(0,0,0,0.03);
+  transition:box-shadow .2s ease,border-color .2s ease,transform .2s ease;
+}
+.order-card-modern:hover{
+  box-shadow:0 6px 20px rgba(0,0,0,0.06);
+  border-color:var(--latte-dark);
+  transform:translateY(-1px);
+}
+.order-main-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  flex-wrap:wrap;
+}
+.order-col-produce{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  min-width:220px;
+  flex:1.2;
+}
+.order-crop-thumb{
+  width:52px;
+  height:52px;
+  border-radius:14px;
+  background:var(--bg-subtle);
+  border:1px solid color-mix(in srgb,var(--latte) 60%,transparent);
+  overflow:hidden;
+  display:grid;
+  place-items:center;
+  flex:none;
+  box-shadow:0 2px 8px rgba(0,0,0,0.04);
+}
+.order-crop-thumb img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transition:transform .3s ease;
+}
+.order-card-modern:hover .order-crop-thumb img{
+  transform:scale(1.06);
+}
+.order-crop-title{
+  font-family:var(--serif);
+  font-size:18.5px;
+  font-weight:700;
+  color:var(--burgundy);
+  line-height:1.2;
+  letter-spacing:-0.01em;
+}
+.order-grower-sub{
+  font-family:var(--sans);
+  font-size:12.5px;
+  font-weight:500;
+  color:var(--ink2);
+  margin-top:3px;
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+.order-grower-sub b{
+  font-weight:700;
+  color:var(--ink);
+}
+.order-id-meta{
+  font-family:var(--mono, "SF Mono", Consolas, monospace);
+  font-size:11px;
+  font-weight:600;
+  color:var(--ink3);
+  margin-top:3px;
+  letter-spacing:0.04em;
+  text-transform:uppercase;
+}
+.order-col-status{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  min-width:180px;
+  flex:1;
+}
+.order-status-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-family:var(--sans);
+  font-size:11.5px;
+  font-weight:700;
+  letter-spacing:0.02em;
+  padding:3.5px 11px;
+  border-radius:999px;
+  width:fit-content;
+  white-space:nowrap;
+}
+.order-status-badge.st-placed{background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+.order-status-badge.st-confirmed{background:#e0f2fe;color:#0369a1;border:1px solid #bae6fd}
+.order-status-badge.st-preparing{background:#f3e8ff;color:#6b21a8;border:1px solid #e9d5ff}
+.order-status-badge.st-out{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0}
+.order-status-badge.st-delivered{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0}
+.order-status-badge.st-cancelled{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
+
+.order-dest-text{
+  font-family:var(--sans);
+  font-size:12.5px;
+  color:var(--ink2);
+  font-weight:500;
+  display:flex;
+  align-items:center;
+  gap:5px;
+  margin-top:2px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.order-dest-text b{
+  font-weight:600;
+  color:var(--ink);
+}
+.order-time-text{
+  font-family:var(--sans);
+  font-size:11.5px;
+  color:var(--ink3);
+  font-weight:500;
+  display:flex;
+  align-items:center;
+  gap:5px;
+  margin-top:2px;
+}
+.order-col-actions{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  justify-content:flex-end;
+  flex:1.2;
+  min-width:220px;
+}
+.order-total-block{
+  text-align:right;
+  flex:none;
+}
+.order-total-price{
+  font-family:var(--serif);
+  font-size:22px;
+  font-weight:700;
+  color:var(--burgundy);
+  line-height:1;
+  letter-spacing:-0.02em;
+}
+.order-fee-note{
+  font-family:var(--sans);
+  font-size:11.5px;
+  font-weight:500;
+  color:var(--ink3);
+  margin-top:3px;
+  white-space:nowrap;
+}
+.order-btns-group{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.btn-pill{
+  border-radius:999px !important;
+  font-size:12px !important;
+  padding:6px 14px !important;
+  white-space:nowrap;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.farmer-gps-strip{
+  margin-top:12px;
+  padding:10px 14px;
+  background:var(--bg-subtle);
+  border-radius:12px;
+  border:1px solid color-mix(in srgb,var(--latte) 50%,transparent);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:12px;
+  color:var(--ink2);
+  gap:10px;
+  width:100%;
+}
+@media (max-width:860px){
+  .order-main-row{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:14px;
+  }
+  .order-col-produce, .order-col-status, .order-col-actions{
+    width:100%;
+    min-width:0;
+  }
+  .order-col-actions{
+    justify-content:space-between;
+    border-top:1px solid var(--soft);
+    padding-top:12px;
+  }
+  .order-total-block{
+    text-align:left;
+  }
+}
+
 .orderbox{
   background:var(--card);
   border:1px solid color-mix(in srgb,var(--latte) 50%,transparent);
@@ -4462,6 +4723,18 @@ const greet = () => {
 const SL = { placed: 'Order placed', confirmed: 'Confirmed', preparing: 'Preparing', out: 'Out for delivery', delivered: 'Delivered', cancelled: 'Cancelled' };
 const FLOW = ['placed', 'confirmed', 'preparing', 'out', 'delivered'];
 const stChip = s => `<span class="status st-${s}">${SL[s] || s}</span>`;
+const getOrderStatusPill = s => {
+  const cfg = {
+    placed: { icon: '🟡', label: 'Order Placed · Awaiting Confirmation', cls: 'st-placed' },
+    confirmed: { icon: '🔵', label: 'Confirmed · Preparing Harvest', cls: 'st-confirmed' },
+    preparing: { icon: '📦', label: 'Harvest Packed · Ready for Transit', cls: 'st-preparing' },
+    out: { icon: '🚚', label: 'Out for Delivery · On the Way', cls: 'st-out' },
+    delivered: { icon: '✓', label: 'Delivered', cls: 'st-delivered' },
+    cancelled: { icon: '✕', label: 'Cancelled / Declined', cls: 'st-cancelled' }
+  };
+  const c = cfg[s] || { icon: '•', label: SL[s] || s, cls: 'st-neutral' };
+  return `<span class="order-status-badge ${c.cls}">${c.icon} ${c.label}</span>`;
+};
 
 /* ============ Farmer Views ============ */
 const FT = [
@@ -5079,59 +5352,108 @@ function fOrders(u, orders) {
       <p>Incoming buyer orders will appear here for 1-tap confirmation and delivery dispatch.</p>
     </div>`;
   }
-  const nextLabel = { placed: 'Confirm order', confirmed: 'Start preparing', preparing: 'Mark out for delivery', out: 'Mark delivered' };
 
-  return orders.slice().sort((a, b) => b.createdAt - a.createdAt).map(o => {
-    if (CURRENT_USER && CURRENT_USER.role === 'farmer' && CURRENT_USER.loc && typeof CURRENT_USER.loc.lat === 'number') {
-      try {
-        localStorage.setItem('df_farmer_loc_' + o.id, JSON.stringify(CURRENT_USER.loc));
-      } catch(e) {}
-    }
-    const phone = o.buyerPhone || COUNTERPARTY_PHONES[o.buyerId];
-    const ci = FLOW.indexOf(o.status);
+  const toConfirm = orders.filter(o => o.status === 'placed');
+  const toDispatch = orders.filter(o => ['confirmed', 'preparing', 'out'].includes(o.status));
+  const completed = orders.filter(o => ['delivered', 'cancelled'].includes(o.status));
 
-    return `<div class="orderbox">
-      <div class="top">
-        <div>
-          <h3 style="font-size:22px">${esc(o.crop)} · ${o.qty} kg</h3>
-          <div class="small">${esc(o.buyerName || o.buyerOrg)} · ${ago(o.createdAt)} · Order #${esc(o.id.slice(0, 8).toUpperCase())}</div>
-        </div>
-        ${stChip(o.status)}
+  const tab = S.fOrderTab || (toConfirm.length ? 'confirm' : toDispatch.length ? 'dispatch' : 'all');
+
+  let visibleOrders = orders.slice().sort((a, b) => b.createdAt - a.createdAt);
+  if (tab === 'confirm') visibleOrders = toConfirm.sort((a, b) => b.createdAt - a.createdAt);
+  else if (tab === 'dispatch') visibleOrders = toDispatch.sort((a, b) => b.createdAt - a.createdAt);
+  else if (tab === 'completed') visibleOrders = completed.sort((a, b) => b.createdAt - a.createdAt);
+
+  const nextLabel = { placed: '✓ Confirm & Pack', confirmed: 'Start preparing', preparing: '🚚 Mark Out for Delivery', out: '✓ Mark Delivered' };
+
+  return `
+    <div class="orders-nav-tabs">
+      <button type="button" class="orders-tab-btn ${tab === 'confirm' ? 'active' : ''}" onclick="S.fOrderTab='confirm';render()">
+        <span>📥 To Confirm</span>
+        <span class="tab-count">${toConfirm.length}</span>
+      </button>
+      <button type="button" class="orders-tab-btn ${tab === 'dispatch' ? 'active' : ''}" onclick="S.fOrderTab='dispatch';render()">
+        <span>🚚 To Dispatch</span>
+        <span class="tab-count">${toDispatch.length}</span>
+      </button>
+      <button type="button" class="orders-tab-btn ${tab === 'completed' ? 'active' : ''}" onclick="S.fOrderTab='completed';render()">
+        <span>✓ Completed</span>
+        <span class="tab-count">${completed.length}</span>
+      </button>
+      <button type="button" class="orders-tab-btn ${tab === 'all' ? 'active' : ''}" onclick="S.fOrderTab='all';render()">
+        <span>All Orders</span>
+        <span class="tab-count">${orders.length}</span>
+      </button>
+    </div>
+
+    ${!visibleOrders.length ? `
+      <div class="empty" style="padding:36px 20px">
+        <div class="empty-icon">${ic(tab === 'confirm' ? 'check' : 'box', 28)}</div>
+        <h3>No orders in this stage</h3>
+        <p>${tab === 'confirm' ? 'All new orders have been confirmed and processed!' : tab === 'dispatch' ? 'No orders currently being packed or out for delivery.' : 'No completed deliveries yet.'}</p>
+        <button type="button" class="btn btn-light btn-sm" onclick="S.fOrderTab='all';render()">View All Orders (${orders.length})</button>
       </div>
-      <div class="meta" style="margin-bottom:12px">
-        <span>${ic('rupee', 15)} ${inr(o.price)}/kg · produce ${inr(o.qty * o.price)} + ${inr(o.deliveryFee)} delivery = <b>${inr(o.qty * o.price + o.deliveryFee)}</b></span>
-        <span>${ic('pin', 15)} Deliver to ${esc(o.dest.label)}${o.address ? ' – ' + esc(o.address) : ''}</span>
-        <span>${ic('clock', 15)} ${esc(o.pay)}</span>
-      </div>
-      ${o.status !== 'cancelled' ? `<div class="timeline">${FLOW.map((s, i) => {
-        const isDone = i < ci || o.status === 'delivered';
-        const isNow = i === ci && o.status !== 'delivered';
-        const hist = (o.statusHistory || []).find(h => h.status === s);
-        return `<div class="tl ${isDone ? 'done' : isNow ? 'now' : ''}">
-          ${SL[s]}
-          ${hist ? `<span class="tl-time">${ftime(hist.at)}</span>` : ''}
-        </div>`;
-      }).join('')}</div>` : ''}
-      ${['confirmed', 'preparing', 'out'].includes(o.status) ? `
-        <div style="margin-top:14px;padding:12px 14px;background:var(--bg-subtle);border-radius:12px;border:1px solid var(--latte);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
-          <div>
-            <span style="font-weight:700;color:var(--burgundy);font-size:13.5px">${ic('truck', 15)} Delivery Vehicle GPS Broadcast</span>
-            <div class="small">${activeGpsOrderId === o.id ? '<span class="live-pulse">Actively broadcasting device GPS to buyer</span>' : 'Share vehicle live GPS location so the buyer can track delivery in real time.'}</div>
+    ` : visibleOrders.map(o => {
+      if (CURRENT_USER && CURRENT_USER.role === 'farmer' && CURRENT_USER.loc && typeof CURRENT_USER.loc.lat === 'number') {
+        try {
+          localStorage.setItem('df_farmer_loc_' + o.id, JSON.stringify(CURRENT_USER.loc));
+        } catch(e) {}
+      }
+      const phone = o.buyerPhone || COUNTERPARTY_PHONES[o.buyerId];
+      const buyerName = o.buyerName || o.buyerOrg || 'Buyer';
+      const totalAmount = o.qty * o.price + o.deliveryFee;
+
+      return `
+        <div class="order-card-modern">
+          <div class="order-main-row">
+            <!-- Col 1: Produce & Buyer -->
+            <div class="order-col-produce">
+              <div class="order-crop-thumb">
+                <img src="${esc(getCropPhoto(o.crop))}" alt="${esc(o.crop)}" loading="lazy" onerror="this.outerHTML='<span style=\\'font-size:22px\\'>${CROP_ICONS[o.crop] || '🌱'}</span>'">
+              </div>
+              <div>
+                <div class="order-crop-title">Fresh ${esc(o.crop)} <span>· ${o.qty} kg</span></div>
+                <div class="order-grower-sub">${ic('user', 12)} Buyer: <b>${esc(buyerName)}</b> · ${inr(o.price)}/kg</div>
+                <div class="order-id-meta">Order #${esc(o.id.slice(0, 8).toUpperCase())} · ${ago(o.createdAt)}</div>
+              </div>
+            </div>
+
+            <!-- Col 2: Status & Destination -->
+            <div class="order-col-status">
+              ${getOrderStatusPill(o.status)}
+              <div class="order-dest-text">${ic('pin', 12)} Deliver to <b>${esc(o.dest.label)}</b></div>
+              <div class="order-time-text">${ic('clock', 12)} Pay: <b>${esc(o.pay || 'Cash on Delivery')}</b></div>
+            </div>
+
+            <!-- Col 3: Total & Actions -->
+            <div class="order-col-actions">
+              <div class="order-total-block">
+                <div class="order-total-price">${inr(totalAmount)}</div>
+                <div class="order-fee-note">${inr(o.qty * o.price)} + ${inr(o.deliveryFee)} delivery</div>
+              </div>
+              <div class="order-btns-group">
+                ${nextLabel[o.status] ? `<button type="button" class="btn btn-primary btn-sm btn-pill" onclick="advance('${o.id}')">${nextLabel[o.status]}</button>` : ''}
+                ${o.status === 'placed' ? `<button type="button" class="btn btn-danger btn-sm btn-pill" onclick="cancelOrder('${o.id}')">Decline</button>` : ''}
+                ${phone ? `<a class="btn btn-light btn-sm btn-pill" href="tel:${esc(phone)}" title="Call: ${esc(phone)}">${ic('phone', 14)} Contact Buyer</a>` : ''}
+              </div>
+            </div>
           </div>
-          ${activeGpsOrderId === o.id ? `
-            <button type="button" class="btn btn-sm btn-ghost" style="color:var(--terra);border:1px solid var(--terra)" onclick="stopLiveLocationSharing()">Stop GPS Sharing</button>
-          ` : `
-            <button type="button" class="btn btn-sm btn-primary" onclick="startLiveLocationSharing('${o.id}')">${ic('pin', 14)} Start Live GPS Broadcast</button>
-          `}
-        </div>
-      ` : ''}
-      <div class="actions" style="margin-top:18px">
-        ${nextLabel[o.status] ? `<button type="button" class="btn btn-primary btn-sm" onclick="advance('${o.id}')">${nextLabel[o.status]}</button>` : ''}
-        ${o.status === 'placed' ? `<button type="button" class="btn btn-danger btn-sm" onclick="cancelOrder('${o.id}')">Decline</button>` : ''}
-        ${phone ? `<a class="btn btn-light btn-sm" href="tel:${esc(phone)}">${ic('phone', 15)} Call buyer (${esc(phone)})</a>` : ''}
-      </div>
-    </div>`;
-  }).join('');
+
+          ${['confirmed', 'preparing', 'out'].includes(o.status) ? `
+            <div class="farmer-gps-strip">
+              <div>
+                <span>${ic('truck', 14)} <b>Vehicle Live GPS Broadcast</b>: </span>
+                ${activeGpsOrderId === o.id ? '<span class="live-pulse" style="color:var(--green);font-weight:700">Broadcasting live to buyer</span>' : '<span style="color:var(--ink3)">Share location during run</span>'}
+              </div>
+              ${activeGpsOrderId === o.id ? `
+                <button type="button" class="btn btn-xs btn-ghost" style="color:var(--terra);border:1px solid var(--terra);border-radius:999px" onclick="stopLiveLocationSharing()">Stop GPS</button>
+              ` : `
+                <button type="button" class="btn btn-xs btn-light" style="border-radius:999px" onclick="startLiveLocationSharing('${o.id}')">${ic('pin', 12)} Start GPS Broadcast</button>
+              `}
+            </div>
+          ` : ''}
+        </div>`;
+    }).join('')}`;
 }
 
 async function advance(id) {
@@ -5802,39 +6124,78 @@ function bOrders(u) {
     </div>`;
   }
 
-  return os.map(o => {
-    const fName = o.farmerOrg || o.farmerName || 'Farmer';
-    const ci = FLOW.indexOf(o.status);
-    const phone = o.farmerPhone || COUNTERPARTY_PHONES[o.farmerId];
+  const activeOrders = os.filter(o => ['placed', 'confirmed', 'preparing', 'out'].includes(o.status));
+  const pastOrders = os.filter(o => ['delivered', 'cancelled'].includes(o.status));
 
-    return `<div class="orderbox">
-      <div class="top">
-        <div>
-          <h3 style="font-size:22px">${esc(o.crop)} · ${o.qty} kg</h3>
-          <div class="small">From ${esc(fName)} · ${ago(o.createdAt)} · Order #${esc(o.id.slice(0, 8).toUpperCase())}</div>
-        </div>
-        ${stChip(o.status)}
+  const tab = S.bOrderTab || (activeOrders.length ? 'active' : 'past');
+  const visibleOrders = tab === 'active' ? activeOrders : pastOrders;
+
+  return `
+    <div class="orders-nav-tabs">
+      <button type="button" class="orders-tab-btn ${tab === 'active' ? 'active' : ''}" onclick="S.bOrderTab='active';render()">
+        <span>🚚 Active Orders</span>
+        <span class="tab-count">${activeOrders.length}</span>
+      </button>
+      <button type="button" class="orders-tab-btn ${tab === 'past' ? 'active' : ''}" onclick="S.bOrderTab='past';render()">
+        <span>📋 Past Orders</span>
+        <span class="tab-count">${pastOrders.length}</span>
+      </button>
+    </div>
+
+    ${!visibleOrders.length ? `
+      <div class="empty" style="padding:36px 20px">
+        <div class="empty-icon">${ic(tab === 'active' ? 'truck' : 'check', 28)}</div>
+        <h3>${tab === 'active' ? 'No active orders in transit' : 'No past orders yet'}</h3>
+        <p>${tab === 'active' ? 'When you place an order, live status tracking and delivery updates will appear here.' : 'Completed and delivered orders will be archived here for receipts and reviews.'}</p>
+        ${tab === 'active' && pastOrders.length ? `<button type="button" class="btn btn-light btn-sm" onclick="S.bOrderTab='past';render()">View Past Orders (${pastOrders.length})</button>` : `<a class="btn btn-primary btn-sm" href="#/buyer/market">Browse Marketplace</a>`}
       </div>
-      <div class="meta" style="margin-bottom:12px">
-        <span>${ic('rupee', 15)} ${inr(o.price)}/kg · produce ${inr(o.qty * o.price)} + ${inr(o.deliveryFee)} delivery = <b>${inr(o.qty * o.price + o.deliveryFee)}</b></span>
-        <span>${ic('pin', 15)} Deliver to ${esc(o.dest.label)}</span>
-      </div>
-      ${o.status !== 'cancelled' ? `<div class="timeline">${FLOW.map((s, i) => {
-        const isDone = i < ci || o.status === 'delivered';
-        const isNow = i === ci && o.status !== 'delivered';
-        const hist = (o.statusHistory || []).find(h => h.status === s);
-        return `<div class="tl ${isDone ? 'done' : isNow ? 'now' : ''}">
-          ${SL[s]}
-          ${hist ? `<span class="tl-time">${ftime(hist.at)}</span>` : ''}
+    ` : visibleOrders.map(o => {
+      const fName = o.farmerOrg || o.farmerName || 'Farmer';
+      const phone = o.farmerPhone || COUNTERPARTY_PHONES[o.farmerId];
+      const totalAmount = o.qty * o.price + o.deliveryFee;
+
+      return `
+        <div class="order-card-modern">
+          <div class="order-main-row">
+            <!-- Col 1: Produce & Grower -->
+            <div class="order-col-produce">
+              <div class="order-crop-thumb">
+                <img src="${esc(getCropPhoto(o.crop))}" alt="${esc(o.crop)}" loading="lazy" onerror="this.outerHTML='<span style=\\'font-size:22px\\'>${CROP_ICONS[o.crop] || '🌱'}</span>'">
+              </div>
+              <div>
+                <div class="order-crop-title">Fresh ${esc(o.crop)} <span>· ${o.qty} kg</span></div>
+                <div class="order-grower-sub">${ic('user', 12)} ${esc(fName)} · <b>${inr(o.price)}/kg</b></div>
+                <div class="order-id-meta">Order #${esc(o.id.slice(0, 8).toUpperCase())} · ${ago(o.createdAt)}</div>
+              </div>
+            </div>
+
+            <!-- Col 2: Status & Destination -->
+            <div class="order-col-status">
+              ${getOrderStatusPill(o.status)}
+              <div class="order-dest-text">${ic('pin', 12)} Deliver to <b>${esc(o.dest.label)}</b></div>
+              <div class="order-time-text">${ic('clock', 12)} Ordered ${fdate(o.createdAt)}</div>
+            </div>
+
+            <!-- Col 3: Total & Actions -->
+            <div class="order-col-actions">
+              <div class="order-total-block">
+                <div class="order-total-price">${inr(totalAmount)}</div>
+                <div class="order-fee-note">${inr(o.qty * o.price)} + ${inr(o.deliveryFee)} delivery</div>
+              </div>
+              <div class="order-btns-group">
+                <a class="btn btn-primary btn-sm btn-pill" href="#/buyer/track/${o.id}">
+                  ${ic('truck', 14)} Live Track →
+                </a>
+                ${phone ? `
+                  <a class="btn btn-light btn-sm btn-pill" href="tel:${esc(phone)}" title="Call: ${esc(phone)}">
+                    ${ic('phone', 14)} Contact Farmer
+                  </a>` : ''}
+                ${o.status === 'delivered' ? (o.rating ? `<span class="small" style="color:#d9a21b;font-weight:700">★ ${o.rating}/5</span>` : `<button type="button" class="btn btn-light btn-sm btn-pill" onclick="openModal('rate','${o.id}')">${ic('star', 14)} Rate</button>`) : ''}
+              </div>
+            </div>
+          </div>
         </div>`;
-      }).join('')}</div>` : '<p class="small" style="margin-top:12px">The farmer declined this order. Any reservation was released.</p>'}
-      <div class="actions" style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
-        <a class="btn btn-primary btn-sm" href="#/buyer/track/${o.id}">${ic('truck', 15)} Live Track Order</a>
-        ${phone ? `<a class="btn btn-light btn-sm" href="tel:${esc(phone)}">${ic('phone', 15)} Call farmer (${esc(phone)})</a>` : ''}
-        ${o.status === 'delivered' ? (o.rating ? `<span class="small">You rated this seller ${'★'.repeat(o.rating)}${'☆'.repeat(5 - o.rating)}</span>` : `<button type="button" class="btn btn-light btn-sm" onclick="openModal('rate','${o.id}')">${ic('star', 15)} Rate this seller</button>`) : ''}
-      </div>
-    </div>`;
-  }).join('');
+    }).join('')}`;
 }
 
 /* ============ Live Order Tracking & Map Component ============ */
