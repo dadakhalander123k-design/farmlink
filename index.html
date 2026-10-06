@@ -580,7 +580,7 @@ section.s{padding:76px 0}
 /* Category Row */
 .cat-grid{
   display:grid;
-  grid-template-columns:repeat(7,1fr);
+  grid-template-columns:repeat(6,1fr);
   gap:14px;
 }
 @media (max-width:1100px){.cat-grid{grid-template-columns:repeat(4,1fr)}}
@@ -1519,6 +1519,27 @@ input:focus,select:focus,textarea:focus{
   gap:12px;
 }
 .live-preview-box .kicker{font-size:12px;font-weight:700;text-transform:uppercase;color:var(--latte-dark);letter-spacing:.05em}
+
+/* Live Preview Full Produce Image Without Cropping */
+.live-preview-box .pcard .pic,
+#live_card_prev .pic{
+  height:auto !important;
+  aspect-ratio:4/3;
+  position:relative;
+  overflow:hidden;
+  background:var(--bg-subtle);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.live-preview-box .pcard .pic img,
+#live_card_prev .pic img{
+  width:100%;
+  height:100%;
+  object-fit:contain !important;
+  object-position:center;
+  display:block;
+}
 
 /* ==================== Orders & Timeline ==================== */
 .orderbox{
@@ -3155,15 +3176,35 @@ function applyUserLocOverride(u) {
 
 
 const CROPS = window.DFPricing.CROPS;
-const CROP_NAMES = Object.keys(CROPS);
+const CROP_NAMES = [
+  'Tomato', 'Potato', 'Onion', 'Green Chilli', 'Chilli',
+  'Wheat', 'Rice', 'Maize', 'Groundnut', 'Pulses',
+  'Capsicum', 'Brinjal', 'Cabbage', 'Cauliflower', 'Carrot',
+  'Cucumber', 'Okra', 'Spinach', 'Banana', 'Mango',
+  'Watermelon', 'Papaya', 'Coconut', 'Cotton', 'Turmeric'
+];
+const CROP_DEFAULT_REFS = {
+  Potato: 22, 'Green Chilli': 45, Wheat: 28, Maize: 24, Groundnut: 75,
+  Pulses: 85, Capsicum: 42, Cabbage: 18, Cauliflower: 26, Carrot: 35,
+  Cucumber: 22, Spinach: 20, Watermelon: 18, Papaya: 25, Cotton: 68
+};
+CROP_NAMES.forEach(c => {
+  if (!CROPS[c]) {
+    const refPrice = CROP_DEFAULT_REFS[c] || 30;
+    CROPS[c] = { cat: 'Produce', ref: refPrice, t: ['#f8dccb', '#efb59b'], d: [60,60,60,60,60,60,60,60,60,60,60,60] };
+  }
+});
 
 /* High-resolution authentic Indian crop photography */
 const CROP_PHOTOS = {
   'Tomato': 'assets/images/crop_tomato.jpg',
   'Onion': 'assets/images/crop_onion.jpg',
   'Chilli': 'assets/images/crop_chilli.jpg',
+  'Green Chilli': 'assets/images/crop_green_chilli.jpg',
   'Potato': 'assets/images/crop_potato.jpg',
   'Rice': 'assets/images/crop_rice.jpg',
+  'Paddy': 'assets/images/crop_rice.jpg',
+  'Wheat': 'assets/images/crop_wheat.jpg',
   'Brinjal': 'assets/images/crop_brinjal.jpg',
   'Banana': 'assets/images/crop_banana.jpg',
   'Okra': 'assets/images/crop_okra.jpg',
@@ -3171,9 +3212,58 @@ const CROP_PHOTOS = {
   'Carrot': 'assets/images/crop_carrot.jpg',
   'Spinach': 'assets/images/crop_spinach.jpg',
   'Cauliflower': 'assets/images/crop_cauliflower.jpg',
-  'Coconut': 'assets/images/crop_rice.jpg',
-  'Turmeric': 'assets/images/crop_onion.jpg'
+  'Cabbage': 'assets/images/crop_cabbage.jpg',
+  'Cucumber': 'assets/images/crop_cucumber.jpg',
+  'Capsicum': 'assets/images/crop_capsicum.jpg',
+  'Coconut': 'assets/images/crop_coconut.jpg',
+  'Turmeric': 'assets/images/crop_turmeric.jpg',
+  'Cotton': 'assets/images/crop_cotton.jpg',
+  'Watermelon': 'assets/images/crop_watermelon.jpg',
+  'Papaya': 'assets/images/crop_papaya.jpg',
+  'Maize': 'assets/images/crop_maize.jpg',
+  'Groundnut': 'assets/images/crop_groundnut.jpg',
+  'Pulses': 'assets/images/crop_pulses.jpg',
+  'Default': 'assets/images/market_produce_display.jpg'
 };
+
+function getCropPhoto(crop) {
+  if (!crop) return CROP_PHOTOS['Default'];
+  const raw = String(crop).trim();
+  if (CROP_PHOTOS[raw]) return CROP_PHOTOS[raw];
+
+  const lower = raw.toLowerCase();
+  for (const [k, v] of Object.entries(CROP_PHOTOS)) {
+    if (k.toLowerCase() === lower) return v;
+  }
+
+  if (/green\s*chilli|green\s*chili|hari\s*mirch/i.test(lower)) return CROP_PHOTOS['Green Chilli'];
+  if (/chilli|chili|mirch/i.test(lower)) return CROP_PHOTOS['Chilli'];
+  if (/wheat|gehun/i.test(lower)) return CROP_PHOTOS['Wheat'];
+  if (/cotton|kapas/i.test(lower)) return CROP_PHOTOS['Cotton'];
+  if (/paddy|rice|dhan/i.test(lower)) return CROP_PHOTOS['Rice'];
+  if (/maize|corn|makka/i.test(lower)) return CROP_PHOTOS['Maize'];
+  if (/groundnut|peanut|mungfali/i.test(lower)) return CROP_PHOTOS['Groundnut'];
+  if (/pulses|dal|moong|urad|arhar|toor|chana|gram/i.test(lower)) return CROP_PHOTOS['Pulses'];
+  if (/cabbage|patta\s*gobhi/i.test(lower)) return CROP_PHOTOS['Cabbage'];
+  if (/cauliflower|phool\s*gobhi|gobhi/i.test(lower)) return CROP_PHOTOS['Cauliflower'];
+  if (/cucumber|kheera/i.test(lower)) return CROP_PHOTOS['Cucumber'];
+  if (/capsicum|bell\s*pepper|shimla\s*mirch/i.test(lower)) return CROP_PHOTOS['Capsicum'];
+  if (/watermelon|water\s*melon|tarbooj/i.test(lower)) return CROP_PHOTOS['Watermelon'];
+  if (/papaya|papita/i.test(lower)) return CROP_PHOTOS['Papaya'];
+  if (/turmeric|haldi/i.test(lower)) return CROP_PHOTOS['Turmeric'];
+  if (/coconut|nariyal/i.test(lower)) return CROP_PHOTOS['Coconut'];
+  if (/tomato|tamatar/i.test(lower)) return CROP_PHOTOS['Tomato'];
+  if (/onion|pyaz/i.test(lower)) return CROP_PHOTOS['Onion'];
+  if (/potato|aloo/i.test(lower)) return CROP_PHOTOS['Potato'];
+  if (/brinjal|eggplant|baingan/i.test(lower)) return CROP_PHOTOS['Brinjal'];
+  if (/banana|kela/i.test(lower)) return CROP_PHOTOS['Banana'];
+  if (/okra|bhindi|lady\s*finger/i.test(lower)) return CROP_PHOTOS['Okra'];
+  if (/mango|aam/i.test(lower)) return CROP_PHOTOS['Mango'];
+  if (/carrot|gajar/i.test(lower)) return CROP_PHOTOS['Carrot'];
+  if (/spinach|palak/i.test(lower)) return CROP_PHOTOS['Spinach'];
+
+  return CROP_PHOTOS['Default'];
+}
 
 /* ============ Crop Illustrations (SVG fallback) ============ */
 function leaves(cx, cy, n, len, col, spread = 360, off = 0) {
@@ -3216,7 +3306,7 @@ const art = c => { const t = (CROPS[c] || CROPS.Tomato).t; return `<div class="a
 
 /* Real photo rendering with graceful fallback to art(c) */
 const pic = l => {
-  const photo = l.img || CROP_PHOTOS[l.crop];
+  const photo = l.img || getCropPhoto(l.crop);
   const locLabel = (l.loc && l.loc.label) ? l.loc.label : '';
   if (photo) {
     return `<img src="${esc(photo)}" alt="${esc(l.crop)} from ${esc(locLabel)}" loading="lazy" onerror="this.outerHTML=window.artFor('${esc(l.crop)}')">`;
@@ -3224,6 +3314,7 @@ const pic = l => {
   return art(l.crop);
 };
 window.artFor = art;
+window.getCropPhoto = getCropPhoto;
 
 const logoSVG = `<svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="12" fill="#722F37"/><path d="M12 28c0-9 6-15 17-16-1 10-7 16-15 16" fill="#E8DCC6"/><path d="M12 29c5-8 9-11 14-13" stroke="#B7A89A" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>`;
 
@@ -3594,10 +3685,15 @@ function landing() {
     { name: 'Tomato', category: 'Vegetables', img: 'assets/images/crop_tomato.jpg' },
     { name: 'Onion', category: 'Root Vegetables', img: 'assets/images/crop_onion.jpg' },
     { name: 'Potato', category: 'Tubers', img: 'assets/images/crop_potato.jpg' },
-    { name: 'Chilli', category: 'Spices', img: 'assets/images/crop_chilli.jpg' },
-    { name: 'Brinjal', category: 'Vegetables', img: 'assets/images/crop_brinjal.jpg' },
-    { name: 'Banana', category: 'Fruits', img: 'assets/images/crop_banana.jpg' },
-    { name: 'Rice', category: 'Grains & Paddy', img: 'assets/images/crop_rice.jpg' }
+    { name: 'Wheat', category: 'Grains & Cereals', img: 'assets/images/crop_wheat.jpg' },
+    { name: 'Rice', category: 'Grains & Paddy', img: 'assets/images/crop_rice.jpg' },
+    { name: 'Green Chilli', category: 'Spices', img: 'assets/images/crop_green_chilli.jpg' },
+    { name: 'Capsicum', category: 'Vegetables', img: 'assets/images/crop_capsicum.jpg' },
+    { name: 'Watermelon', category: 'Fresh Fruits', img: 'assets/images/crop_watermelon.jpg' },
+    { name: 'Mango', category: 'Tropical Fruits', img: 'assets/images/crop_mango.jpg' },
+    { name: 'Coconut', category: 'Plantation', img: 'assets/images/crop_coconut.jpg' },
+    { name: 'Cotton', category: 'Commercial Fibre', img: 'assets/images/crop_cotton.jpg' },
+    { name: 'Turmeric', category: 'Spices', img: 'assets/images/crop_turmeric.jpg' }
   ];
 
   return `<section class="hero"><div class="wrap hero-grid">
