@@ -2,6 +2,10 @@
   "version": 2,
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/api/market-prices/filters", "destination": "/api/market-prices/filters.js" },
+    { "source": "/api/market-prices", "destination": "/api/market-prices/index.js" },
+    { "source": "/api/tracking/update", "destination": "/api/tracking/update.js" },
+    { "source": "/api/tracking/:orderId", "destination": "/api/tracking/[orderId].js" },
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }
