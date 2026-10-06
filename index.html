@@ -735,68 +735,66 @@ section.s{padding:76px 0}
 .dash-banner-overlay{
   position:absolute;
   inset:0;
-  background:linear-gradient(90deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 45%, transparent 75%),
-             linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 35%, transparent 65%);
+  background:linear-gradient(90deg, rgba(14, 11, 9, 0.78) 0%, rgba(14, 11, 9, 0.46) 38%, rgba(14, 11, 9, 0.12) 65%, transparent 85%);
   pointer-events:none;
 }
 [data-theme="dark"] .dash-banner-overlay{
-  background:linear-gradient(90deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 45%, transparent 75%),
-             linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 35%, transparent 65%);
+  background:linear-gradient(90deg, rgba(14, 11, 9, 0.84) 0%, rgba(14, 11, 9, 0.52) 38%, rgba(14, 11, 9, 0.16) 65%, transparent 85%);
 }
 .dash-banner-inner{
   max-width:1200px;
   width:100%;
   margin:0 auto;
-  padding:48px 24px;
+  padding:44px 32px;
   position:relative;
   z-index:2;
 }
 .dash-banner-content{
   position:relative;
   z-index:2;
-  max-width:620px;
+  max-width:560px;
   display:flex;
   flex-direction:column;
-  gap:16px;
+  gap:12px;
 }
 .dash-banner-badge{
   display:inline-flex;
   align-items:center;
   gap:8px;
   font-size:12.5px;
-  font-weight:700;
+  font-weight:600;
   color:#FFFDFC;
-  text-transform:uppercase;
-  letter-spacing:.05em;
-  background:rgba(0,0,0,0.35);
+  letter-spacing:.02em;
+  background:rgba(255, 255, 255, 0.14);
   backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
   padding:6px 14px;
   border-radius:999px;
-  border:1px solid rgba(255,255,255,0.35);
+  border:1px solid rgba(255, 255, 255, 0.28);
   width:fit-content;
-  box-shadow:0 2px 10px rgba(0,0,0,0.3);
+  box-shadow:0 2px 10px rgba(0, 0, 0, 0.25);
 }
 [data-theme="dark"] .dash-banner-badge{
-  background:rgba(0,0,0,0.45);
-  border-color:rgba(255,255,255,0.3);
+  background:rgba(255, 255, 255, 0.12);
+  border-color:rgba(255, 255, 255, 0.22);
 }
 .dash-banner h1{
   font-family:var(--sans);
   font-weight:800;
-  font-size:clamp(36px, 5.2vw, 56px);
+  font-size:clamp(30px, 4.2vw, 48px);
   color:#FFFDFC !important;
   margin:0;
-  line-height:1.1;
+  line-height:1.15;
   letter-spacing:-.02em;
-  text-shadow:0 2px 6px rgba(0,0,0,0.8), 0 4px 20px rgba(0,0,0,0.6);
+  text-shadow:0 2px 10px rgba(0, 0, 0, 0.55);
 }
 .dash-banner-sub{
-  color:#FFFDFC !important;
-  font-size:clamp(16px, 1.8vw, 19px);
+  color:rgba(255, 253, 252, 0.94) !important;
+  font-size:clamp(15px, 1.5vw, 17.5px);
   margin:0;
-  line-height:1.5;
-  text-shadow:0 1px 4px rgba(0,0,0,0.8), 0 2px 10px rgba(0,0,0,0.6);
+  line-height:1.45;
+  font-weight:450;
+  text-shadow:0 1px 6px rgba(0, 0, 0, 0.45);
 }
 .dash-banner-tagline{
   display:flex;
@@ -890,46 +888,46 @@ section.s{padding:76px 0}
   .dash-banner-overlay{
     position:absolute;
     inset:0;
-    background:linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 35%, transparent 70%);
+    background:linear-gradient(90deg, rgba(14, 11, 9, 0.85) 0%, rgba(14, 11, 9, 0.52) 46%, transparent 85%);
     pointer-events:none;
   }
   [data-theme="dark"] .dash-banner-overlay{
-    background:linear-gradient(180deg, rgba(0,0,0,0.2) 0%, transparent 25%, rgba(0,0,0,0.55) 100%);
+    background:linear-gradient(90deg, rgba(14, 11, 9, 0.9) 0%, rgba(14, 11, 9, 0.58) 46%, transparent 85%);
   }
   .dash-banner-inner{
     position:relative;
     z-index:2;
     width:100%;
     max-width:100%;
-    padding:24px 18px 24px;
+    padding:16px 18px;
     margin:0;
   }
   .dash-banner-content{
     max-width:100%;
-    gap:10px;
+    gap:8px;
   }
   .dash-banner-badge{
-    font-size:12px;
-    padding:5px 12px;
-    background:rgba(0,0,0,0.4);
+    font-size:11px;
+    padding:4px 10px;
+    background:rgba(255, 255, 255, 0.16);
     backdrop-filter:blur(10px);
     -webkit-backdrop-filter:blur(10px);
-    border:1px solid rgba(255,255,255,0.35);
+    border:1px solid rgba(255, 255, 255, 0.28);
     color:#FFFDFC;
     width:fit-content;
   }
   .dash-banner h1{
-    font-size:clamp(22px, 6vw, 32px);
+    font-size:clamp(18px, 5vw, 24px);
     color:#FFFDFC !important;
-    text-shadow:0 2px 8px rgba(0,0,0,0.85), 0 4px 20px rgba(0,0,0,0.7);
+    text-shadow:0 2px 8px rgba(0,0,0,0.7);
     line-height:1.15;
     margin:0;
   }
   .dash-banner-sub{
-    font-size:14px;
-    color:#FFFDFC !important;
-    text-shadow:0 1px 6px rgba(0,0,0,0.8);
-    line-height:1.45;
+    font-size:12.5px;
+    color:rgba(255, 253, 252, 0.92) !important;
+    text-shadow:0 1px 4px rgba(0,0,0,0.6);
+    line-height:1.4;
     margin:0;
   }
   .dash-banner-tagline{
@@ -2518,8 +2516,11 @@ input:focus,select:focus,textarea:focus{
     border-radius:0;
   }
   .dash-banner-content{
-    padding:18px 14px 20px;
+    padding:0;
     max-width:100%;
+    gap:8px;
+    display:flex;
+    flex-direction:column;
   }
   .dash-banner h1{
     font-size:clamp(22px, 6vw, 30px);
@@ -4114,8 +4115,13 @@ async function doAuth(role) {
 function shell(u, base, tabs, cur, badges, title, sub, content) {
   const isOverview = cur === tabs[0][0];
   const bannerImg = base === 'farmer' ? 'assets/images/heroes/farmer-hero.webp?v=1376' : 'assets/images/heroes/buyer-hero.webp?v=1376';
-  const bannerBadge = base === 'farmer' ? `${ic('leaf', 14)} Verified Regional Farmer Portal` : `${ic('store', 14)} Direct Farm-to-Buyer Marketplace`;
-  const bannerTagline = base === 'farmer' ? `${ic('check', 15)} 0% Middleman Margin &bull; Live Mandi Price Benchmark` : `${ic('check', 15)} Direct Farm-Fresh Sourcing &bull; Verified Farm Quality`;
+  const heroBadge = base === 'farmer' ? `${ic('leaf', 13)} Verified Farmer Portal` : `${ic('store', 13)} Direct Marketplace`;
+  const heroSub = base === 'farmer'
+    ? 'Direct to buyers. Zero middleman margin.'
+    : 'Farm-fresh harvests, directly from verified growers.';
+  const heroBtn = base === 'farmer'
+    ? `<a class="btn-hero-primary" href="#/farmer/add">${ic('plus', 16)} List Produce</a>`
+    : `<a class="btn-hero-primary" href="#/buyer/market">${ic('store', 16)} Explore Marketplace</a>`;
 
   const banner = isOverview ? `
   <div class="dash-banner">
@@ -4123,10 +4129,12 @@ function shell(u, base, tabs, cur, badges, title, sub, content) {
     <div class="dash-banner-overlay"></div>
     <div class="dash-banner-inner">
       <div class="dash-banner-content">
-        <div class="dash-banner-badge">${bannerBadge}</div>
+        <div class="dash-banner-badge">${heroBadge}</div>
         <h1>${title}</h1>
-        <p class="dash-banner-sub">${sub}</p>
-        <div class="dash-banner-tagline">${bannerTagline}</div>
+        <p class="dash-banner-sub">${heroSub}</p>
+        <div class="dash-banner-actions">
+          ${heroBtn}
+        </div>
       </div>
     </div>
   </div>` : `
