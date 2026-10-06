@@ -4401,9 +4401,10 @@ function navbar(u) {
   </div>`
   : `<a class="btn btn-primary btn-sm" href="#/login">Sign in</a>`;
 
+  const brandHref = (u && u.role) ? `#/${u.role}` : '#/';
   return `<header class="nav"><div class="nav-left" style="display:flex;align-items:center;gap:10px">
     ${navLeft}
-    <a class="brand" href="#/">${logoImg}Farmlink</a>
+    <a class="brand" href="${brandHref}">${logoImg}Farmlink</a>
   </div>
   <div class="nav-right">
     <button type="button" class="theme-btn" onclick="toggleTheme()" aria-label="Toggle light and dark theme">${ic('moon', 17)}</button>
@@ -4412,9 +4413,11 @@ function navbar(u) {
 }
 
 function footer() {
+  const u = CURRENT_USER || S.user;
+  const brandHref = (u && u.role) ? `#/${u.role}` : '#/';
   return `<footer class="ft"><div class="wrap row">
     <div>
-      <a class="brand" href="#/">${logoImg}Farmlink</a>
+      <a class="brand" href="${brandHref}">${logoImg}Farmlink</a>
       <p>A transparent farm-to-buyer digital marketplace connecting verified Indian growers with retail and wholesale buyers. Authentic produce, transparent reference prices, and AI-optimized routes.</p>
     </div>
     <div style="display:flex;gap:36px;flex-wrap:wrap">
@@ -8271,6 +8274,9 @@ function render() {
       body = a === 'farmer' ? farmerApp(u, b || 'overview') : buyerApp(u, b || 'market');
     }
   } else {
+    if (u && (u.role === 'farmer' || u.role === 'buyer') && (!a || a === '')) {
+      return go('#/' + u.role);
+    }
     body = landing();
   }
 
