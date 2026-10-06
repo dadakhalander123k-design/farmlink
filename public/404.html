@@ -865,8 +865,8 @@ section.s{padding:76px 0}
   .dash-banner{
     position:relative;
     width:100%;
-    aspect-ratio:1376 / 768;
-    min-height:unset;
+    aspect-ratio:4 / 3;
+    min-height:300px;
     height:auto;
     display:flex;
     align-items:flex-start;
@@ -881,19 +881,19 @@ section.s{padding:76px 0}
     inset:0;
     width:100%;
     height:100%;
-    object-fit:contain;
-    object-position:center;
+    object-fit:cover;
+    object-position:center 30%;
     display:block;
     image-rendering:-webkit-optimize-contrast;
   }
   .dash-banner-overlay{
     position:absolute;
     inset:0;
-    background:linear-gradient(90deg, rgba(14, 11, 9, 0.85) 0%, rgba(14, 11, 9, 0.52) 46%, transparent 85%);
+    background:linear-gradient(180deg, rgba(14, 11, 9, 0.35) 0%, rgba(14, 11, 9, 0.7) 100%), linear-gradient(90deg, rgba(14, 11, 9, 0.82) 0%, rgba(14, 11, 9, 0.45) 55%, transparent 100%);
     pointer-events:none;
   }
   [data-theme="dark"] .dash-banner-overlay{
-    background:linear-gradient(90deg, rgba(14, 11, 9, 0.9) 0%, rgba(14, 11, 9, 0.58) 46%, transparent 85%);
+    background:linear-gradient(180deg, rgba(14, 11, 9, 0.4) 0%, rgba(14, 11, 9, 0.78) 100%), linear-gradient(90deg, rgba(14, 11, 9, 0.88) 0%, rgba(14, 11, 9, 0.5) 55%, transparent 100%);
   }
   .dash-banner-inner{
     position:relative;
@@ -954,8 +954,8 @@ section.s{padding:76px 0}
 }
 @media (max-width:480px){
   .dash-banner{
-    aspect-ratio:1376 / 768;
-    min-height:unset;
+    aspect-ratio:4 / 3;
+    min-height:300px;
     height:auto;
   }
   .dash-banner-inner{
@@ -3210,13 +3210,13 @@ input:focus,select:focus,textarea:focus{
     min-height:auto;
   }
   .auth-art{
-    aspect-ratio:1376 / 768;
-    min-height:unset;
+    aspect-ratio:4 / 3;
+    min-height:280px;
     height:auto;
     padding:24px 18px;
     justify-content:flex-start;
-    background-size:contain;
-    background-position:center;
+    background-size:cover;
+    background-position:center 30%;
     background-repeat:no-repeat;
     background-color:#140F0C;
   }
@@ -3262,8 +3262,8 @@ input:focus,select:focus,textarea:focus{
     padding:16px 14px 28px;
   }
   .dash-banner{
-    aspect-ratio:1376 / 768;
-    min-height:unset;
+    aspect-ratio:4 / 3;
+    min-height:300px;
     height:auto;
     align-items:flex-start;
     margin-bottom:0;
