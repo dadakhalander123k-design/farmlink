@@ -706,10 +706,12 @@ section.s{padding:76px 0}
   position:relative;
   width:100%;
   overflow:hidden;
-  min-height:80vh;
-  height:clamp(560px, 80vh, 800px);
+  aspect-ratio:1376 / 768;
+  height:auto;
+  min-height:unset;
+  max-height:none;
   display:flex;
-  align-items:center;
+  align-items:flex-end;
   background:#140F0C;
   border-radius:0;
   border:none;
@@ -720,7 +722,7 @@ section.s{padding:76px 0}
   inset:0;
   width:100%;
   height:100%;
-  object-fit:cover;
+  object-fit:contain;
   object-position:center;
   display:block;
   pointer-events:none;
@@ -864,7 +866,8 @@ section.s{padding:76px 0}
   .dash-banner{
     position:relative;
     width:100%;
-    min-height:240px;
+    aspect-ratio:1376 / 768;
+    min-height:unset;
     height:auto;
     display:flex;
     align-items:flex-end;
@@ -879,7 +882,7 @@ section.s{padding:76px 0}
     inset:0;
     width:100%;
     height:100%;
-    object-fit:cover;
+    object-fit:contain;
     object-position:center;
     display:block;
     image-rendering:-webkit-optimize-contrast;
@@ -952,7 +955,8 @@ section.s{padding:76px 0}
 }
 @media (max-width:480px){
   .dash-banner{
-    min-height:220px;
+    aspect-ratio:1376 / 768;
+    min-height:unset;
     height:auto;
   }
   .dash-banner-inner{
@@ -1194,7 +1198,7 @@ footer p{max-width:440px;font-size:14.5px;margin-top:10px}
 }
 @media (max-width:900px){
   .auth{grid-template-columns:1fr}
-  .auth-art{min-height:260px}
+  .auth-art{aspect-ratio:1376 / 768; min-height:unset; height:auto}
 }
 .auth-art{
   position:relative;
@@ -1204,8 +1208,11 @@ footer p{max-width:440px;font-size:14.5px;margin-top:10px}
   display:flex;
   flex-direction:column;
   justify-content:flex-end;
-  background-size:cover;
+  background-size:contain;
   background-position:center;
+  background-repeat:no-repeat;
+  background-color:#140F0C;
+  image-rendering:-webkit-optimize-contrast;
 }
 .auth-art::before{
   content:"";
@@ -2451,9 +2458,15 @@ input:focus,select:focus,textarea:focus{
     min-height:auto;
   }
   .auth-art{
-    min-height:140px;
-    padding:20px 16px;
-    justify-content:center;
+    aspect-ratio:1376 / 768;
+    min-height:unset;
+    height:auto;
+    padding:24px 18px;
+    justify-content:flex-end;
+    background-size:contain;
+    background-position:center;
+    background-repeat:no-repeat;
+    background-color:#140F0C;
   }
   .auth-art h2{
     font-size:19px;
@@ -2497,7 +2510,8 @@ input:focus,select:focus,textarea:focus{
     padding:16px 14px 28px;
   }
   .dash-banner{
-    min-height:220px;
+    aspect-ratio:1376 / 768;
+    min-height:unset;
     height:auto;
     align-items:flex-end;
     margin-bottom:0;
@@ -3887,7 +3901,7 @@ function authPage(role) {
     ? ['List produce in under a minute with photo preview', 'See buyers that match your crop and price expectation', 'Get an AI-optimised delivery route for your orders', 'Direct cash or UPI settlement on delivery']
     : ['See live prices compared against mandi references', 'Post procurement requirements and compare matches', 'Track orders from farm confirmation to final delivery', 'Verified farmer profiles and peer ratings'];
 
-  const bgImg = f ? 'assets/images/heroes/farmer-hero.webp' : 'assets/images/market_produce_display.jpg';
+  const bgImg = f ? 'assets/images/heroes/farmer-hero.webp?v=1376' : 'assets/images/heroes/buyer-hero.webp?v=1376';
 
   return `<main class="auth">
   <section class="auth-art ${role}" style="background-image:url('${bgImg}')">
@@ -4099,7 +4113,7 @@ async function doAuth(role) {
 /* ============ Dashboard Shell ============ */
 function shell(u, base, tabs, cur, badges, title, sub, content) {
   const isOverview = cur === tabs[0][0];
-  const bannerImg = base === 'farmer' ? 'assets/images/heroes/farmer-hero.webp' : 'assets/images/buyer_dashboard_hero.jpg';
+  const bannerImg = base === 'farmer' ? 'assets/images/heroes/farmer-hero.webp?v=1376' : 'assets/images/heroes/buyer-hero.webp?v=1376';
   const bannerBadge = base === 'farmer' ? `${ic('leaf', 14)} Verified Regional Farmer Portal` : `${ic('store', 14)} Direct Farm-to-Buyer Marketplace`;
   const bannerTagline = base === 'farmer' ? `${ic('check', 15)} 0% Middleman Margin &bull; Live Mandi Price Benchmark` : `${ic('check', 15)} Direct Farm-Fresh Sourcing &bull; Verified Farm Quality`;
 
