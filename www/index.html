@@ -885,6 +885,9 @@ section.s{padding:76px 0}
     object-position:68% center;
     display:block;
   }
+  .farmer-dash-banner .dash-banner-bg{
+    object-position:8% center !important;
+  }
   .dash-banner-overlay{
     position:absolute;
     inset:0;
@@ -4979,7 +4982,7 @@ function shell(u, base, tabs, cur, badges, title, sub, content) {
     : `<a class="btn-hero-primary" href="#/buyer/market">${ic('store', 16)} Explore Marketplace</a>`;
 
   const banner = isOverview ? `
-  <div class="dash-banner">
+  <div class="dash-banner ${base}-dash-banner">
     <img class="dash-banner-bg" src="${bannerImg}" alt="${base === 'farmer' ? 'Indian farmer harvesting fresh crops' : 'Fresh farm harvest and produce'}" loading="eager">
     <div class="dash-banner-overlay"></div>
     <div class="dash-banner-inner">
