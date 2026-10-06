@@ -6268,20 +6268,38 @@ function marketPricesView(u, role) {
   }
 
   const d = MARKET_PRICES_DATA;
-  const defaultCommodities = [
-    'Tomato', 'Onion', 'Green Chilli', 'Chilli', 'Rice', 'Paddy', 'Potato',
-    'Banana', 'Mango', 'Brinjal', 'Bhindi(Ladies Finger)', 'Coconut', 'Turmeric', 'Cotton', 'Maize'
+  const POPULAR_CROPS = [
+    'Tomato', 'Onion', 'Potato', 'Green Chilli', 'Dry Chillies', 'Rice', 'Paddy(Common)',
+    'Wheat', 'Cotton', 'Maize', 'Banana', 'Mango', 'Apple', 'Brinjal',
+    'Bhindi(Ladies Finger)', 'Coconut', 'Turmeric', 'Ginger(Dry)', 'Garlic',
+    'Mustard', 'Groundnut', 'Soyabean', 'Bengal Gram(Gram)(Whole)', 'Black Gram(Urd Beans)(Whole)',
+    'Green Gram(Moong)(Whole)', 'Red gram/Arhar/Tur(whole)', 'Jowar(Sorghum)', 'Bajra(Pearl Millet/Cumbu)',
+    'Ragi(Finger Millet)', 'Cabbage', 'Cauliflower', 'Lemon', 'Papaya', 'Watermelon',
+    'Almond(Badam)', 'Cashewnuts'
   ];
-  const commodities = AVAILABLE_COMMODITIES.length
+
+  const defaultCommodities = [
+    'Tomato', 'Onion', 'Green Chilli', 'Dry Chillies', 'Rice', 'Paddy(Common)', 'Potato',
+    'Wheat', 'Cotton', 'Maize', 'Banana', 'Mango', 'Apple', 'Brinjal', 'Bhindi(Ladies Finger)',
+    'Coconut', 'Turmeric', 'Ginger(Dry)', 'Garlic', 'Mustard', 'Groundnut', 'Soyabean',
+    'Bengal Gram(Gram)(Whole)', 'Black Gram(Urd Beans)(Whole)', 'Green Gram(Moong)(Whole)',
+    'Red gram/Arhar/Tur(whole)', 'Jowar(Sorghum)', 'Bajra(Pearl Millet/Cumbu)', 'Ragi(Finger Millet)',
+    'Cabbage', 'Cauliflower', 'Lemon', 'Papaya', 'Watermelon', 'Almond(Badam)', 'Cashewnuts', 'Absinthe'
+  ];
+
+  const allCmdtNames = AVAILABLE_COMMODITIES.length
     ? AVAILABLE_COMMODITIES.map(c => c.name)
     : defaultCommodities;
+
+  const selCommodity = SELECTED_PRICE_COMMODITY || 'Tomato';
+  const isSelectedInPopular = POPULAR_CROPS.some(c => c.toLowerCase() === selCommodity.toLowerCase());
 
   const defaultStates = [
     { id: 2, name: 'Andhra Pradesh' },
     { id: 32, name: 'Telangana' },
-    { id: 15, name: 'Karnataka' },
-    { id: 29, name: 'Tamil Nadu' },
-    { id: 19, name: 'Maharashtra' }
+    { id: 16, name: 'Karnataka' },
+    { id: 31, name: 'Tamil Nadu' },
+    { id: 20, name: 'Maharashtra' }
   ];
   const states = AVAILABLE_STATES.length ? AVAILABLE_STATES : defaultStates;
 
@@ -6309,7 +6327,7 @@ function marketPricesView(u, role) {
       <div class="empty">
         <div class="empty-icon">${ic('store', 32)}</div>
         <h3>No market data available for ${esc(SELECTED_PRICE_COMMODITY)}</h3>
-        <p class="sub">${d && d.message ? esc(d.message) : 'No APMC mandis in the selected region reported transactions today for this crop.'}</p>
+        <p class="sub">${d && d.message ? esc(d.message) : 'No APMC mandis reported trading transactions in the selected period for this crop.'}</p>
         <button type="button" class="btn btn-light" onclick="loadMarketPrices('Tomato', SELECTED_PRICE_STATE, true)" style="margin-top:16px">
           View Tomato Mandi Rates
         </button>
@@ -6318,12 +6336,19 @@ function marketPricesView(u, role) {
     body = `
       <div style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
         <div class="small" style="font-weight:600;color:var(--ink2)">
-          📅 <b>${esc(d.updatedLabel)}</b> · Observation Date: <b>${esc(d.date)}</b> · Region: Selected State
+          📅 <b>${esc(d.updatedLabel)}</b> · Observation Date: <b>${esc(d.date)}</b> · Region: <b>${esc(d.reportingState || d.stateName || 'Selected State')}</b>
         </div>
         <div class="small" style="color:var(--burgundy);font-weight:700">
           ✓ Official Wholesale Mandi Reference
         </div>
       </div>
+
+      ${d.isFallbackRegion ? `
+        <div style="margin-bottom:16px;padding:10px 14px;background:#fff8ea;border-left:4px solid var(--terra);border-radius:6px;font-size:13px;color:#7a4400;display:flex;align-items:center;gap:8px">
+          ${ic('info', 16)}
+          <span>${esc(d.message || `Showing live official AGMARKNET mandi data from ${d.reportingState}.`)}</span>
+        </div>
+      ` : ''}
 
       <div class="mandi-grid">
         <div class="mandi-kpi">
@@ -6350,7 +6375,7 @@ function marketPricesView(u, role) {
         <div class="mandi-kpi">
           <div class="label">Mandis Reporting</div>
           <div class="val">${d.marketsReportingCount}<small style="font-size:16px"> APMCs</small></div>
-          <div class="subval">Government of India — AGMARKNET</div>
+          <div class="subval">${esc(d.reportingState || 'AGMARKNET')} Mandis</div>
           <div class="small" style="margin-top:8px;color:var(--green)">● Verified Official Observations</div>
         </div>
       </div>
@@ -6414,13 +6439,19 @@ function marketPricesView(u, role) {
         <div style="flex:1;min-width:220px">
           <label class="small" style="font-weight:700;display:block;margin-bottom:6px">Select Commodity / Crop</label>
           <select id="priceCmdtSelect" onchange="changePriceCommodity(this.value)" style="width:100%">
-            ${commodities.slice(0, 40).map(c => `<option value="${esc(c)}" ${c.toLowerCase() === SELECTED_PRICE_COMMODITY.toLowerCase() ? 'selected' : ''}>${esc(c)}</option>`).join('')}
+            <optgroup label="🌟 Popular Agricultural Produce & Crops">
+              ${POPULAR_CROPS.map(c => `<option value="${esc(c)}" ${c.toLowerCase() === selCommodity.toLowerCase() ? 'selected' : ''}>${esc(c)}</option>`).join('')}
+            </optgroup>
+            <optgroup label="📋 All Commodities (AGMARKNET A-Z)">
+              ${allCmdtNames.map(c => `<option value="${esc(c)}" ${(!isSelectedInPopular && c.toLowerCase() === selCommodity.toLowerCase()) ? 'selected' : ''}>${esc(c)}</option>`).join('')}
+            </optgroup>
           </select>
         </div>
         <div style="flex:1;min-width:220px">
           <label class="small" style="font-weight:700;display:block;margin-bottom:6px">Select State</label>
           <select id="priceStateSelect" onchange="changePriceState(this.value)" style="width:100%">
-            ${states.map(s => `<option value="${s.id}" ${s.id === SELECTED_PRICE_STATE ? 'selected' : ''}>${esc(s.name)}</option>`).join('')}
+            <option value="0" ${SELECTED_PRICE_STATE === 0 ? 'selected' : ''}>🇮🇳 All India / National Market</option>
+            ${states.filter(s => s.id !== 0).map(s => `<option value="${s.id}" ${s.id === SELECTED_PRICE_STATE ? 'selected' : ''}>${esc(s.name)}</option>`).join('')}
           </select>
         </div>
         <div>
@@ -7084,6 +7115,14 @@ window.addEventListener('hashchange', () => {
   if (CURRENT_USER) {
     startPolling();
   }
+
+  // Pre-load official AGMARKNET filters in background
+  fetch('/api/market-prices/filters').then(r => r.json()).then(f => {
+    if (f && f.success) {
+      AVAILABLE_COMMODITIES = f.commodities || [];
+      AVAILABLE_STATES = f.states || [];
+    }
+  }).catch(() => {});
 })();
 </script>
 </body>
