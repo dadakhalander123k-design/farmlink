@@ -5559,7 +5559,7 @@ function toggleFarmerOrderAccordion(id, e) {
   const btn = document.getElementById('order-btn-' + id);
   if (drawer) drawer.classList.toggle('open', nextOpen);
   if (btn) {
-    const defaultLabel = btn.getAttribute('data-label') || 'View &amp; Dispatch ↓';
+    const defaultLabel = btn.getAttribute('data-label') || 'View Details ↓';
     btn.innerHTML = nextOpen ? 'Close Details ↑' : defaultLabel;
     btn.classList.toggle('active', nextOpen);
   }
@@ -5654,7 +5654,7 @@ function fOrders(u, orders) {
           `;
         } else if (['confirmed', 'preparing', 'out'].includes(o.status)) {
           summaryAction = `
-            <button type="button" class="btn-toggle-dispatch ${isExpanded ? 'active' : ''}" id="order-btn-${o.id}" data-label="View &amp; Dispatch ↓" onclick="toggleFarmerOrderAccordion('${o.id}', event)">${isExpanded ? 'Close Details ↑' : 'View &amp; Dispatch ↓'}</button>
+            <button type="button" class="btn-toggle-dispatch ${isExpanded ? 'active' : ''}" id="order-btn-${o.id}" data-label="View Details ↓" onclick="toggleFarmerOrderAccordion('${o.id}', event)">${isExpanded ? 'Close Details ↑' : 'View Details ↓'}</button>
           `;
         } else {
           summaryAction = `
