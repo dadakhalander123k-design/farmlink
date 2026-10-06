@@ -882,18 +882,18 @@ section.s{padding:76px 0}
     width:100%;
     height:100%;
     object-fit:cover;
-    object-position:center 25%;
+    object-position:68% center;
     display:block;
   }
   .dash-banner-overlay{
     position:absolute;
     inset:0;
-    background:linear-gradient(90deg, rgba(14, 11, 9, 0.78) 0%, rgba(14, 11, 9, 0.46) 45%, rgba(14, 11, 9, 0.12) 70%, transparent 88%);
+    background:linear-gradient(90deg, rgba(14, 11, 9, 0.72) 0%, rgba(14, 11, 9, 0.38) 42%, rgba(14, 11, 9, 0.05) 65%, transparent 80%);
     pointer-events:none;
     display:block !important;
   }
   [data-theme="dark"] .dash-banner-overlay{
-    background:linear-gradient(90deg, rgba(14, 11, 9, 0.84) 0%, rgba(14, 11, 9, 0.52) 45%, rgba(14, 11, 9, 0.16) 70%, transparent 88%);
+    background:linear-gradient(90deg, rgba(14, 11, 9, 0.78) 0%, rgba(14, 11, 9, 0.44) 42%, rgba(14, 11, 9, 0.08) 65%, transparent 80%);
     display:block !important;
   }
   .dash-banner-inner{
@@ -901,7 +901,7 @@ section.s{padding:76px 0}
     z-index:2;
     width:100%;
     max-width:100%;
-    padding:20px 18px;
+    padding:16px 14px;
     margin:0;
     display:flex;
     flex-direction:column;
@@ -910,12 +910,12 @@ section.s{padding:76px 0}
   .dash-banner-content{
     position:relative;
     z-index:2;
-    max-width:320px;
+    max-width:215px !important;
     display:flex;
     flex-direction:column;
     align-items:flex-start;
     text-align:left;
-    gap:10px;
+    gap:7px;
     padding:0 !important;
     background:transparent !important;
     border:none !important;
@@ -925,43 +925,43 @@ section.s{padding:76px 0}
   .dash-banner-badge{
     display:inline-flex;
     align-items:center;
-    gap:8px;
-    font-size:12px !important;
+    gap:6px;
+    font-size:10.5px !important;
     font-weight:600;
     color:#FFFDFC !important;
     letter-spacing:.02em;
     background:rgba(255, 255, 255, 0.14) !important;
-    backdrop-filter:blur(12px);
-    -webkit-backdrop-filter:blur(12px);
-    padding:5px 12px !important;
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    padding:3.5px 9px !important;
     border-radius:999px !important;
     border:1px solid rgba(255, 255, 255, 0.28) !important;
     width:fit-content;
-    box-shadow:0 2px 10px rgba(0, 0, 0, 0.25) !important;
+    box-shadow:0 2px 8px rgba(0, 0, 0, 0.25) !important;
   }
   .dash-banner h1{
     font-family:var(--sans);
     font-weight:800 !important;
-    font-size:clamp(20px, 5.5vw, 25px) !important;
+    font-size:clamp(16.5px, 4.4vw, 18.5px) !important;
     color:#FFFDFC !important;
     margin:0 !important;
-    line-height:1.15 !important;
-    letter-spacing:-.02em;
-    text-shadow:0 2px 10px rgba(0, 0, 0, 0.55) !important;
+    line-height:1.2 !important;
+    letter-spacing:-.015em;
+    text-shadow:0 2px 8px rgba(0, 0, 0, 0.6) !important;
   }
   .dash-banner-sub{
     color:rgba(255, 253, 252, 0.94) !important;
-    font-size:13px !important;
+    font-size:11.5px !important;
     margin:0 !important;
-    line-height:1.45 !important;
+    line-height:1.35 !important;
     font-weight:450 !important;
-    text-shadow:0 1px 6px rgba(0, 0, 0, 0.45) !important;
+    text-shadow:0 1px 5px rgba(0, 0, 0, 0.5) !important;
   }
   .dash-banner-tagline{
     display:flex;
     align-items:center;
-    gap:8px;
-    font-size:13px !important;
+    gap:6px;
+    font-size:11.5px !important;
     font-weight:600;
     color:#F5EBE1 !important;
     text-shadow:0 1px 4px rgba(0,0,0,0.8) !important;
@@ -969,22 +969,22 @@ section.s{padding:76px 0}
   .dash-banner-actions{
     display:flex;
     align-items:center;
-    gap:10px;
-    margin-top:4px;
+    gap:8px;
+    margin-top:2px;
     width:auto;
   }
   .btn-hero-primary, .btn-hero-secondary{
     background:linear-gradient(135deg, #8B3A44 0%, #722F37 100%) !important;
     color:#FFFDFC !important;
     border:1px solid rgba(255,255,255,0.35) !important;
-    padding:10px 20px !important;
-    border-radius:12px !important;
+    padding:7px 15px !important;
+    border-radius:10px !important;
     font-weight:700 !important;
-    font-size:13.5px !important;
+    font-size:12px !important;
     display:inline-flex !important;
     align-items:center !important;
-    gap:8px !important;
-    box-shadow:0 6px 20px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.25) !important;
+    gap:6px !important;
+    box-shadow:0 4px 14px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.25) !important;
     width:auto !important;
     flex:none !important;
     text-decoration:none !important;
@@ -997,11 +997,11 @@ section.s{padding:76px 0}
     height:auto;
   }
   .dash-banner-inner{
-    padding:18px 16px;
+    padding:16px 12px;
   }
   .dash-banner-content{
-    max-width:280px;
-    gap:9px;
+    max-width:205px !important;
+    gap:6px;
     padding:0 !important;
     background:transparent !important;
     border:none !important;
@@ -1009,27 +1009,27 @@ section.s{padding:76px 0}
     box-shadow:none !important;
   }
   .dash-banner-badge{
-    font-size:11.5px !important;
-    padding:5px 11px !important;
+    font-size:10px !important;
+    padding:3px 8px !important;
   }
   .dash-banner h1{
-    font-size:clamp(19px, 5.2vw, 23px) !important;
+    font-size:clamp(15.5px, 4.2vw, 17.5px) !important;
   }
   .dash-banner-sub{
-    font-size:12.5px !important;
+    font-size:11px !important;
   }
   .dash-banner-actions{
     display:flex;
     flex-direction:row;
     flex-wrap:wrap;
-    gap:8px;
+    gap:6px;
     align-items:center;
     margin-top:2px;
   }
   .btn-hero-primary, .btn-hero-secondary{
     width:auto !important;
-    padding:9px 18px !important;
-    font-size:13px !important;
+    padding:6px 14px !important;
+    font-size:11.5px !important;
   }
 }
 
@@ -3333,8 +3333,8 @@ input:focus,select:focus,textarea:focus{
   }
   .dash-banner-content{
     padding:0 !important;
-    max-width:320px;
-    gap:10px;
+    max-width:215px !important;
+    gap:7px;
     display:flex;
     flex-direction:column;
     align-items:flex-start;
@@ -3345,24 +3345,24 @@ input:focus,select:focus,textarea:focus{
     box-shadow:none !important;
   }
   .dash-banner-badge{
-    font-size:12px !important;
-    padding:5px 12px !important;
+    font-size:10.5px !important;
+    padding:3.5px 9px !important;
   }
   .dash-banner h1{
-    font-size:clamp(20px, 5.5vw, 25px) !important;
+    font-size:clamp(16.5px, 4.4vw, 18.5px) !important;
     font-weight:800 !important;
-    line-height:1.15 !important;
-    letter-spacing:-.02em;
-    text-shadow:0 2px 10px rgba(0, 0, 0, 0.55) !important;
+    line-height:1.2 !important;
+    letter-spacing:-.015em;
+    text-shadow:0 2px 8px rgba(0, 0, 0, 0.6) !important;
   }
   .dash-banner-sub{
-    font-size:13px !important;
-    line-height:1.45 !important;
+    font-size:11.5px !important;
+    line-height:1.35 !important;
     font-weight:450 !important;
-    text-shadow:0 1px 6px rgba(0, 0, 0, 0.45) !important;
+    text-shadow:0 1px 5px rgba(0, 0, 0, 0.5) !important;
   }
   .dash-banner-tagline{
-    font-size:13px !important;
+    font-size:11.5px !important;
     text-shadow:0 1px 4px rgba(0,0,0,0.8) !important;
     flex-wrap:wrap;
   }
@@ -3370,18 +3370,18 @@ input:focus,select:focus,textarea:focus{
     display:flex;
     flex-direction:row;
     flex-wrap:wrap;
-    gap:8px;
+    gap:6px;
     align-items:center;
     width:auto;
-    margin-top:4px;
+    margin-top:2px;
   }
   .dash-banner-actions .btn{
     width:auto !important;
-    padding:10px 20px !important;
-    font-size:13.5px !important;
+    padding:7px 15px !important;
+    font-size:12px !important;
     justify-content:center;
-    border-radius:12px !important;
-    box-shadow:0 6px 20px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.25) !important;
+    border-radius:10px !important;
+    box-shadow:0 4px 14px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.25) !important;
   }
   .dash-head{
     flex-direction:column;
