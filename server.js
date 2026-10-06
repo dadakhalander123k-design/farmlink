@@ -366,7 +366,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   const ext = path.extname(resolvedFile).toLowerCase();
-  const contentType = MIME_TYPES[ext] || (resolvedFile.includes('buyerfinalhero') ? 'image/jpeg' : 'application/octet-stream');
+  const contentType = MIME_TYPES[ext] || ((resolvedFile.includes('buyerfinalhero') || resolvedFile.includes('buyerlogin') || resolvedFile.includes('farmerlogin')) ? 'image/jpeg' : 'application/octet-stream');
 
   fs.readFile(resolvedFile, (readErr, content) => {
     if (readErr) {
