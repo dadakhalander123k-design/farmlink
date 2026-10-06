@@ -3887,7 +3887,7 @@ function authPage(role) {
     ? ['List produce in under a minute with photo preview', 'See buyers that match your crop and price expectation', 'Get an AI-optimised delivery route for your orders', 'Direct cash or UPI settlement on delivery']
     : ['See live prices compared against mandi references', 'Post procurement requirements and compare matches', 'Track orders from farm confirmation to final delivery', 'Verified farmer profiles and peer ratings'];
 
-  const bgImg = f ? 'assets/images/farm_harvest_journey.jpg' : 'assets/images/market_produce_display.jpg';
+  const bgImg = f ? 'assets/images/heroes/farmer-hero.webp' : 'assets/images/market_produce_display.jpg';
 
   return `<main class="auth">
   <section class="auth-art ${role}" style="background-image:url('${bgImg}')">
@@ -4099,7 +4099,7 @@ async function doAuth(role) {
 /* ============ Dashboard Shell ============ */
 function shell(u, base, tabs, cur, badges, title, sub, content) {
   const isOverview = cur === tabs[0][0];
-  const bannerImg = base === 'farmer' ? 'assets/images/farmer_dashboard_hero.jpg' : 'assets/images/buyer_dashboard_hero.jpg';
+  const bannerImg = base === 'farmer' ? 'assets/images/heroes/farmer-hero.webp' : 'assets/images/buyer_dashboard_hero.jpg';
   const bannerBadge = base === 'farmer' ? `${ic('leaf', 14)} Verified Regional Farmer Portal` : `${ic('store', 14)} Direct Farm-to-Buyer Marketplace`;
   const bannerTagline = base === 'farmer' ? `${ic('check', 15)} 0% Middleman Margin &bull; Live Mandi Price Benchmark` : `${ic('check', 15)} Direct Farm-Fresh Sourcing &bull; Verified Farm Quality`;
 
