@@ -339,8 +339,8 @@ const server = http.createServer(async (req, res) => {
   });
 });
 
-server.listen(PORT, () => {
-  console.log(`DirectFarm MVP server running at http://localhost:${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Farmlink server running at http://0.0.0.0:${PORT}`);
   console.log(`- AGMARKNET API ready at http://localhost:${PORT}/api/market-prices`);
   console.log(`- Live Tracking API ready at http://localhost:${PORT}/api/tracking`);
 });
