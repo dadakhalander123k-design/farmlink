@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">FarmLink</string>
+    <string name="title_activity_main">FarmLink</string>
+    <string name="package_name">com.farmlink.app</string>
+    <string name="custom_url_scheme">com.farmlink.app</string>
+</resources>

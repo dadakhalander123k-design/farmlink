@@ -1,0 +1,9 @@
+{
+  "appId": "com.farmlink.app",
+  "appName": "FarmLink",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  }
+}

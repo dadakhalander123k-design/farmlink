@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Center Sprout / Farm Icon in Crisp Cream (#F5EBDC) and Gold Accent -->
+    <path
+        android:fillColor="#F5EBDC"
+        android:pathData="M54,26 C43,37 36,49 36,63 C36,73 44,81 54,82 C64,81 72,73 72,63 C72,49 65,37 54,26 Z" />
+    <path
+        android:fillColor="#3F5B2E"
+        android:pathData="M54,32 C54,48 54,64 54,78 C54,78 54,74 54,70 C54,58 58,48 64,40 C61,37 57,34 54,32 Z" />
+    <path
+        android:fillColor="#DECDB3"
+        android:pathData="M44,55 C47,51 51,48 54,46 C54,58 50,68 44,74 C43,68 43,61 44,55 Z" />
+</vector>
