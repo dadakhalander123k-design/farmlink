@@ -11,8 +11,8 @@ const PORT = process.env.PORT || 3000;
 const ROOT_DIR = __dirname;
 
 // Supabase client for auth & order authorization checks
-const SUPABASE_URL = 'https://ykymwiyleohoxluderod.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_1fdznVkRU4PkwcmZ3bwxEg_bOBcN5y4';
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://ykymwiyleohoxluderod.supabase.co';
+const SUPABASE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_KEY || 'sb_publishable_1fdznVkRU4PkwcmZ3bwxEg_bOBcN5y4';
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: { persistSession: false, autoRefreshToken: false }
 });
@@ -339,8 +339,8 @@ const server = http.createServer(async (req, res) => {
   });
 });
 
-server.listen(PORT, () => {
-  console.log(`DirectFarm MVP server running at http://localhost:${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Farmlink server running at http://0.0.0.0:${PORT}`);
   console.log(`- AGMARKNET API ready at http://localhost:${PORT}/api/market-prices`);
   console.log(`- Live Tracking API ready at http://localhost:${PORT}/api/tracking`);
 });
