@@ -308,39 +308,56 @@ const server = http.createServer(async (req, res) => {
   }
 
   // --- Static File Serving ---
-  let filePath = path.join(ROOT_DIR, pathname === '/' ? 'index.html' : pathname);
+  const candidates = [
+    path.join(ROOT_DIR, pathname === '/' ? 'index.html' : pathname),
+    path.join(process.cwd(), pathname === '/' ? 'index.html' : pathname),
+    path.join(ROOT_DIR, 'public', pathname === '/' ? 'index.html' : pathname),
+    path.join(process.cwd(), 'public', pathname === '/' ? 'index.html' : pathname),
+    path.join(ROOT_DIR, 'index.html'),
+    path.join(process.cwd(), 'index.html'),
+    path.join(ROOT_DIR, 'public', 'index.html'),
+    path.join(process.cwd(), 'public', 'index.html')
+  ];
 
-  // Security: prevent path traversal outside ROOT_DIR
-  if (!filePath.startsWith(ROOT_DIR)) {
-    res.writeHead(403);
-    return res.end('Access Denied');
+  let resolvedFile = null;
+  for (const candidate of candidates) {
+    try {
+      if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) {
+        resolvedFile = candidate;
+        break;
+      }
+    } catch (e) {}
   }
 
-  fs.stat(filePath, (err, stats) => {
-    if (err || !stats.isFile()) {
-      // If not found, serve index.html for SPA hash routing
-      filePath = path.join(ROOT_DIR, 'index.html');
+  if (!resolvedFile) {
+    res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+    return res.end('File not found');
+  }
+
+  const ext = path.extname(resolvedFile).toLowerCase();
+  const contentType = MIME_TYPES[ext] || 'application/octet-stream';
+
+  fs.readFile(resolvedFile, (readErr, content) => {
+    if (readErr) {
+      res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
+      return res.end('Error loading file: ' + readErr.message);
     }
-
-    const ext = path.extname(filePath).toLowerCase();
-    const contentType = MIME_TYPES[ext] || 'application/octet-stream';
-
-    fs.readFile(filePath, (readErr, content) => {
-      if (readErr) {
-        res.writeHead(500);
-        return res.end('Server Error loading file');
-      }
-      res.writeHead(200, {
-        'Content-Type': contentType,
-        'Cache-Control': ext === '.html' ? 'no-cache' : 'public, max-age=3600'
-      });
-      res.end(content);
+    res.writeHead(200, {
+      'Content-Type': contentType,
+      'Cache-Control': ext === '.html' ? 'no-cache' : 'public, max-age=3600'
     });
+    res.end(content);
   });
 });
 
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Farmlink server running at http://0.0.0.0:${PORT}`);
-  console.log(`- AGMARKNET API ready at http://localhost:${PORT}/api/market-prices`);
-  console.log(`- Live Tracking API ready at http://localhost:${PORT}/api/tracking`);
-});
+if (process.env.VERCEL) {
+  // Running in Vercel Serverless environment
+} else {
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`Farmlink server running at http://0.0.0.0:${PORT}`);
+    console.log(`- AGMARKNET API ready at http://localhost:${PORT}/api/market-prices`);
+    console.log(`- Live Tracking API ready at http://localhost:${PORT}/api/tracking`);
+  });
+}
+
+module.exports = server;

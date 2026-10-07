@@ -725,22 +725,28 @@
 
   // --- Real-time GPS Tracking Updates ---
   async function updateTrackingLocation(orderId, loc) {
-    var token = getToken();
-    var res = await fetch('/api/tracking/update', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        token: token,
-        orderId: orderId,
-        lat: loc.lat,
-        lng: loc.lng,
-        speed: loc.speed,
-        heading: loc.heading,
-        label: loc.label || 'Driver Vehicle (GPS Active)',
-        farmerLoc: loc.farmerLoc || null
-      })
-    });
-    return res.ok;
+    try {
+      var token = getToken();
+      var baseUrl = (typeof window !== 'undefined' && window.__ENV && window.__ENV.API_BASE_URL) ? window.__ENV.API_BASE_URL : '';
+      var res = await fetch(baseUrl + '/api/tracking/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          token: token,
+          orderId: orderId,
+          lat: loc.lat,
+          lng: loc.lng,
+          speed: loc.speed,
+          heading: loc.heading,
+          label: loc.label || 'Driver Vehicle (GPS Active)',
+          farmerLoc: loc.farmerLoc || null
+        })
+      });
+      return res.ok;
+    } catch (e) {
+      console.warn('Live tracking sync offline or unreachable:', e);
+      return false;
+    }
   }
 
   return {

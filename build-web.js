@@ -14,7 +14,7 @@ function copyDir(src, dest) {
     const srcPath = path.join(src, entry.name);
     const destPath = path.join(dest, entry.name);
     if (entry.isDirectory()) {
-      if (['node_modules', '.git', 'android', 'tests', 'supabase', 'www'].includes(entry.name)) {
+      if (['node_modules', '.git', 'android', 'tests', 'supabase', 'www', 'public'].includes(entry.name)) {
         continue;
       }
       copyDir(srcPath, destPath);
@@ -40,7 +40,7 @@ for (const file of filesToCopy) {
 }
 
 // Copy directories
-const dirsToCopy = ['lib', 'assets', 'public'];
+const dirsToCopy = ['lib', 'assets'];
 for (const dir of dirsToCopy) {
   const s = path.join(srcDir, dir);
   if (fs.existsSync(s)) {
@@ -48,4 +48,23 @@ for (const dir of dirsToCopy) {
   }
 }
 
-console.log('✓ Web bundle ready in www/');
+// Also sync essential files to public/ for hosting providers that expect public/
+const publicDir = path.join(__dirname, 'public');
+if (!fs.existsSync(publicDir)) {
+  fs.mkdirSync(publicDir, { recursive: true });
+}
+['index.html', '404.html', 'config.js'].forEach(file => {
+  const s = path.join(srcDir, file);
+  if (fs.existsSync(s)) {
+    fs.copyFileSync(s, path.join(publicDir, file));
+  }
+});
+['lib', 'assets'].forEach(dir => {
+  const s = path.join(srcDir, dir);
+  if (fs.existsSync(s)) {
+    copyDir(s, path.join(publicDir, dir));
+  }
+});
+
+console.log('✓ Web bundle ready in www/ and synced to public/');
+
