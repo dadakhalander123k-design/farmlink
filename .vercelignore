@@ -1,7 +1,12 @@
+<<<<<<< HEAD
 server.js
 dev-server.js
 android/
 *.apk
 www/
+=======
+android/
+*.apk
+>>>>>>> 7839e4dd488e524bb2cf7628dce6fa86fcf29622
 scratch/
 tests/

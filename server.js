@@ -20,6 +20,22 @@ const sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
 // In-memory live tracking store: orderId -> { lat, lng, label, speed, updatedAt, isLive, farmerId }
 const trackingStore = new Map();
 
+// Pre-load index.html into memory so Vercel's NFT tracer bundles it and it never fails to load
+let INDEX_HTML_CONTENT = null;
+try {
+  INDEX_HTML_CONTENT = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+} catch (e1) {
+  try {
+    INDEX_HTML_CONTENT = fs.readFileSync(path.join(process.cwd(), 'index.html'), 'utf8');
+  } catch (e2) {
+    try {
+      INDEX_HTML_CONTENT = fs.readFileSync(path.join(__dirname, 'public', 'index.html'), 'utf8');
+    } catch (e3) {
+      INDEX_HTML_CONTENT = null;
+    }
+  }
+}
+
 // MIME Types
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -308,6 +324,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   // --- Static File Serving ---
+<<<<<<< HEAD
   const candidates = [
     path.join(ROOT_DIR, pathname === '/' ? 'index.html' : pathname),
     path.join(process.cwd(), pathname === '/' ? 'index.html' : pathname),
@@ -330,15 +347,65 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (!resolvedFile) {
+=======
+  // Fast path: root or SPA page routes directly serve pre-cached index.html
+  const isHtmlRoute = !pathname.startsWith('/assets') && !pathname.startsWith('/api') && (pathname === '/' || pathname === '/index.html' || !path.extname(pathname));
+  if (isHtmlRoute && INDEX_HTML_CONTENT) {
+    res.writeHead(200, {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Cache-Control': 'no-cache'
+    });
+    return res.end(INDEX_HTML_CONTENT);
+  }
+
+  const candidates = [
+    path.join(ROOT_DIR, pathname === '/' ? 'index.html' : pathname),
+    path.join(process.cwd(), pathname === '/' ? 'index.html' : pathname),
+    path.join(ROOT_DIR, 'public', pathname === '/' ? 'index.html' : pathname),
+    path.join(process.cwd(), 'public', pathname === '/' ? 'index.html' : pathname),
+    path.join(ROOT_DIR, 'index.html'),
+    path.join(process.cwd(), 'index.html')
+  ];
+
+  let resolvedFile = null;
+  for (const candidate of candidates) {
+    try {
+      if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) {
+        resolvedFile = candidate;
+        break;
+      }
+    } catch (e) {}
+  }
+
+  if (!resolvedFile) {
+    if (INDEX_HTML_CONTENT) {
+      res.writeHead(200, {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-cache'
+      });
+      return res.end(INDEX_HTML_CONTENT);
+    }
+>>>>>>> 7839e4dd488e524bb2cf7628dce6fa86fcf29622
     res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
     return res.end('File not found');
   }
 
   const ext = path.extname(resolvedFile).toLowerCase();
+<<<<<<< HEAD
   const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
   fs.readFile(resolvedFile, (readErr, content) => {
     if (readErr) {
+=======
+  const contentType = MIME_TYPES[ext] || ((resolvedFile.includes('buyerfinalhero') || resolvedFile.includes('buyerlogin') || resolvedFile.includes('farmerlogin')) ? 'image/jpeg' : 'application/octet-stream');
+
+  fs.readFile(resolvedFile, (readErr, content) => {
+    if (readErr) {
+      if (INDEX_HTML_CONTENT) {
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+        return res.end(INDEX_HTML_CONTENT);
+      }
+>>>>>>> 7839e4dd488e524bb2cf7628dce6fa86fcf29622
       res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
       return res.end('Error loading file: ' + readErr.message);
     }

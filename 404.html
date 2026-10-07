@@ -865,8 +865,8 @@ section.s{padding:76px 0}
   .dash-banner{
     position:relative;
     width:100%;
-    aspect-ratio:1376 / 768;
-    min-height:unset;
+    aspect-ratio:4 / 3;
+    min-height:300px;
     height:auto;
     display:flex;
     align-items:flex-start;
@@ -881,96 +881,158 @@ section.s{padding:76px 0}
     inset:0;
     width:100%;
     height:100%;
-    object-fit:contain;
-    object-position:center;
+    object-fit:cover;
+    object-position:68% center;
     display:block;
-    image-rendering:-webkit-optimize-contrast;
+  }
+  .farmer-dash-banner .dash-banner-bg{
+    object-position:8% center !important;
   }
   .dash-banner-overlay{
     position:absolute;
     inset:0;
-    background:linear-gradient(90deg, rgba(14, 11, 9, 0.85) 0%, rgba(14, 11, 9, 0.52) 46%, transparent 85%);
+    background:linear-gradient(90deg, rgba(14, 11, 9, 0.72) 0%, rgba(14, 11, 9, 0.38) 42%, rgba(14, 11, 9, 0.05) 65%, transparent 80%);
     pointer-events:none;
+    display:block !important;
   }
   [data-theme="dark"] .dash-banner-overlay{
-    background:linear-gradient(90deg, rgba(14, 11, 9, 0.9) 0%, rgba(14, 11, 9, 0.58) 46%, transparent 85%);
+    background:linear-gradient(90deg, rgba(14, 11, 9, 0.78) 0%, rgba(14, 11, 9, 0.44) 42%, rgba(14, 11, 9, 0.08) 65%, transparent 80%);
+    display:block !important;
   }
   .dash-banner-inner{
     position:relative;
     z-index:2;
     width:100%;
     max-width:100%;
-    padding:16px 18px;
+    padding:16px 14px;
     margin:0;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
   }
   .dash-banner-content{
-    max-width:100%;
-    gap:8px;
+    position:relative;
+    z-index:2;
+    max-width:215px !important;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    text-align:left;
+    gap:7px;
+    padding:0 !important;
+    background:transparent !important;
+    border:none !important;
+    outline:none !important;
+    box-shadow:none !important;
   }
   .dash-banner-badge{
-    font-size:11px;
-    padding:4px 10px;
-    background:rgba(255, 255, 255, 0.16);
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:10.5px !important;
+    font-weight:600;
+    color:#FFFDFC !important;
+    letter-spacing:.02em;
+    background:rgba(255, 255, 255, 0.14) !important;
     backdrop-filter:blur(10px);
     -webkit-backdrop-filter:blur(10px);
-    border:1px solid rgba(255, 255, 255, 0.28);
-    color:#FFFDFC;
+    padding:3.5px 9px !important;
+    border-radius:999px !important;
+    border:1px solid rgba(255, 255, 255, 0.28) !important;
     width:fit-content;
+    box-shadow:0 2px 8px rgba(0, 0, 0, 0.25) !important;
   }
   .dash-banner h1{
-    font-size:clamp(18px, 5vw, 24px);
+    font-family:var(--sans);
+    font-weight:800 !important;
+    font-size:clamp(16.5px, 4.4vw, 18.5px) !important;
     color:#FFFDFC !important;
-    text-shadow:0 2px 8px rgba(0,0,0,0.7);
-    line-height:1.15;
-    margin:0;
+    margin:0 !important;
+    line-height:1.2 !important;
+    letter-spacing:-.015em;
+    text-shadow:0 2px 8px rgba(0, 0, 0, 0.6) !important;
   }
   .dash-banner-sub{
-    font-size:12.5px;
-    color:rgba(255, 253, 252, 0.92) !important;
-    text-shadow:0 1px 4px rgba(0,0,0,0.6);
-    line-height:1.4;
-    margin:0;
+    color:rgba(255, 253, 252, 0.94) !important;
+    font-size:11.5px !important;
+    margin:0 !important;
+    line-height:1.35 !important;
+    font-weight:450 !important;
+    text-shadow:0 1px 5px rgba(0, 0, 0, 0.5) !important;
   }
   .dash-banner-tagline{
-    font-size:12.5px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:11.5px !important;
+    font-weight:600;
     color:#F5EBE1 !important;
-    text-shadow:0 1px 4px rgba(0,0,0,0.8);
+    text-shadow:0 1px 4px rgba(0,0,0,0.8) !important;
   }
   .dash-banner-actions{
     display:flex;
-    flex-direction:row;
-    gap:10px;
-    margin-top:8px;
-    width:100%;
+    align-items:center;
+    gap:8px;
+    margin-top:2px;
+    width:auto;
   }
   .btn-hero-primary, .btn-hero-secondary{
-    flex:1;
-    min-width:0;
-    padding:11px 16px;
-    font-size:14px;
-    justify-content:center;
-    text-align:center;
+    background:linear-gradient(135deg, #8B3A44 0%, #722F37 100%) !important;
+    color:#FFFDFC !important;
+    border:1px solid rgba(255,255,255,0.35) !important;
+    padding:7px 15px !important;
+    border-radius:10px !important;
+    font-weight:700 !important;
+    font-size:12px !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    gap:6px !important;
+    box-shadow:0 4px 14px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.25) !important;
+    width:auto !important;
+    flex:none !important;
+    text-decoration:none !important;
   }
 }
 @media (max-width:480px){
   .dash-banner{
-    aspect-ratio:1376 / 768;
-    min-height:unset;
+    aspect-ratio:4 / 3;
+    min-height:300px;
     height:auto;
   }
   .dash-banner-inner{
-    padding:18px 14px 20px;
+    padding:16px 12px;
+  }
+  .dash-banner-content{
+    max-width:205px !important;
+    gap:6px;
+    padding:0 !important;
+    background:transparent !important;
+    border:none !important;
+    outline:none !important;
+    box-shadow:none !important;
+  }
+  .dash-banner-badge{
+    font-size:10px !important;
+    padding:3px 8px !important;
+  }
+  .dash-banner h1{
+    font-size:clamp(15.5px, 4.2vw, 17.5px) !important;
+  }
+  .dash-banner-sub{
+    font-size:11px !important;
   }
   .dash-banner-actions{
     display:flex;
     flex-direction:row;
     flex-wrap:wrap;
-    gap:8px;
+    gap:6px;
     align-items:center;
+    margin-top:2px;
   }
   .btn-hero-primary, .btn-hero-secondary{
-    width:auto;
-    padding:10px 16px;
+    width:auto !important;
+    padding:6px 14px !important;
+    font-size:11.5px !important;
   }
 }
 
@@ -1192,40 +1254,53 @@ footer p{max-width:440px;font-size:14.5px;margin-top:10px}
 .auth{
   display:grid;
   grid-template-columns:1fr 1fr;
+  align-items:center;
+  justify-items:center;
   min-height:calc(100vh - 72px);
   background:var(--bg);
+  padding:32px 24px;
+  gap:24px;
+  box-sizing:border-box;
 }
 @media (max-width:900px){
-  .auth{grid-template-columns:1fr}
-  .auth-art{aspect-ratio:1376 / 768; min-height:unset; height:auto}
+  .auth{grid-template-columns:1fr; padding:16px 12px; gap:16px}
+  .auth-art{aspect-ratio:1376 / 768; min-height:unset; height:auto; width:min(520px, 100%)}
 }
 .auth-art{
   position:relative;
   overflow:hidden;
   color:#E8DCC6;
-  padding:48px;
+  width:min(580px, 100%);
+  aspect-ratio:1376 / 768;
+  border-radius:24px;
+  border:1px solid var(--latte);
+  box-shadow:var(--shadow-lg);
+  margin:auto;
+  padding:24px 28px;
   display:flex;
   flex-direction:column;
   justify-content:flex-start;
-  background-size:contain;
+  background-size:100% 100%;
   background-position:center;
   background-repeat:no-repeat;
   background-color:#140F0C;
   image-rendering:-webkit-optimize-contrast;
+  box-sizing:border-box;
 }
 .auth-art::before{
   content:"";
   position:absolute;
   inset:0;
-  background:linear-gradient(180deg,rgba(42,33,24,.2) 0%,rgba(42,33,24,.75) 100%);
+  background:linear-gradient(180deg,rgba(20,15,12,.4) 0%,rgba(20,15,12,.72) 100%);
   z-index:0;
 }
 .auth-art-content{position:relative;z-index:1}
-.auth-art h2{font-size:clamp(26px,3.2vw,40px);color:#E8DCC6;max-width:14em}
-.auth-art ul{list-style:none;padding:0;margin:20px 0 0;display:grid;gap:12px}
-.auth-art li{display:flex;gap:10px;align-items:center;color:#E8DCC6;font-size:15.5px}
-.auth-art li svg{color:var(--latte)}
-.auth-form{display:grid;place-items:center;padding:40px 20px}
+.auth-art h2{font-size:clamp(18px,2.2vw,24px);line-height:1.25;color:#E8DCC6;max-width:16em;margin:0}
+.auth-art ul{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:8px}
+.auth-art li{display:flex;gap:8px;align-items:flex-start;color:#E8DCC6;font-size:13px;line-height:1.35}
+.auth-art li svg{color:var(--latte);flex-shrink:0;margin-top:2px}
+.auth-art li b{color:#FFF;font-weight:700}
+.auth-form{display:grid;place-items:center;padding:20px}
 .auth-card{
   width:min(480px,100%);
   background:var(--card);
@@ -1234,8 +1309,33 @@ footer p{max-width:440px;font-size:14.5px;margin-top:10px}
   padding:34px;
   box-shadow:var(--shadow-lg);
 }
-.auth-card h1{font-size:30px;margin:18px 0 4px;color:var(--burgundy)}
-.auth-card .sub{color:var(--ink2);margin-bottom:20px;font-size:15px}
+.auth-card h1{font-size:28px;margin:16px 0 4px;color:var(--burgundy)}
+.auth-card .sub{color:var(--ink2);margin-bottom:18px;font-size:14.5px}
+.auth-support-bar{
+  margin-top:20px;
+  padding-top:16px;
+  border-top:1px solid var(--latte-light);
+  text-align:center;
+  font-size:13px;
+  color:var(--ink2);
+  line-height:1.4;
+}
+.auth-support-bar a{
+  color:var(--burgundy);
+  font-weight:700;
+  text-decoration:none;
+}
+.auth-support-bar a:hover{
+  text-decoration:underline;
+}
+.auth-security-badge{
+  margin-top:10px;
+  text-align:center;
+  font-size:11.5px;
+  color:var(--ink3);
+  font-weight:600;
+  letter-spacing:0.2px;
+}
 .seg{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -3213,25 +3313,34 @@ input:focus,select:focus,textarea:focus{
     aspect-ratio:1376 / 768;
     min-height:unset;
     height:auto;
-    padding:24px 18px;
+    width:100%;
+    max-width:520px;
+    margin:0 auto;
+    border-radius:20px;
+    border:1px solid var(--latte);
+    box-shadow:var(--shadow-md);
+    padding:16px 16px;
     justify-content:flex-start;
-    background-size:contain;
+    background-size:100% 100%;
     background-position:center;
     background-repeat:no-repeat;
     background-color:#140F0C;
+    filter:none !important;
   }
   .auth-art h2{
-    font-size:19px;
+    font-size:15px !important;
     max-width:100%;
+    text-shadow:none !important;
   }
   .auth-art ul{
     display:grid;
-    gap:8px;
-    margin-top:12px;
+    gap:6px;
+    margin-top:8px;
   }
   .auth-art li{
-    font-size:13px;
-    gap:8px;
+    font-size:11.5px !important;
+    gap:6px;
+    text-shadow:none !important;
   }
   .auth-form{
     padding:16px 12px;
@@ -3262,41 +3371,64 @@ input:focus,select:focus,textarea:focus{
     padding:16px 14px 28px;
   }
   .dash-banner{
-    aspect-ratio:1376 / 768;
-    min-height:unset;
+    aspect-ratio:4 / 3;
+    min-height:300px;
     height:auto;
     align-items:flex-start;
     margin-bottom:0;
     border-radius:0;
   }
   .dash-banner-content{
-    padding:0;
-    max-width:100%;
-    gap:8px;
+    padding:0 !important;
+    max-width:215px !important;
+    gap:7px;
     display:flex;
     flex-direction:column;
+    align-items:flex-start;
+    text-align:left;
+    background:transparent !important;
+    border:none !important;
+    outline:none !important;
+    box-shadow:none !important;
+  }
+  .dash-banner-badge{
+    font-size:10.5px !important;
+    padding:3.5px 9px !important;
   }
   .dash-banner h1{
-    font-size:clamp(22px, 6vw, 30px);
+    font-size:clamp(16.5px, 4.4vw, 18.5px) !important;
+    font-weight:800 !important;
+    line-height:1.2 !important;
+    letter-spacing:-.015em;
+    text-shadow:0 2px 8px rgba(0, 0, 0, 0.6) !important;
   }
   .dash-banner-sub{
-    font-size:13.5px;
+    font-size:11.5px !important;
+    line-height:1.35 !important;
+    font-weight:450 !important;
+    text-shadow:0 1px 5px rgba(0, 0, 0, 0.5) !important;
   }
   .dash-banner-tagline{
-    font-size:12px;
+    font-size:11.5px !important;
+    text-shadow:0 1px 4px rgba(0,0,0,0.8) !important;
     flex-wrap:wrap;
   }
   .dash-banner-actions{
     display:flex;
     flex-direction:row;
     flex-wrap:wrap;
-    gap:8px;
+    gap:6px;
     align-items:center;
     width:auto;
+    margin-top:2px;
   }
   .dash-banner-actions .btn{
-    width:auto;
+    width:auto !important;
+    padding:7px 15px !important;
+    font-size:12px !important;
     justify-content:center;
+    border-radius:10px !important;
+    box-shadow:0 4px 14px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.25) !important;
   }
   .dash-head{
     flex-direction:column;
@@ -4342,6 +4474,7 @@ function navbar(u) {
   const curParts = curHash.split('/').filter(Boolean);
   const curRole = curParts[0] || '';
   const curPage = curParts[1] || (curRole === 'farmer' ? 'overview' : curRole === 'buyer' ? 'market' : '');
+  const isAuthPage = curHash === 'login' || curHash.startsWith('login/') || curParts[1] === 'login';
 
   let navItems = '';
   if (u && u.role === 'farmer') {
@@ -4401,19 +4534,27 @@ function navbar(u) {
   </div>`
   : `<a class="btn btn-primary btn-sm" href="#/login">Sign in</a>`;
 
+  const brandHref = (u && u.role) ? `#/${u.role}` : '#/';
   return `<header class="nav"><div class="nav-left" style="display:flex;align-items:center;gap:10px">
-    ${navLeft}
-    <a class="brand" href="#/">${logoImg}Farmlink</a>
+    ${isAuthPage ? '' : navLeft}
+    <a class="brand" href="${brandHref}">${logoImg}Farmlink</a>
   </div>
   <div class="nav-right">
+<<<<<<< HEAD
     ${profileButton}
+=======
+    <button type="button" class="theme-btn" onclick="toggleTheme()" aria-label="Toggle light and dark theme">${ic('moon', 17)}</button>
+    ${isAuthPage ? '' : profileButton}
+>>>>>>> 7839e4dd488e524bb2cf7628dce6fa86fcf29622
   </div></header>`;
 }
 
 function footer() {
+  const u = CURRENT_USER || S.user;
+  const brandHref = (u && u.role) ? `#/${u.role}` : '#/';
   return `<footer class="ft"><div class="wrap row">
     <div>
-      <a class="brand" href="#/">${logoImg}Farmlink</a>
+      <a class="brand" href="${brandHref}">${logoImg}Farmlink</a>
       <p>A transparent farm-to-buyer digital marketplace connecting verified Indian growers with retail and wholesale buyers. Authentic produce, transparent reference prices, and AI-optimized routes.</p>
     </div>
     <div style="display:flex;gap:36px;flex-wrap:wrap">
@@ -4657,20 +4798,34 @@ function landing() {
 function authPage(role) {
   const f = role === 'farmer', m = S.authMode, su = m === 'signup';
   const sideList = f
-    ? ['List produce in under a minute with photo preview', 'See buyers that match your crop and price expectation', 'Get an AI-optimised delivery route for your orders', 'Direct cash or UPI settlement on delivery']
-    : ['See live prices compared against mandi references', 'Post procurement requirements and compare matches', 'Track orders from farm confirmation to final delivery', 'Verified farmer profiles and peer ratings'];
+    ? [
+        { label: 'Zero Commission', text: 'You keep 100% of your agreed price.' },
+        { label: 'Mandi Benchmark', text: 'Real-time AGMARKNET reference rates guide your pricing.' },
+        { label: 'Verified Buyers', text: 'Receive orders only from verified retailers & businesses.' },
+        { label: 'Direct Settlement', text: 'Instant UPI / Bank transfer on delivery.' }
+      ]
+    : [
+        { label: 'Direct Origin', text: 'Sourced straight from the farm gate without mandi brokers.' },
+        { label: 'Fair Pricing', text: 'Live mandi rates compare your savings automatically.' },
+        { label: 'Live GPS Logistics', text: 'Track harvest trucks from farm to delivery dock.' },
+        { label: 'Quality Graded', text: 'Transparent Grade A/B crop specifications.' }
+      ];
 
-  const bgImg = f ? 'assets/images/heroes/farmer-hero.webp?v=1376' : 'assets/images/heroes/buyer-hero.webp?v=1376';
+  const bgImg = f ? 'assets/images/farmerlogin' : 'assets/images/buyerlogin';
+
+  const ctaText = su
+    ? 'Create Free Account →'
+    : (f ? 'Log In to Farmer Portal →' : 'Log In to Buyer Marketplace →');
 
   return `<main class="auth">
   <section class="auth-art ${role}" style="background-image:url('${bgImg}')">
     <div class="auth-art-content">
-      <div style="display:inline-flex;align-items:center;gap:9px;margin-bottom:18px;background:rgba(0,0,0,0.4);backdrop-filter:blur(8px);padding:6px 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.25)">
-        <img src="assets/images/farmfinal.png" alt="Farmlink" style="width:26px;height:26px;object-fit:contain">
-        <span style="color:#fff;font-weight:700;font-size:15px;font-family:var(--serif)">Farmlink</span>
+      <div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:12px;background:rgba(0,0,0,0.45);backdrop-filter:blur(8px);padding:4px 12px;border-radius:999px;border:1px solid rgba(255,255,255,0.25)">
+        <img src="assets/images/farmfinal.png" alt="Farmlink" style="width:22px;height:22px;object-fit:contain">
+        <span style="color:#fff;font-weight:700;font-size:13.5px;font-family:var(--serif)">Farmlink</span>
       </div>
       <h2>${f ? 'Sell directly to the businesses and consumers who need your crop' : 'Procure fresh harvests directly from verified regional farmers'}</h2>
-      <ul>${sideList.map(s => `<li>${ic('check', 18)} ${s}</li>`).join('')}</ul>
+      <ul>${sideList.map(s => `<li>${ic('check', 16)} <span><b>${s.label}:</b> ${s.text}</span></li>`).join('')}</ul>
     </div>
   </section>
   <section class="auth-form"><div class="auth-card">
@@ -4679,39 +4834,28 @@ function authPage(role) {
       <span style="font-family:var(--serif);font-size:24px;font-weight:700;color:var(--burgundy)">Farmlink</span>
     </div>
     <div class="seg" style="margin-bottom:12px">
-      <button type="button" class="${f ? 'on' : ''}" onclick="setRole('farmer')">${ic('leaf', 16)} Farmer</button>
-      <button type="button" class="${!f ? 'on' : ''}" onclick="setRole('buyer')">${ic('store', 16)} Buyer</button>
+      <button type="button" class="${f ? 'on' : ''}" onclick="setRole('farmer')">🌾 Farmer</button>
+      <button type="button" class="${!f ? 'on' : ''}" onclick="setRole('buyer')">🛒 Buyer</button>
     </div>
-    <div class="seg">
-      <button type="button" class="${!su ? 'on' : ''}" onclick="setMode('login')">Log in</button>
-      <button type="button" class="${su ? 'on' : ''}" onclick="setMode('signup')">Create account</button>
+    <div class="seg" style="margin-bottom:16px">
+      <button type="button" class="${!su ? 'on' : ''}" onclick="setMode('login')">Log In</button>
+      <button type="button" class="${su ? 'on' : ''}" onclick="setMode('signup')">Create Account</button>
     </div>
-    <h1>${f ? 'Farmer' : 'Buyer'} ${su ? 'sign up' : 'login'}</h1>
-    <p class="sub">${su ? (f ? 'Create your farm profile to start listing produce.' : 'Create your buyer profile to see live listings.') : 'Welcome back. Enter your email and password.'}</p>
+    <h1>${su ? 'Get started in 30 seconds' : 'Welcome back'}</h1>
+    <p class="sub">${su ? 'Create your profile to start trading.' : 'Enter your email and password to access your dashboard.'}</p>
     <div id="authErr" class="err" hidden></div>
     <form id="authForm" onsubmit="event.preventDefault();doAuth('${role}')">
-      ${su ? `<div class="field"><label for="a_name">Your name</label><input id="a_name" autocomplete="name" placeholder="e.g. Ramesh Kumar"></div>` : ''}
-      <div class="field"><label for="a_email">Email address</label><input id="a_email" type="email" autocomplete="email" placeholder="name@example.com"></div>
-      ${su ? `<div class="field"><label for="a_phone">Phone number</label><input id="a_phone" inputmode="numeric" maxlength="10" autocomplete="tel" placeholder="10-digit mobile number"></div>
-      <div class="two">
-        <div class="field"><label for="a_org">${f ? 'Farm or FPO name' : 'Business name'}</label><input id="a_org" placeholder="${f ? 'e.g. Ramesh Farms' : 'e.g. Hotel Grand Bay'}"></div>
-        <div class="field">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-            <label for="a_loc" style="margin:0">${f ? 'Farm location' : 'Delivery location'}</label>
-            <button type="button" class="btn btn-sm btn-subtle" id="a_gps_btn" onclick="detectAuthGpsLocation('${role}')" style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;font-size:12px">
-              ${ic('map-pin', 13)} Use GPS
-            </button>
-          </div>
-          <select id="a_loc" onchange="S.authDetectedLoc = null; updateAuthLocBadge();">${townOpts(S.authDetectedLoc ? S.authDetectedLoc.nearestTown : 'Bhimavaram')}</select>
-          <div id="a_loc_badge" style="margin-top:4px;font-size:11.5px;color:var(--ink2)">
-            ${S.authDetectedLoc ? `<span style="color:var(--burgundy);font-weight:600">📍 GPS Verified: ${S.authDetectedLoc.lat.toFixed(4)}, ${S.authDetectedLoc.lng.toFixed(4)}</span>` : 'Tip: Tap "Use GPS" to detect genuine coordinates.'}
-          </div>
-        </div>
-      </div>
-      ${f ? '' : `<div class="field"><label for="a_type">Buyer type</label><select id="a_type"><option>Consumer</option><option>Retailer</option><option>Restaurant or hotel</option><option>Wholesaler</option></select></div>`}` : ''}
-      <div class="field"><label for="a_pw">Password</label><input id="a_pw" type="password" autocomplete="${su ? 'new-password' : 'current-password'}" placeholder="${su ? 'At least 8 characters' : 'Your password'}"></div>
-      <button type="submit" id="authBtn" class="btn btn-primary btn-lg" style="width:100%">${su ? 'Create account' : 'Log in'}</button>
+      ${su ? `<div class="field"><label for="a_name">Full Name</label><input id="a_name" autocomplete="name" placeholder="e.g. Ramesh Kumar"></div>` : ''}
+      <div class="field"><label for="a_email">Email Address</label><input id="a_email" type="email" autocomplete="email" placeholder="name@example.com"></div>
+      <div class="field"><label for="a_pw">Password</label><input id="a_pw" type="password" autocomplete="${su ? 'new-password' : 'current-password'}" placeholder="${su ? 'At least 8 characters' : 'Enter your password'}"></div>
+      <button type="submit" id="authBtn" class="btn btn-primary btn-lg" style="width:100%;margin-top:6px">${ctaText}</button>
     </form>
+    <div class="auth-support-bar">
+      <span>Need help logging in?</span> <a href="https://wa.me/919876543210" target="_blank" rel="noopener">Chat on WhatsApp</a> or <a href="tel:1800327654">Call 1800-FARMLINK</a>
+    </div>
+    <div class="auth-security-badge">
+      🔒 Encrypted &amp; Secure &bull; Government Mandi Benchmark Verified
+    </div>
   </div></section></main>`;
 }
 
@@ -4800,8 +4944,8 @@ async function doAuth(role) {
   if (pw.length < 8) return err('Password must be at least 8 characters.');
 
   if (S.authMode === 'signup') {
-    const phone = v('a_phone').trim();
-    if (!/^\d{10}$/.test(phone)) return err('Phone number must be exactly 10 digits.');
+    const rawName = v('a_name').trim();
+    if (rawName.length < 2) return err('Enter your full name.');
   }
 
   S.isSubmitting = true;
@@ -4811,24 +4955,22 @@ async function doAuth(role) {
   try {
     if (S.authMode === 'signup') {
       const name = v('a_name').trim();
-      const org = v('a_org').trim();
-      const phone = v('a_phone').trim();
-      if (name.length < 2) throw new Error('Enter your full name.');
-      if (org.length < 2) throw new Error(role === 'farmer' ? 'Enter your farm or FPO name.' : 'Enter your business name.');
-      if (!/^\d{10}$/.test(phone)) throw new Error('Enter a valid 10-digit mobile number for order contact.');
+      const org = (v('a_org') ? v('a_org').trim() : '') || (name + (role === 'farmer' ? ' Farms' : ' Enterprises'));
+      const rawPhone = v('a_phone').trim();
+      const phone = (rawPhone && /^\d{10}$/.test(rawPhone)) ? rawPhone : '9876543210';
 
       let loc;
       if (S.authDetectedLoc && S.authDetectedLoc.nearestTown === v('a_loc')) {
         loc = {
-          label: v('a_loc'),
+          label: v('a_loc') || 'Bhimavaram',
           lat: S.authDetectedLoc.lat,
           lng: S.authDetectedLoc.lng,
           isGps: true
         };
       } else {
-        loc = town(v('a_loc'));
+        loc = town(v('a_loc') || 'Bhimavaram');
       }
-      const buyerType = role === 'buyer' ? v('a_type') : null;
+      const buyerType = role === 'buyer' ? (v('a_type') || 'Retailer') : null;
 
       const res = await window.DFApi.signup({
         role,
@@ -4880,7 +5022,7 @@ async function doAuth(role) {
 /* ============ Dashboard Shell ============ */
 function shell(u, base, tabs, cur, badges, title, sub, content) {
   const isOverview = cur === tabs[0][0];
-  const bannerImg = base === 'farmer' ? 'assets/images/heroes/farmer-hero.webp?v=1376' : 'assets/images/heroes/buyer-hero.webp?v=1376';
+  const bannerImg = base === 'farmer' ? 'assets/images/heroes/farmer-hero.webp?v=1376' : 'assets/images/buyerfinalhero';
   const heroBadge = base === 'farmer' ? `${ic('leaf', 13)} Verified Farmer Portal` : `${ic('store', 13)} Direct Marketplace`;
   const heroSub = base === 'farmer'
     ? 'Direct to buyers. Zero middleman margin.'
@@ -4890,7 +5032,7 @@ function shell(u, base, tabs, cur, badges, title, sub, content) {
     : `<a class="btn-hero-primary" href="#/buyer/market">${ic('store', 16)} Explore Marketplace</a>`;
 
   const banner = isOverview ? `
-  <div class="dash-banner">
+  <div class="dash-banner ${base}-dash-banner">
     <img class="dash-banner-bg" src="${bannerImg}" alt="${base === 'farmer' ? 'Indian farmer harvesting fresh crops' : 'Fresh farm harvest and produce'}" loading="eager">
     <div class="dash-banner-overlay"></div>
     <div class="dash-banner-inner">
@@ -8270,6 +8412,9 @@ function render() {
       body = a === 'farmer' ? farmerApp(u, b || 'overview') : buyerApp(u, b || 'market');
     }
   } else {
+    if (u && (u.role === 'farmer' || u.role === 'buyer') && (!a || a === '')) {
+      return go('#/' + u.role);
+    }
     body = landing();
   }
 
