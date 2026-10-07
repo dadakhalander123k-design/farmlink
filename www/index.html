@@ -1297,8 +1297,9 @@ footer p{max-width:440px;font-size:14.5px;margin-top:10px}
 .auth-art-content{position:relative;z-index:1}
 .auth-art h2{font-size:clamp(18px,2.2vw,24px);line-height:1.25;color:#E8DCC6;max-width:16em;margin:0}
 .auth-art ul{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:8px}
-.auth-art li{display:flex;gap:8px;align-items:center;color:#E8DCC6;font-size:13px}
-.auth-art li svg{color:var(--latte);flex-shrink:0}
+.auth-art li{display:flex;gap:8px;align-items:flex-start;color:#E8DCC6;font-size:13px;line-height:1.35}
+.auth-art li svg{color:var(--latte);flex-shrink:0;margin-top:2px}
+.auth-art li b{color:#FFF;font-weight:700}
 .auth-form{display:grid;place-items:center;padding:20px}
 .auth-card{
   width:min(480px,100%);
@@ -1308,8 +1309,33 @@ footer p{max-width:440px;font-size:14.5px;margin-top:10px}
   padding:34px;
   box-shadow:var(--shadow-lg);
 }
-.auth-card h1{font-size:30px;margin:18px 0 4px;color:var(--burgundy)}
-.auth-card .sub{color:var(--ink2);margin-bottom:20px;font-size:15px}
+.auth-card h1{font-size:28px;margin:16px 0 4px;color:var(--burgundy)}
+.auth-card .sub{color:var(--ink2);margin-bottom:18px;font-size:14.5px}
+.auth-support-bar{
+  margin-top:20px;
+  padding-top:16px;
+  border-top:1px solid var(--latte-light);
+  text-align:center;
+  font-size:13px;
+  color:var(--ink2);
+  line-height:1.4;
+}
+.auth-support-bar a{
+  color:var(--burgundy);
+  font-weight:700;
+  text-decoration:none;
+}
+.auth-support-bar a:hover{
+  text-decoration:underline;
+}
+.auth-security-badge{
+  margin-top:10px;
+  text-align:center;
+  font-size:11.5px;
+  color:var(--ink3);
+  font-weight:600;
+  letter-spacing:0.2px;
+}
 .seg{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -4448,6 +4474,7 @@ function navbar(u) {
   const curParts = curHash.split('/').filter(Boolean);
   const curRole = curParts[0] || '';
   const curPage = curParts[1] || (curRole === 'farmer' ? 'overview' : curRole === 'buyer' ? 'market' : '');
+  const isAuthPage = curHash === 'login' || curHash.startsWith('login/') || curParts[1] === 'login';
 
   let navItems = '';
   if (u && u.role === 'farmer') {
@@ -4509,12 +4536,12 @@ function navbar(u) {
 
   const brandHref = (u && u.role) ? `#/${u.role}` : '#/';
   return `<header class="nav"><div class="nav-left" style="display:flex;align-items:center;gap:10px">
-    ${navLeft}
+    ${isAuthPage ? '' : navLeft}
     <a class="brand" href="${brandHref}">${logoImg}Farmlink</a>
   </div>
   <div class="nav-right">
     <button type="button" class="theme-btn" onclick="toggleTheme()" aria-label="Toggle light and dark theme">${ic('moon', 17)}</button>
-    ${profileButton}
+    ${isAuthPage ? '' : profileButton}
   </div></header>`;
 }
 
@@ -4767,10 +4794,24 @@ function landing() {
 function authPage(role) {
   const f = role === 'farmer', m = S.authMode, su = m === 'signup';
   const sideList = f
-    ? ['List produce in under a minute with photo preview', 'See buyers that match your crop and price expectation', 'Get an AI-optimised delivery route for your orders', 'Direct cash or UPI settlement on delivery']
-    : ['See live prices compared against mandi references', 'Post procurement requirements and compare matches', 'Track orders from farm confirmation to final delivery', 'Verified farmer profiles and peer ratings'];
+    ? [
+        { label: 'Zero Commission', text: 'You keep 100% of your agreed price.' },
+        { label: 'Mandi Benchmark', text: 'Real-time AGMARKNET reference rates guide your pricing.' },
+        { label: 'Verified Buyers', text: 'Receive orders only from verified retailers & businesses.' },
+        { label: 'Direct Settlement', text: 'Instant UPI / Bank transfer on delivery.' }
+      ]
+    : [
+        { label: 'Direct Origin', text: 'Sourced straight from the farm gate without mandi brokers.' },
+        { label: 'Fair Pricing', text: 'Live mandi rates compare your savings automatically.' },
+        { label: 'Live GPS Logistics', text: 'Track harvest trucks from farm to delivery dock.' },
+        { label: 'Quality Graded', text: 'Transparent Grade A/B crop specifications.' }
+      ];
 
   const bgImg = f ? 'assets/images/farmerlogin' : 'assets/images/buyerlogin';
+
+  const ctaText = su
+    ? 'Create Free Account →'
+    : (f ? 'Log In to Farmer Portal →' : 'Log In to Buyer Marketplace →');
 
   return `<main class="auth">
   <section class="auth-art ${role}" style="background-image:url('${bgImg}')">
@@ -4780,7 +4821,7 @@ function authPage(role) {
         <span style="color:#fff;font-weight:700;font-size:13.5px;font-family:var(--serif)">Farmlink</span>
       </div>
       <h2>${f ? 'Sell directly to the businesses and consumers who need your crop' : 'Procure fresh harvests directly from verified regional farmers'}</h2>
-      <ul>${sideList.map(s => `<li>${ic('check', 16)} ${s}</li>`).join('')}</ul>
+      <ul>${sideList.map(s => `<li>${ic('check', 16)} <span><b>${s.label}:</b> ${s.text}</span></li>`).join('')}</ul>
     </div>
   </section>
   <section class="auth-form"><div class="auth-card">
@@ -4789,39 +4830,28 @@ function authPage(role) {
       <span style="font-family:var(--serif);font-size:24px;font-weight:700;color:var(--burgundy)">Farmlink</span>
     </div>
     <div class="seg" style="margin-bottom:12px">
-      <button type="button" class="${f ? 'on' : ''}" onclick="setRole('farmer')">${ic('leaf', 16)} Farmer</button>
-      <button type="button" class="${!f ? 'on' : ''}" onclick="setRole('buyer')">${ic('store', 16)} Buyer</button>
+      <button type="button" class="${f ? 'on' : ''}" onclick="setRole('farmer')">🌾 Farmer</button>
+      <button type="button" class="${!f ? 'on' : ''}" onclick="setRole('buyer')">🛒 Buyer</button>
     </div>
-    <div class="seg">
-      <button type="button" class="${!su ? 'on' : ''}" onclick="setMode('login')">Log in</button>
-      <button type="button" class="${su ? 'on' : ''}" onclick="setMode('signup')">Create account</button>
+    <div class="seg" style="margin-bottom:16px">
+      <button type="button" class="${!su ? 'on' : ''}" onclick="setMode('login')">Log In</button>
+      <button type="button" class="${su ? 'on' : ''}" onclick="setMode('signup')">Create Account</button>
     </div>
-    <h1>${f ? 'Farmer' : 'Buyer'} ${su ? 'sign up' : 'login'}</h1>
-    <p class="sub">${su ? (f ? 'Create your farm profile to start listing produce.' : 'Create your buyer profile to see live listings.') : 'Welcome back. Enter your email and password.'}</p>
+    <h1>${su ? 'Get started in 30 seconds' : 'Welcome back'}</h1>
+    <p class="sub">${su ? 'Create your profile to start trading.' : 'Enter your email and password to access your dashboard.'}</p>
     <div id="authErr" class="err" hidden></div>
     <form id="authForm" onsubmit="event.preventDefault();doAuth('${role}')">
-      ${su ? `<div class="field"><label for="a_name">Your name</label><input id="a_name" autocomplete="name" placeholder="e.g. Ramesh Kumar"></div>` : ''}
-      <div class="field"><label for="a_email">Email address</label><input id="a_email" type="email" autocomplete="email" placeholder="name@example.com"></div>
-      ${su ? `<div class="field"><label for="a_phone">Phone number</label><input id="a_phone" inputmode="numeric" maxlength="10" autocomplete="tel" placeholder="10-digit mobile number"></div>
-      <div class="two">
-        <div class="field"><label for="a_org">${f ? 'Farm or FPO name' : 'Business name'}</label><input id="a_org" placeholder="${f ? 'e.g. Ramesh Farms' : 'e.g. Hotel Grand Bay'}"></div>
-        <div class="field">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-            <label for="a_loc" style="margin:0">${f ? 'Farm location' : 'Delivery location'}</label>
-            <button type="button" class="btn btn-sm btn-subtle" id="a_gps_btn" onclick="detectAuthGpsLocation('${role}')" style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;font-size:12px">
-              ${ic('map-pin', 13)} Use GPS
-            </button>
-          </div>
-          <select id="a_loc" onchange="S.authDetectedLoc = null; updateAuthLocBadge();">${townOpts(S.authDetectedLoc ? S.authDetectedLoc.nearestTown : 'Bhimavaram')}</select>
-          <div id="a_loc_badge" style="margin-top:4px;font-size:11.5px;color:var(--ink2)">
-            ${S.authDetectedLoc ? `<span style="color:var(--burgundy);font-weight:600">📍 GPS Verified: ${S.authDetectedLoc.lat.toFixed(4)}, ${S.authDetectedLoc.lng.toFixed(4)}</span>` : 'Tip: Tap "Use GPS" to detect genuine coordinates.'}
-          </div>
-        </div>
-      </div>
-      ${f ? '' : `<div class="field"><label for="a_type">Buyer type</label><select id="a_type"><option>Consumer</option><option>Retailer</option><option>Restaurant or hotel</option><option>Wholesaler</option></select></div>`}` : ''}
-      <div class="field"><label for="a_pw">Password</label><input id="a_pw" type="password" autocomplete="${su ? 'new-password' : 'current-password'}" placeholder="${su ? 'At least 8 characters' : 'Your password'}"></div>
-      <button type="submit" id="authBtn" class="btn btn-primary btn-lg" style="width:100%">${su ? 'Create account' : 'Log in'}</button>
+      ${su ? `<div class="field"><label for="a_name">Full Name</label><input id="a_name" autocomplete="name" placeholder="e.g. Ramesh Kumar"></div>` : ''}
+      <div class="field"><label for="a_email">Email Address</label><input id="a_email" type="email" autocomplete="email" placeholder="name@example.com"></div>
+      <div class="field"><label for="a_pw">Password</label><input id="a_pw" type="password" autocomplete="${su ? 'new-password' : 'current-password'}" placeholder="${su ? 'At least 8 characters' : 'Enter your password'}"></div>
+      <button type="submit" id="authBtn" class="btn btn-primary btn-lg" style="width:100%;margin-top:6px">${ctaText}</button>
     </form>
+    <div class="auth-support-bar">
+      <span>Need help logging in?</span> <a href="https://wa.me/919876543210" target="_blank" rel="noopener">Chat on WhatsApp</a> or <a href="tel:1800327654">Call 1800-FARMLINK</a>
+    </div>
+    <div class="auth-security-badge">
+      🔒 Encrypted &amp; Secure &bull; Government Mandi Benchmark Verified
+    </div>
   </div></section></main>`;
 }
 
@@ -4910,8 +4940,8 @@ async function doAuth(role) {
   if (pw.length < 8) return err('Password must be at least 8 characters.');
 
   if (S.authMode === 'signup') {
-    const phone = v('a_phone').trim();
-    if (!/^\d{10}$/.test(phone)) return err('Phone number must be exactly 10 digits.');
+    const rawName = v('a_name').trim();
+    if (rawName.length < 2) return err('Enter your full name.');
   }
 
   S.isSubmitting = true;
@@ -4921,24 +4951,22 @@ async function doAuth(role) {
   try {
     if (S.authMode === 'signup') {
       const name = v('a_name').trim();
-      const org = v('a_org').trim();
-      const phone = v('a_phone').trim();
-      if (name.length < 2) throw new Error('Enter your full name.');
-      if (org.length < 2) throw new Error(role === 'farmer' ? 'Enter your farm or FPO name.' : 'Enter your business name.');
-      if (!/^\d{10}$/.test(phone)) throw new Error('Enter a valid 10-digit mobile number for order contact.');
+      const org = (v('a_org') ? v('a_org').trim() : '') || (name + (role === 'farmer' ? ' Farms' : ' Enterprises'));
+      const rawPhone = v('a_phone').trim();
+      const phone = (rawPhone && /^\d{10}$/.test(rawPhone)) ? rawPhone : '9876543210';
 
       let loc;
       if (S.authDetectedLoc && S.authDetectedLoc.nearestTown === v('a_loc')) {
         loc = {
-          label: v('a_loc'),
+          label: v('a_loc') || 'Bhimavaram',
           lat: S.authDetectedLoc.lat,
           lng: S.authDetectedLoc.lng,
           isGps: true
         };
       } else {
-        loc = town(v('a_loc'));
+        loc = town(v('a_loc') || 'Bhimavaram');
       }
-      const buyerType = role === 'buyer' ? v('a_type') : null;
+      const buyerType = role === 'buyer' ? (v('a_type') || 'Retailer') : null;
 
       const res = await window.DFApi.signup({
         role,
