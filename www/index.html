@@ -1254,40 +1254,52 @@ footer p{max-width:440px;font-size:14.5px;margin-top:10px}
 .auth{
   display:grid;
   grid-template-columns:1fr 1fr;
+  align-items:center;
+  justify-items:center;
   min-height:calc(100vh - 72px);
   background:var(--bg);
+  padding:32px 24px;
+  gap:24px;
+  box-sizing:border-box;
 }
 @media (max-width:900px){
-  .auth{grid-template-columns:1fr}
-  .auth-art{aspect-ratio:1376 / 768; min-height:unset; height:auto}
+  .auth{grid-template-columns:1fr; padding:16px 12px; gap:16px}
+  .auth-art{aspect-ratio:1376 / 768; min-height:unset; height:auto; width:min(520px, 100%)}
 }
 .auth-art{
   position:relative;
   overflow:hidden;
   color:#E8DCC6;
-  padding:48px;
+  width:min(580px, 100%);
+  aspect-ratio:1376 / 768;
+  border-radius:24px;
+  border:1px solid var(--latte);
+  box-shadow:var(--shadow-lg);
+  margin:auto;
+  padding:24px 28px;
   display:flex;
   flex-direction:column;
   justify-content:flex-start;
-  background-size:contain;
+  background-size:100% 100%;
   background-position:center;
   background-repeat:no-repeat;
   background-color:#140F0C;
   image-rendering:-webkit-optimize-contrast;
+  box-sizing:border-box;
 }
 .auth-art::before{
   content:"";
   position:absolute;
   inset:0;
-  background:linear-gradient(180deg,rgba(42,33,24,.2) 0%,rgba(42,33,24,.75) 100%);
+  background:linear-gradient(180deg,rgba(20,15,12,.4) 0%,rgba(20,15,12,.72) 100%);
   z-index:0;
 }
 .auth-art-content{position:relative;z-index:1}
-.auth-art h2{font-size:clamp(26px,3.2vw,40px);color:#E8DCC6;max-width:14em}
-.auth-art ul{list-style:none;padding:0;margin:20px 0 0;display:grid;gap:12px}
-.auth-art li{display:flex;gap:10px;align-items:center;color:#E8DCC6;font-size:15.5px}
-.auth-art li svg{color:var(--latte)}
-.auth-form{display:grid;place-items:center;padding:40px 20px}
+.auth-art h2{font-size:clamp(18px,2.2vw,24px);line-height:1.25;color:#E8DCC6;max-width:16em;margin:0}
+.auth-art ul{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:8px}
+.auth-art li{display:flex;gap:8px;align-items:center;color:#E8DCC6;font-size:13px}
+.auth-art li svg{color:var(--latte);flex-shrink:0}
+.auth-form{display:grid;place-items:center;padding:20px}
 .auth-card{
   width:min(480px,100%);
   background:var(--card);
@@ -3272,19 +3284,25 @@ input:focus,select:focus,textarea:focus{
     min-height:auto;
   }
   .auth-art{
-    aspect-ratio:4 / 3;
-    min-height:280px;
+    aspect-ratio:1376 / 768;
+    min-height:unset;
     height:auto;
-    padding:16px 14px;
+    width:100%;
+    max-width:520px;
+    margin:0 auto;
+    border-radius:20px;
+    border:1px solid var(--latte);
+    box-shadow:var(--shadow-md);
+    padding:16px 16px;
     justify-content:flex-start;
-    background-size:cover;
-    background-position:center 30%;
+    background-size:100% 100%;
+    background-position:center;
     background-repeat:no-repeat;
     background-color:#140F0C;
     filter:none !important;
   }
   .auth-art h2{
-    font-size:16px !important;
+    font-size:15px !important;
     max-width:100%;
     text-shadow:none !important;
   }
@@ -4757,12 +4775,12 @@ function authPage(role) {
   return `<main class="auth">
   <section class="auth-art ${role}" style="background-image:url('${bgImg}')">
     <div class="auth-art-content">
-      <div style="display:inline-flex;align-items:center;gap:9px;margin-bottom:18px;background:rgba(0,0,0,0.4);backdrop-filter:blur(8px);padding:6px 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.25)">
-        <img src="assets/images/farmfinal.png" alt="Farmlink" style="width:26px;height:26px;object-fit:contain">
-        <span style="color:#fff;font-weight:700;font-size:15px;font-family:var(--serif)">Farmlink</span>
+      <div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:12px;background:rgba(0,0,0,0.45);backdrop-filter:blur(8px);padding:4px 12px;border-radius:999px;border:1px solid rgba(255,255,255,0.25)">
+        <img src="assets/images/farmfinal.png" alt="Farmlink" style="width:22px;height:22px;object-fit:contain">
+        <span style="color:#fff;font-weight:700;font-size:13.5px;font-family:var(--serif)">Farmlink</span>
       </div>
       <h2>${f ? 'Sell directly to the businesses and consumers who need your crop' : 'Procure fresh harvests directly from verified regional farmers'}</h2>
-      <ul>${sideList.map(s => `<li>${ic('check', 18)} ${s}</li>`).join('')}</ul>
+      <ul>${sideList.map(s => `<li>${ic('check', 16)} ${s}</li>`).join('')}</ul>
     </div>
   </section>
   <section class="auth-form"><div class="auth-card">
