@@ -129,7 +129,8 @@ const server = http.createServer(async (req, res) => {
   // --- API: AGMARKNET Market Prices ---
   if (pathname === '/api/market-prices' && req.method === 'GET') {
     const commodity = parsedUrl.searchParams.get('commodity') || 'Tomato';
-    const stateId = parseInt(parsedUrl.searchParams.get('state') || '2', 10);
+    const rawState = parsedUrl.searchParams.get('state') ?? parsedUrl.searchParams.get('stateId') ?? '2';
+    const stateId = parseInt(rawState, 10);
     const date = parsedUrl.searchParams.get('date') || null;
 
     try {

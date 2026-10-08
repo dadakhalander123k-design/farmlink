@@ -7703,7 +7703,8 @@ async function loadMarketPrices(commodity, stateId, force) {
     if (!AVAILABLE_COMMODITIES.length) {
       try {
         const fRes = await fetch(`${apiBase}/api/market-prices/filters`);
-        if (fRes.ok) {
+        const fCt = fRes.headers.get('content-type') || '';
+        if (fRes.ok && fCt.includes('application/json')) {
           const fJson = await fRes.json();
           if (fJson && fJson.success) {
             AVAILABLE_COMMODITIES = fJson.commodities || [];
@@ -7721,13 +7722,28 @@ async function loadMarketPrices(commodity, stateId, force) {
     let data = null;
     try {
       const res = await fetch(`${apiBase}/api/market-prices?commodity=${encodeURIComponent(c)}&state=${s}`);
-      if (res.ok) {
+      const ct = res.headers.get('content-type') || '';
+      if (res.ok && ct.includes('application/json')) {
         const json = await res.json();
         if (json && json.success) {
           data = json;
         }
       }
     } catch (_) {}
+
+    // In case running on another port (e.g. VS Code Live Server 5500), try localhost:3000 where server.js runs
+    if (!data && location.port && location.port !== '3000' && (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
+      try {
+        const res3000 = await fetch(`http://localhost:3000/api/market-prices?commodity=${encodeURIComponent(c)}&state=${s}`);
+        const ct3000 = res3000.headers.get('content-type') || '';
+        if (res3000.ok && ct3000.includes('application/json')) {
+          const json3000 = await res3000.json();
+          if (json3000 && json3000.success) {
+            data = json3000;
+          }
+        }
+      } catch (_) {}
+    }
 
     if (!data) {
       data = getClientBenchmarkMarketPrices(c, s);
