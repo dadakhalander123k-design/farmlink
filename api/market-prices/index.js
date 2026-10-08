@@ -15,7 +15,7 @@ module.exports = async function handler(req, res) {
 
   const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost:3000'}`);
   const commodity = req.query?.commodity || parsedUrl.searchParams.get('commodity') || 'Tomato';
-  const stateParam = req.query?.state || parsedUrl.searchParams.get('state') || '2';
+  const stateParam = req.query?.state || req.query?.stateId || parsedUrl.searchParams.get('state') || parsedUrl.searchParams.get('stateId') || '2';
   const stateId = parseInt(stateParam, 10);
   const date = req.query?.date || parsedUrl.searchParams.get('date') || null;
 

@@ -2,8 +2,8 @@
   "version": 2,
   "cleanUrls": true,
   "functions": {
-    "server.js": {
-      "includeFiles": "{index.html,404.html,config.js,public/**,assets/**,lib/**}"
+    "api/**/*.js": {
+      "includeFiles": "lib/**"
     }
   },
   "rewrites": [
