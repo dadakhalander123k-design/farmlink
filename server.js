@@ -324,30 +324,6 @@ const server = http.createServer(async (req, res) => {
   }
 
   // --- Static File Serving ---
-<<<<<<< HEAD
-  const candidates = [
-    path.join(ROOT_DIR, pathname === '/' ? 'index.html' : pathname),
-    path.join(process.cwd(), pathname === '/' ? 'index.html' : pathname),
-    path.join(ROOT_DIR, 'public', pathname === '/' ? 'index.html' : pathname),
-    path.join(process.cwd(), 'public', pathname === '/' ? 'index.html' : pathname),
-    path.join(ROOT_DIR, 'index.html'),
-    path.join(process.cwd(), 'index.html'),
-    path.join(ROOT_DIR, 'public', 'index.html'),
-    path.join(process.cwd(), 'public', 'index.html')
-  ];
-
-  let resolvedFile = null;
-  for (const candidate of candidates) {
-    try {
-      if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) {
-        resolvedFile = candidate;
-        break;
-      }
-    } catch (e) {}
-  }
-
-  if (!resolvedFile) {
-=======
   // Fast path: root or SPA page routes directly serve pre-cached index.html
   const isHtmlRoute = !pathname.startsWith('/assets') && !pathname.startsWith('/api') && (pathname === '/' || pathname === '/index.html' || !path.extname(pathname));
   if (isHtmlRoute && INDEX_HTML_CONTENT) {
@@ -385,18 +361,11 @@ const server = http.createServer(async (req, res) => {
       });
       return res.end(INDEX_HTML_CONTENT);
     }
->>>>>>> 7839e4dd488e524bb2cf7628dce6fa86fcf29622
     res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
     return res.end('File not found');
   }
 
   const ext = path.extname(resolvedFile).toLowerCase();
-<<<<<<< HEAD
-  const contentType = MIME_TYPES[ext] || 'application/octet-stream';
-
-  fs.readFile(resolvedFile, (readErr, content) => {
-    if (readErr) {
-=======
   const contentType = MIME_TYPES[ext] || ((resolvedFile.includes('buyerfinalhero') || resolvedFile.includes('buyerlogin') || resolvedFile.includes('farmerlogin')) ? 'image/jpeg' : 'application/octet-stream');
 
   fs.readFile(resolvedFile, (readErr, content) => {
@@ -405,7 +374,6 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
         return res.end(INDEX_HTML_CONTENT);
       }
->>>>>>> 7839e4dd488e524bb2cf7628dce6fa86fcf29622
       res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
       return res.end('Error loading file: ' + readErr.message);
     }
